@@ -32,6 +32,8 @@ while True:
         player.left()
     if pressed_keys[pygame.K_RIGHT]:
         player.right()
+    if pressed_keys[pygame.K_LALT]:
+        player.jump()
 
     screen.fill((0, 0, 0))
 
