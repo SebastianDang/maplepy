@@ -20,15 +20,25 @@ all_sprites.add(player)
 
 
 while True:
+
+    # Event handling
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
 
+    # Input key handling
+    pressed_keys = pygame.key.get_pressed()
+    if pressed_keys[pygame.K_LEFT]:
+        player.left()
+    if pressed_keys[pygame.K_RIGHT]:
+        player.right()
+
     displaysurface.fill((0, 0, 0))
 
     for entity in all_sprites:
         displaysurface.blit(entity.surf, entity.rect)
+        entity.update()
 
     pygame.display.update()
     clock.tick(config['fps'])
