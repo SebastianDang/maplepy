@@ -11,21 +11,22 @@ else:
 
 class Config:
     def __init__(self, filename):
-        self._filename = filename
+        self.path = path
+        self.filename = filename
         self.load()
 
     def __setitem__(self, key, item):
-        self._args[key] = item
+        self.args[key] = item
 
     def __getitem__(self, key):
-        return self._args[key]
+        return self.args[key]
 
     def load(self):
-        print('Loading', self._filename, '...')
-        with open(path + "/" + self._filename) as json_file:
-            self._args = json.load(json_file)
+        print('Loading', self.filename, '...')
+        with open(path + "/" + self.filename) as json_file:
+            self.args = json.load(json_file)
 
     def save(self):
-        print('Saving', self._filename, '...')
-        with open(path + "/" + self._filename, 'w') as json_file:
-            json.dump(self._args, json_file, indent=2)
+        print('Saving', self.filename, '...')
+        with open(path + "/" + self.filename, 'w') as json_file:
+            json.dump(self.args, json_file, indent=2)
