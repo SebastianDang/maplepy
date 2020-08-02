@@ -7,6 +7,7 @@ from world import Background, Platform
 config = Config('etc/config.json')
 
 pygame.init()
+
 screen = pygame.display.set_mode((config['width'], config['height']))
 clock = pygame.time.Clock()
 pygame.display.set_caption(config['caption'])

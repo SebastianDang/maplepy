@@ -3,7 +3,7 @@ import pygame
 vec = pygame.math.Vector2
 
 MAX_VELOCITY = 10.0
-MAX_JUMP = 88.0
+MAX_JUMP = 400.0
 
 
 def clamp(n, minn, maxn):
@@ -23,11 +23,11 @@ class Player (pygame.sprite.Sprite):
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
         self.move_speed = 1.0
-        self.move_gnd_friction = 0.12
-        self.move_air_friction = 0.05
+        self.move_gnd_friction = 0.20
+        self.move_air_friction = 0.15
         self.moving = False
-        self.jump_force = 3.0
-        self.jump_gravity = 0.4
+        self.jump_force = 2.80
+        self.jump_gravity = 0.35
         self.jump_pos = vec(0, 0)
         self.jumping = False
         self.attacking_frames = 60
@@ -73,6 +73,10 @@ class Player (pygame.sprite.Sprite):
                 './data/sprites/player/{}_{}.png'.format('stand1', str(i)))
             self.stand_sprites.append(image)
 
+        # Sounds
+        self.attack_sound = pygame.mixer.Sound('./data/sounds/attack.wav')
+
+        # Rect
         self.image = self.stand_sprites[0]
         self.rect = self.image.get_rect()
 
@@ -119,12 +123,14 @@ class Player (pygame.sprite.Sprite):
             return
         self.attacking = True
         self.frame_count = 0
+        self.attack_sound.play()
 
     def place(self, x, y):
         self.pos.x = x
         self.pos.y = y
 
     def update(self):
+
         # Handle physics
         if self.moving:
             ground = self.vel.x * -self.move_gnd_friction
@@ -143,6 +149,7 @@ class Player (pygame.sprite.Sprite):
 
         # Adjust position
         if self.jumping:
+            print(self.jump_pos.y - self.pos.y)
             if self.pos.y < (self.jump_pos.y - MAX_JUMP):
                 self.pos.y = (self.jump_pos.y - MAX_JUMP)
             if self.pos.y > self.jump_pos.y:
@@ -155,7 +162,7 @@ class Player (pygame.sprite.Sprite):
         # Update rect
         self.rect.midbottom = self.pos
 
-        # Update sprites
+        # Update animation
         self.frame_count = (self.frame_count + 1) % 180  # 3 seconds
         if self.attacking and self.prone:
             if self.frame_count >= self.attacking_frames:
