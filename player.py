@@ -18,8 +18,9 @@ class Player (pygame.sprite.Sprite):
         self.screen = screen
 
         # Movement variables
+        self.prone = False
         self.dir = vec(-1, 0)  # Start facing left, since the sprites face left
-        self.pos = vec(10, 380)
+        self.pos = vec(0, 0)
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
         self.move_speed = 2.0
@@ -47,6 +48,12 @@ class Player (pygame.sprite.Sprite):
                 './data/sprites/player/{}_{}.png'.format('walk1', str(i)))
             self.walk_sprites.append(image)
 
+        self.prone_sprites = []
+        for i in range(0, 2):
+            image = pygame.image.load(
+                './data/sprites/player/{}_{}.png'.format('prone', str(i)))
+            self.prone_sprites.append(image)
+
         self.jump_sprites = []
         for i in range(0, 2):
             image = pygame.image.load(
@@ -56,25 +63,45 @@ class Player (pygame.sprite.Sprite):
         self.image = self.stand_sprites[0]
         self.rect = self.image.get_rect()
 
-    def left(self):
+    def on_down(self):
+        if self.prone:
+            return
+        self.prone = True
+
+    def off_down(self):
+        if not self.prone:
+            return
+        self.prone = False
+
+    def on_left(self):
         self.dir.x = -1
         self.acc.x = -self.move_speed
         self.moving = True
 
-    def right(self):
+    def on_right(self):
         self.dir.x = 1
         self.acc.x = self.move_speed
         self.moving = True
 
-    def jump(self):
+    def on_jump(self):
         if self.jumping:
             return
         self.acc.y = -self.jump_force
         self.jump_pos = vec(self.pos.x, self.pos.y)
         self.jumping = True
 
-    def update(self):
+    def off_move(self):
+        if not self.moving:
+            return
+        self.vel.x = 0
+        self.acc.x = 0
+        self.moving = False
 
+    def place(self, x, y):
+        self.pos.x = x
+        self.pos.y = y
+
+    def update(self):
         # Handle physics
         if self.moving:
             ground = self.vel.x * -self.move_gnd_friction
@@ -82,14 +109,8 @@ class Player (pygame.sprite.Sprite):
             self.acc.x += air if self.jumping else ground
             self.vel.x = clamp(self.vel.x + self.acc.x, -
                                MAX_VELOCITY, MAX_VELOCITY)
-            if self.dir.x < 0 and self.vel.x > 0:
-                self.vel.x = 0
-                self.acc.x = 0
-                self.moving = False
-            if self.dir.x > 0 and self.vel.x < 0:
-                self.vel.x = 0
-                self.acc.x = 0
-                self.moving = False
+            if (self.dir.x < 0 and self.vel.x > 0) or (self.dir.x > 0 and self.vel.x < 0):
+                self.off_move()
         if self.jumping:
             self.acc.y += self.jump_gravity
             self.vel.y += self.acc.y
@@ -117,8 +138,12 @@ class Player (pygame.sprite.Sprite):
             frame = int(self.frame_count / 90 % len(self.jump_sprites))
             self.image = self.jump_sprites[frame]
         elif self.moving:
-            frame = int(self.frame_count / 9 % len(self.walk_sprites))
+            frame = int(self.frame_count / 7 % len(self.walk_sprites))
             self.image = self.walk_sprites[frame]
+        elif self.prone:
+            self.rect.midbottom = vec(self.pos.x, self.pos.y + 28)
+            frame = int(self.frame_count / 90 % len(self.prone_sprites))
+            self.image = self.prone_sprites[frame]
         else:
             frame = int(self.frame_count / 45 % len(self.stand_sprites))
             self.image = self.stand_sprites[frame]

@@ -13,6 +13,7 @@ pygame.display.set_caption(config['caption'])
 
 platform = Platform(screen)
 player = Player(screen)
+player.place(10,380)
 
 all_sprites = pygame.sprite.Group()
 all_sprites.add(platform)
@@ -28,12 +29,16 @@ while True:
 
     # Input key handling
     pressed_keys = pygame.key.get_pressed()
+    if pressed_keys[pygame.K_DOWN]:
+        player.on_down()
+    if not pressed_keys[pygame.K_DOWN]:
+        player.off_down()
     if pressed_keys[pygame.K_LEFT]:
-        player.left()
+        player.on_left()
     if pressed_keys[pygame.K_RIGHT]:
-        player.right()
+        player.on_right()
     if pressed_keys[pygame.K_LALT]:
-        player.jump()
+        player.on_jump()
 
     screen.fill((0, 0, 0))
 
