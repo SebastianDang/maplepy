@@ -35,6 +35,10 @@ class Player (pygame.sprite.Sprite):
         self.move_ground_friction = config['player']['move_ground_friction']
         self.move_air_drag = config['player']['move_air_drag']
 
+        # Debug parameters
+        self.debug_enable = config['player']['debug']['enable']
+        self.debug_rect = config['player']['debug']['rect']
+
         # States
         self.attacking = False
         self.prone = False
@@ -199,5 +203,11 @@ class Player (pygame.sprite.Sprite):
     def blit(self):
         # Flip the image across x, y
         image = pygame.transform.flip(self.image, self.dir.x > 0, False)
+
         # Draw image
         self.screen.blit(image, self.rect)
+
+        # Draw debug
+        if self.debug_enable:
+            if self.debug_rect:
+                pygame.draw.rect(self.screen, (255, 0, 0), self.rect, 2)
