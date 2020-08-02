@@ -89,7 +89,7 @@ class Player (pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
     def on_down(self):
-        if self.prone:
+        if self.prone or self.jumping:
             return
         self.prone = True
 
@@ -124,6 +124,7 @@ class Player (pygame.sprite.Sprite):
             return
         self.acc.y = -self.jump_force
         self.jump_pos = vec(self.pos.x, self.pos.y)
+        self.prone = False
         self.jumping = True
 
     def on_attack(self):
@@ -138,7 +139,6 @@ class Player (pygame.sprite.Sprite):
         self.pos.y = y
 
     def update(self):
-
         # Handle physics
         if self.moving:
             ground = self.vel.x * -self.move_ground_friction

@@ -12,10 +12,11 @@ pygame.init()
 screen = pygame.display.set_mode((config['width'], config['height']))
 clock = pygame.time.Clock()
 pygame.display.set_caption(config['caption'])
+fps = config['fps']
 
 background = Background(screen)
 player = Player(screen)
-player.place(512,510)
+player.place(512, 510)
 
 all_sprites = pygame.sprite.Group()
 all_sprites.add(background)
@@ -45,11 +46,14 @@ while True:
     if pressed_keys[pygame.K_LCTRL]:
         player.on_attack()
 
+    # Render black
     screen.fill((0, 0, 0))
 
+    # Render entities
     for entity in all_sprites:
         entity.update()
         entity.blit()
 
+    # Update display and clock
     pygame.display.update()
-    clock.tick(config['fps'])
+    clock.tick(fps)
