@@ -22,7 +22,7 @@ class Player (pygame.sprite.Sprite):
         self.pos = vec(0, 0)
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
-        self.move_speed = 2.0
+        self.move_speed = 1.0
         self.move_gnd_friction = 0.12
         self.move_air_friction = 0.05
         self.moving = False
@@ -30,22 +30,24 @@ class Player (pygame.sprite.Sprite):
         self.jump_gravity = 0.4
         self.jump_pos = vec(0, 0)
         self.jumping = False
+        self.attacking_frames = 60
+        self.attacking = False
 
         # Frame rate from screen
         self.frame_count = 0
 
         # Sprites
-        self.stand_sprites = []
-        for i in range(0, 4):
+        self.prone_attack_sprites = []
+        for i in range(0, 3):
             image = pygame.image.load(
-                './data/sprites/player/{}_{}.png'.format('stand1', str(i)))
-            self.stand_sprites.append(image)
+                './data/sprites/player/{}_{}.png'.format('proneStab', str(i)))
+            self.prone_attack_sprites.append(image)
 
-        self.walk_sprites = []
-        for i in range(0, 4):
+        self.attack_sprites = []
+        for i in range(0, 3):
             image = pygame.image.load(
-                './data/sprites/player/{}_{}.png'.format('walk1', str(i)))
-            self.walk_sprites.append(image)
+                './data/sprites/player/{}_{}.png'.format('stabO1', str(i)))
+            self.attack_sprites.append(image)
 
         self.prone_sprites = []
         for i in range(0, 2):
@@ -58,6 +60,18 @@ class Player (pygame.sprite.Sprite):
             image = pygame.image.load(
                 './data/sprites/player/{}_{}.png'.format('jump', str(i)))
             self.jump_sprites.append(image)
+
+        self.walk_sprites = []
+        for i in range(0, 4):
+            image = pygame.image.load(
+                './data/sprites/player/{}_{}.png'.format('walk1', str(i)))
+            self.walk_sprites.append(image)
+
+        self.stand_sprites = []
+        for i in range(0, 4):
+            image = pygame.image.load(
+                './data/sprites/player/{}_{}.png'.format('stand1', str(i)))
+            self.stand_sprites.append(image)
 
         self.image = self.stand_sprites[0]
         self.rect = self.image.get_rect()
@@ -73,14 +87,25 @@ class Player (pygame.sprite.Sprite):
         self.prone = False
 
     def on_left(self):
+        if self.attacking:
+            return
         self.dir.x = -1
         self.acc.x = -self.move_speed
         self.moving = True
 
     def on_right(self):
+        if self.attacking:
+            return
         self.dir.x = 1
         self.acc.x = self.move_speed
         self.moving = True
+
+    def off_move(self):
+        if not self.moving:
+            return
+        self.vel.x = 0
+        self.acc.x = 0
+        self.moving = False
 
     def on_jump(self):
         if self.jumping:
@@ -89,12 +114,11 @@ class Player (pygame.sprite.Sprite):
         self.jump_pos = vec(self.pos.x, self.pos.y)
         self.jumping = True
 
-    def off_move(self):
-        if not self.moving:
+    def on_attack(self):
+        if self.attacking:
             return
-        self.vel.x = 0
-        self.acc.x = 0
-        self.moving = False
+        self.attacking = True
+        self.frame_count = 0
 
     def place(self, x, y):
         self.pos.x = x
@@ -133,16 +157,28 @@ class Player (pygame.sprite.Sprite):
 
         # Update sprites
         self.frame_count = (self.frame_count + 1) % 180  # 3 seconds
-        if self.jumping:
+        if self.attacking and self.prone:
+            if self.frame_count >= self.attacking_frames:
+                self.attacking = False
+            self.rect.midbottom = vec(self.pos.x, self.pos.y + 28)
+            frame = int(self.frame_count / 20 % len(self.prone_attack_sprites))
+            self.image = self.prone_attack_sprites[frame]
+        elif self.attacking:
+            if self.frame_count >= self.attacking_frames:
+                self.attacking = False
+            self.rect.midbottom = vec(self.pos.x, self.pos.y + 3)
+            frame = int(self.frame_count / 20 % len(self.attack_sprites))
+            self.image = self.attack_sprites[frame]
+        elif self.prone:
+            self.rect.midbottom = vec(self.pos.x, self.pos.y + 28)
+            frame = int(self.frame_count / 90 % len(self.prone_sprites))
+            self.image = self.prone_sprites[frame]
+        elif self.jumping:
             frame = int(self.frame_count / 90 % len(self.jump_sprites))
             self.image = self.jump_sprites[frame]
         elif self.moving:
             frame = int(self.frame_count / 7 % len(self.walk_sprites))
             self.image = self.walk_sprites[frame]
-        elif self.prone:
-            self.rect.midbottom = vec(self.pos.x, self.pos.y + 28)
-            frame = int(self.frame_count / 90 % len(self.prone_sprites))
-            self.image = self.prone_sprites[frame]
         else:
             frame = int(self.frame_count / 45 % len(self.stand_sprites))
             self.image = self.stand_sprites[frame]

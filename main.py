@@ -40,6 +40,8 @@ while True:
         player.on_right()
     if pressed_keys[pygame.K_LALT]:
         player.on_jump()
+    if pressed_keys[pygame.K_LCTRL]:
+        player.on_attack()
 
     screen.fill((0, 0, 0))
 
