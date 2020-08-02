@@ -2,7 +2,7 @@ import sys
 import pygame
 from config import Config
 from player import Player
-from world import Platform
+from world import Background, Platform
 
 config = Config('etc/config.json')
 
@@ -11,12 +11,12 @@ screen = pygame.display.set_mode((config['width'], config['height']))
 clock = pygame.time.Clock()
 pygame.display.set_caption(config['caption'])
 
-platform = Platform(screen)
+background = Background(screen)
 player = Player(screen)
-player.place(10,380)
+player.place(512,510)
 
 all_sprites = pygame.sprite.Group()
-all_sprites.add(platform)
+all_sprites.add(background)
 all_sprites.add(player)
 
 while True:
@@ -24,6 +24,7 @@ while True:
     # Event handling
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
+            pygame.event.clear()
             pygame.quit()
             sys.exit()
 
