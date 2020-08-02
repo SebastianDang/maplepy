@@ -4,7 +4,8 @@ from config import Config
 from player import Player
 from world import Background, Platform
 
-config = Config('etc/config.json')
+config = Config.instance()
+config.init('etc/config.json')
 
 pygame.init()
 

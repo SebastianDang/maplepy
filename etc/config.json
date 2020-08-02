@@ -1,6 +1,14 @@
 {
-  "caption": "Hello World",
+  "caption": "Maplestory",
   "height": 560,
   "width": 1024,
-  "fps": 60
+  "fps": 60,
+  "player": {
+    "jump_force": 2.80,
+    "jump_gravity": 0.35,
+    "move_speed": 1.00,
+    "move_max_speed": 10.00,
+    "move_ground_friction": 0.20,
+    "move_air_drag": 0.15
+  }
 }

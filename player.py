@@ -1,83 +1,91 @@
 import pygame
+from config import Config
+from utils import clamp
 
 vec = pygame.math.Vector2
 
-MAX_VELOCITY = 10.0
-MAX_JUMP = 400.0
-
-
-def clamp(n, minn, maxn):
-    return max(min(maxn, n), minn)
-
 
 class Player (pygame.sprite.Sprite):
+
+    """
+    Player class that handles physics, animation sprites, and sounds
+    """
+
     def __init__(self, screen):
 
         super().__init__()
         self.screen = screen
 
-        # Movement variables
-        self.prone = False
+        # Movement
         self.dir = vec(-1, 0)  # Start facing left, since the sprites face left
         self.pos = vec(0, 0)
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
-        self.move_speed = 1.0
-        self.move_gnd_friction = 0.20
-        self.move_air_friction = 0.15
-        self.moving = False
-        self.jump_force = 2.80
-        self.jump_gravity = 0.35
+
+        # Config
+        config = Config.instance()
+
+        # Parameters
+        self.attacking_frames = 60  # 1
+        self.jump_force = config['player']['jump_force']
+        self.jump_gravity = config['player']['jump_gravity']
         self.jump_pos = vec(0, 0)
-        self.jumping = False
-        self.attacking_frames = 60
+        self.move_speed = config['player']['move_speed']
+        self.move_max_speed = config['player']['move_max_speed']
+        self.move_ground_friction = config['player']['move_ground_friction']
+        self.move_air_drag = config['player']['move_air_drag']
+
+        # States
         self.attacking = False
+        self.prone = False
+        self.jumping = False
+        self.moving = False
 
         # Frame rate from screen
         self.frame_count = 0
 
         # Sprites
-        self.prone_attack_sprites = []
+        self.sprite_prone_attack = []
         for i in range(0, 3):
             image = pygame.image.load(
                 './data/sprites/player/{}_{}.png'.format('proneStab', str(i)))
-            self.prone_attack_sprites.append(image)
+            self.sprite_prone_attack.append(image)
 
-        self.attack_sprites = []
+        self.sprite_attack = []
         for i in range(0, 3):
             image = pygame.image.load(
                 './data/sprites/player/{}_{}.png'.format('stabO1', str(i)))
-            self.attack_sprites.append(image)
+            self.sprite_attack.append(image)
 
-        self.prone_sprites = []
+        self.sprite_prone = []
         for i in range(0, 2):
             image = pygame.image.load(
                 './data/sprites/player/{}_{}.png'.format('prone', str(i)))
-            self.prone_sprites.append(image)
+            self.sprite_prone.append(image)
 
-        self.jump_sprites = []
+        self.sprite_jump = []
         for i in range(0, 2):
             image = pygame.image.load(
                 './data/sprites/player/{}_{}.png'.format('jump', str(i)))
-            self.jump_sprites.append(image)
+            self.sprite_jump.append(image)
 
-        self.walk_sprites = []
+        self.sprite_walk = []
         for i in range(0, 4):
             image = pygame.image.load(
                 './data/sprites/player/{}_{}.png'.format('walk1', str(i)))
-            self.walk_sprites.append(image)
+            self.sprite_walk.append(image)
 
-        self.stand_sprites = []
+        self.sprite_stand = []
         for i in range(0, 4):
             image = pygame.image.load(
                 './data/sprites/player/{}_{}.png'.format('stand1', str(i)))
-            self.stand_sprites.append(image)
+            self.sprite_stand.append(image)
 
         # Sounds
-        self.attack_sound = pygame.mixer.Sound('./data/sounds/attack.wav')
+        self.sound_attack = pygame.mixer.Sound('./data/sounds/attack.wav')
 
-        # Rect
-        self.image = self.stand_sprites[0]
+        # Blit
+        self.image = self.sprite_stand[0]
         self.rect = self.image.get_rect()
 
     def on_down(self):
@@ -123,7 +131,7 @@ class Player (pygame.sprite.Sprite):
             return
         self.attacking = True
         self.frame_count = 0
-        self.attack_sound.play()
+        self.sound_attack.play()
 
     def place(self, x, y):
         self.pos.x = x
@@ -133,11 +141,11 @@ class Player (pygame.sprite.Sprite):
 
         # Handle physics
         if self.moving:
-            ground = self.vel.x * -self.move_gnd_friction
-            air = self.vel.x * -self.move_air_friction
+            ground = self.vel.x * -self.move_ground_friction
+            air = self.vel.x * -self.move_air_drag
             self.acc.x += air if self.jumping else ground
-            self.vel.x = clamp(self.vel.x + self.acc.x, -
-                               MAX_VELOCITY, MAX_VELOCITY)
+            self.vel.x = clamp(self.vel.x + self.acc.x,
+                               (-self.move_max_speed), (self.move_max_speed))
             if (self.dir.x < 0 and self.vel.x > 0) or (self.dir.x > 0 and self.vel.x < 0):
                 self.off_move()
         if self.jumping:
@@ -149,9 +157,6 @@ class Player (pygame.sprite.Sprite):
 
         # Adjust position
         if self.jumping:
-            print(self.jump_pos.y - self.pos.y)
-            if self.pos.y < (self.jump_pos.y - MAX_JUMP):
-                self.pos.y = (self.jump_pos.y - MAX_JUMP)
             if self.pos.y > self.jump_pos.y:
                 self.pos.y = self.jump_pos.y
                 self.vel.y = 0
@@ -168,27 +173,27 @@ class Player (pygame.sprite.Sprite):
             if self.frame_count >= self.attacking_frames:
                 self.attacking = False
             self.rect.midbottom = vec(self.pos.x, self.pos.y + 28)
-            frame = int(self.frame_count / 20 % len(self.prone_attack_sprites))
-            self.image = self.prone_attack_sprites[frame]
+            frame = int(self.frame_count / 20 % len(self.sprite_prone_attack))
+            self.image = self.sprite_prone_attack[frame]
         elif self.attacking:
             if self.frame_count >= self.attacking_frames:
                 self.attacking = False
             self.rect.midbottom = vec(self.pos.x, self.pos.y + 3)
-            frame = int(self.frame_count / 20 % len(self.attack_sprites))
-            self.image = self.attack_sprites[frame]
+            frame = int(self.frame_count / 20 % len(self.sprite_attack))
+            self.image = self.sprite_attack[frame]
         elif self.prone:
             self.rect.midbottom = vec(self.pos.x, self.pos.y + 28)
-            frame = int(self.frame_count / 90 % len(self.prone_sprites))
-            self.image = self.prone_sprites[frame]
+            frame = int(self.frame_count / 90 % len(self.sprite_prone))
+            self.image = self.sprite_prone[frame]
         elif self.jumping:
-            frame = int(self.frame_count / 90 % len(self.jump_sprites))
-            self.image = self.jump_sprites[frame]
+            frame = int(self.frame_count / 90 % len(self.sprite_jump))
+            self.image = self.sprite_jump[frame]
         elif self.moving:
-            frame = int(self.frame_count / 7 % len(self.walk_sprites))
-            self.image = self.walk_sprites[frame]
+            frame = int(self.frame_count / 7 % len(self.sprite_walk))
+            self.image = self.sprite_walk[frame]
         else:
-            frame = int(self.frame_count / 45 % len(self.stand_sprites))
-            self.image = self.stand_sprites[frame]
+            frame = int(self.frame_count / 45 % len(self.sprite_stand))
+            self.image = self.sprite_stand[frame]
 
     def blit(self):
         # Flip the image across x, y
