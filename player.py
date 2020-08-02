@@ -91,14 +91,14 @@ class Player (pygame.sprite.Sprite):
         self.prone = False
 
     def on_left(self):
-        if self.attacking:
+        if self.attacking or self.prone:
             return
         self.dir.x = -1
         self.acc.x = -self.move_speed
         self.moving = True
 
     def on_right(self):
-        if self.attacking:
+        if self.attacking or self.prone:
             return
         self.dir.x = 1
         self.acc.x = self.move_speed
