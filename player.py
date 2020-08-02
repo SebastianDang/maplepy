@@ -164,9 +164,6 @@ class Player (pygame.sprite.Sprite):
                 self.jumping = False
                 self.jumping_pos = vec(0, 0)
 
-        # Update rect
-        self.rect.midbottom = self.pos
-
         # Update animation
         self.frame_count = (self.frame_count + 1) % 180  # 3 seconds
         if self.attacking and self.prone:
@@ -194,6 +191,10 @@ class Player (pygame.sprite.Sprite):
         else:
             frame = int(self.frame_count / 45 % len(self.sprite_stand))
             self.image = self.sprite_stand[frame]
+
+        # Update rect
+        self.rect = self.image.get_rect()
+        self.rect.midbottom = self.pos
 
     def blit(self):
         # Flip the image across x, y
