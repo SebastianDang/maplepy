@@ -51,6 +51,23 @@ def colliderect_info(rect_a, rect_b):
     return None, 0
 
 
+def rect_outside(rect_a, rect_b):
+    """
+    Returns if a rect is outside the other rect
+
+    Args:
+        rect_a (Rect): The object to check
+        rect_b (Rect): The object to check against
+
+    Returns:
+        bool: Returns if rect_a is outside of rect_b
+    """
+    return rect_a.top > rect_b.bottom or \
+        rect_a.bottom < rect_b.top or \
+        rect_a.left > rect_b.right or \
+        rect_a.right < rect_b.left
+
+
 def rect_above(rect_a, rect_b):
     """
     Returns if a rect is above the other rect

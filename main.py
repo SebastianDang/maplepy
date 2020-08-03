@@ -1,6 +1,6 @@
 import sys
 import pygame
-from utils import colliderect_info, rect_above
+from utils import colliderect_info, rect_above, rect_outside
 from config import Config
 from player import Player
 from world import Background, Obstacle, Portal
@@ -67,6 +67,11 @@ while is_running:
     # Render black
     screen.fill((0, 0, 0))
 
+    # Adjust camera
+    bounds = entities[entities_index]['bounds']
+    cam.center = player.pos  # Move player to center
+    cam = cam.clamp(bounds)  # Clamp inside boundary rect
+
     # # Loading
     # if is_loading:
     #     # Update variable
@@ -123,17 +128,18 @@ while is_running:
     # Reset any states for this loop
     player.portal = None
 
-    # Adjust camera
-    bounds = entities[entities_index]['bounds']
-    cam.center = player.pos  # Move player to center
-    cam = cam.clamp(bounds)  # Clamp inside boundary rect
+    # Off collision detection
+    if player.floor and rect_outside(player.rect, player.floor.rect):
+        player.floor = None
+        player.on_fall()
 
     # Collision detection
     for entity in entities[entities_index]['sprites']:
         if isinstance(entity, Obstacle):
+            # Check for collisions
             side, value = colliderect_info(entity.rect, player.rect)
-            if side:  # Collision happened
-                # Check top
+            if side:
+                # Top
                 if side == 'top' and entity.player_above:
                     player.off_jump()  # Disable falling or jumping
                     player.place(player.pos.x, player.pos.y - value)
@@ -141,26 +147,22 @@ while is_running:
                 # If platform, stop checking
                 if entity.platform:
                     continue
-                # Check sides
+                # Sides
                 if side == 'bottom':
                     player.place(player.pos.x, player.pos.y + value)
                 if side == 'left':
                     player.place(player.pos.x - value, player.pos.y)
                 if side == 'right':
                     player.place(player.pos.x + value, player.pos.y)
-            # Keep track if the player is above this platform or not
+            # Keep track if the player is above this obstacle or not
             entity.player_above = rect_above(player.rect, entity.rect)
         if isinstance(entity, Portal):
+            # Check for collisions
             side, value = colliderect_info(entity.rect, player.rect)
-            if side:  # Inside
+            if side:
+                # Inside
                 if side == 'inside' or value > (entity.rect.width * 0.6):
                     player.portal = entity
-
-    # Check player floor
-    if player.floor:
-        if player.rect.right < player.floor.rect.left or player.rect.left > player.floor.rect.right:
-            player.floor = None
-            player.on_fall()
 
     # Render entities
     for entity in entities[entities_index]['sprites']:
