@@ -115,14 +115,23 @@ class Game:
                            round(self.player.pos.y+self.cam_dy))
         self.cam = self.cam.clamp(bounds)  # Clamp inside bounds rect
 
-    def handle_events(self, events):
+    def handle_events(self):
 
+        # Get events
+        events = pygame.event.get()
+
+        # Handle pygame events
         for event in events:
             if event.type == pygame.QUIT:
                 pygame.event.clear()
                 self.running = False
 
-    def handle_inputs(self, inputs):
+        pygame.event.pump()
+
+    def handle_inputs(self):
+
+        # Get inputs
+        inputs = pygame.key.get_pressed()
 
         # Player pressed up on portal
         if inputs[pygame.K_UP] and self.player.portal:
@@ -226,13 +235,13 @@ class Game:
         self.handle_camera()
 
         # Handle events
-        self.handle_events(pygame.event.get())
+        self.handle_events()
 
         # Handle collisions
         self.handle_collisions()
 
         # Handle user input
-        self.handle_inputs(pygame.key.get_pressed())
+        self.handle_inputs()
 
         # Handle entities
         for entity in self.entities['sprites']:

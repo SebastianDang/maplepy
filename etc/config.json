@@ -5,10 +5,6 @@
   "fps": 60,
   "cam_dx": 0,
   "cam_dy": -80,
-  "bounds": {
-    "width": 1024,
-    "height": 560
-  },
   "obstacle": {
     "debug": {
       "enable": 1,
@@ -128,13 +124,7 @@
           "img": "./data/backgrounds/background_1.png"
         },
         {
-          "type": "Obstacle",
-          "x": 512,
-          "y": 533,
-          "width": 1024,
-          "height": 54
-        },
-        {
+          "name": "left wall",
           "type": "Obstacle",
           "x": 0,
           "y": 280,
@@ -142,6 +132,7 @@
           "height": 560
         },
         {
+          "name": "right wall",
           "type": "Obstacle",
           "x": 1023,
           "y": 280,
@@ -149,8 +140,16 @@
           "height": 560
         },
         {
+          "name": "floor",
+          "type": "Obstacle",
+          "x": 512,
+          "y": 505,
+          "width": 1024,
+          "height": 1
+        },
+        {
           "type": "Portal",
-          "x": 100,
+          "x": 850,
           "y": 505,
           "dest": 0
         }
