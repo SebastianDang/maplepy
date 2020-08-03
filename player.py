@@ -27,9 +27,9 @@ class Player (pygame.sprite.Sprite):
 
         # Parameters
         self.attacking_frames = 60  # 1
+        self.fall_max_speed = config['player']['fall_max_speed']
         self.jump_force = config['player']['jump_force']
         self.jump_gravity = config['player']['jump_gravity']
-        self.jump_pos = vec(0, 0)
         self.move_speed = config['player']['move_speed']
         self.move_max_speed = config['player']['move_max_speed']
         self.move_ground_friction = config['player']['move_ground_friction']
@@ -42,7 +42,7 @@ class Player (pygame.sprite.Sprite):
         # States
         self.attacking = False
         self.prone = False
-        self.jumping = False
+        self.falling = True
         self.moving = False
         self.portal = None
 
@@ -94,7 +94,7 @@ class Player (pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
     def on_down(self):
-        if self.prone or self.jumping:
+        if self.prone or self.falling:
             return
         self.prone = True
 
@@ -125,12 +125,18 @@ class Player (pygame.sprite.Sprite):
         self.moving = False
 
     def on_jump(self):
-        if self.jumping:
+        if self.falling:
             return
         self.acc.y = -self.jump_force
-        self.jump_pos = vec(self.pos.x, self.pos.y)
         self.prone = False
-        self.jumping = True
+        self.falling = True
+
+    def off_jump(self):
+        if not self.falling:
+            return
+        self.vel.y = 0
+        self.acc.y = 0
+        self.falling = False
 
     def on_attack(self):
         if self.attacking:
@@ -140,8 +146,7 @@ class Player (pygame.sprite.Sprite):
         self.sound_attack.play()
 
     def place(self, x, y):
-        self.pos.x = x
-        self.pos.y = y
+        self.pos.update(x, y)
         self.rect.midbottom = self.pos
 
     def update(self):
@@ -149,26 +154,17 @@ class Player (pygame.sprite.Sprite):
         if self.moving:
             ground = self.vel.x * -self.move_ground_friction
             air = self.vel.x * -self.move_air_drag
-            self.acc.x += air if self.jumping else ground
+            self.acc.x += air if self.falling else ground
             self.vel.x = clamp(self.vel.x + self.acc.x,
                                (-self.move_max_speed), (self.move_max_speed))
             if (self.dir.x < 0 and self.vel.x > 0) or (self.dir.x > 0 and self.vel.x < 0):
                 self.off_move()
-        if self.jumping:
+        if self.falling:
             self.acc.y += self.jump_gravity
-            self.vel.y += self.acc.y
+            self.vel.y = min(self.vel.y + self.acc.y, self.fall_max_speed)
 
         # Update position
         self.pos += self.vel + 0.5 * self.acc
-
-        # Adjust position
-        if self.jumping:
-            if self.pos.y > self.jump_pos.y:
-                self.pos.y = self.jump_pos.y
-                self.vel.y = 0
-                self.acc.y = 0
-                self.jumping = False
-                self.jumping_pos = vec(0, 0)
 
         # Update animation
         self.frame_count = (self.frame_count + 1) % 180  # 3 seconds
@@ -188,7 +184,7 @@ class Player (pygame.sprite.Sprite):
             self.rect.midbottom = vec(self.pos.x, self.pos.y + 28)
             frame = int(self.frame_count / 90 % len(self.sprite_prone))
             self.image = self.sprite_prone[frame]
-        elif self.jumping:
+        elif self.falling:
             frame = int(self.frame_count / 90 % len(self.sprite_jump))
             self.image = self.sprite_jump[frame]
         elif self.moving:

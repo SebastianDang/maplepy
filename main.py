@@ -20,7 +20,7 @@ key_delay = {}
 
 # Create player
 player = Player(screen)
-player.place(512, 510)
+player.place(512, 300)
 
 # Add sprites
 sprite_groups = []
@@ -116,6 +116,7 @@ while is_running:
             side, value = colliderect_info(entity.rect, player.rect)
             if side and value:  # Collision happened
                 if side == 'top':
+                    player.off_jump() # Disable falling
                     player.place(player.pos.x, player.pos.y - value)
                 if side == 'bottom':
                     player.place(player.pos.x, player.pos.y + value)
