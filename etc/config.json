@@ -28,7 +28,6 @@
     "move_speed": 1.00,
     "move_max_speed": 10.00,
     "move_ground_friction": 0.20,
-    "move_air_drag": 0.15,
     "debug": {
       "enable": 1,
       "rect": 1

@@ -18,6 +18,7 @@ class Player (pygame.sprite.Sprite):
 
         # Movement
         self.dir = vec(-1, 0)  # Start facing left, since the sprites face left
+        self.f_dir = vec(-1, 0)
         self.pos = vec(0, 0)
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
@@ -33,7 +34,6 @@ class Player (pygame.sprite.Sprite):
         self.move_speed = config['player']['move_speed']
         self.move_max_speed = config['player']['move_max_speed']
         self.move_ground_friction = config['player']['move_ground_friction']
-        self.move_air_drag = config['player']['move_air_drag']
 
         # Debug parameters
         self.debug_enable = config['player']['debug']['enable']
@@ -105,14 +105,16 @@ class Player (pygame.sprite.Sprite):
         self.prone = False
 
     def on_left(self):
-        if self.attacking or self.prone:
+        self.f_dir.x = -1 # Facing direction
+        if self.attacking or self.prone or self.falling:
             return
         self.dir.x = -1
         self.acc.x = -self.move_speed
         self.moving = True
 
     def on_right(self):
-        if self.attacking or self.prone:
+        self.f_dir.x = 1 # Facing direction
+        if self.attacking or self.prone or self.falling:
             return
         self.dir.x = 1
         self.acc.x = self.move_speed
@@ -160,17 +162,15 @@ class Player (pygame.sprite.Sprite):
 
     def update(self):
         # Handle physics
-        if self.moving:
-            ground = self.vel.x * -self.move_ground_friction
-            air = self.vel.x * -self.move_air_drag
-            self.acc.x += air if self.falling else ground
+        if self.falling:
+            self.acc.y += self.jump_gravity
+            self.vel.y = min(self.vel.y + self.acc.y, self.fall_max_speed)
+        elif self.moving:
+            self.acc.x += self.vel.x * -self.move_ground_friction
             self.vel.x = clamp(self.vel.x + self.acc.x,
                                (-self.move_max_speed), (self.move_max_speed))
             if (self.dir.x < 0 and self.vel.x > 0) or (self.dir.x > 0 and self.vel.x < 0):
                 self.off_move()
-        if self.falling:
-            self.acc.y += self.jump_gravity
-            self.vel.y = min(self.vel.y + self.acc.y, self.fall_max_speed)
 
         # Update position
         self.pos += self.vel + 0.5 * self.acc
@@ -215,7 +215,7 @@ class Player (pygame.sprite.Sprite):
             rect = rect.move(-offset.x, -offset.y)
 
         # Flip the image across x, y
-        image = pygame.transform.flip(self.image, self.dir.x > 0, False)
+        image = pygame.transform.flip(self.image, self.f_dir.x > 0, False)
 
         # Draw image
         self.screen.blit(image, rect)
