@@ -1,6 +1,6 @@
 import sys
 import pygame
-from utils import colliderect_info
+from utils import colliderect_info, rect_above
 from config import Config
 from player import Player
 from world import Background, Obstacle, Portal
@@ -46,8 +46,8 @@ for m in config['maps']:
             obstacle = Obstacle(screen)
             obstacle.init(sprite['x'], sprite['y'],
                           sprite['width'], sprite['height'])
-            if 'can_fall' in sprite:
-                obstacle.can_fall = sprite['can_fall']
+            if 'platform' in sprite:
+                obstacle.platform = sprite['platform']
             sprites.add(obstacle)
         if sprite['type'] == 'Portal':
             portal = Portal(screen)
@@ -133,17 +133,23 @@ while is_running:
         if isinstance(entity, Obstacle):
             side, value = colliderect_info(entity.rect, player.rect)
             if side:  # Collision happened
-                if side == 'top':
+                # Check top
+                if side == 'top' and entity.player_above:
                     player.off_jump()  # Disable falling or jumping
                     player.place(player.pos.x, player.pos.y - value)
-                    if entity.can_fall:
-                        player.floor = entity
+                    player.floor = entity
+                # If platform, stop checking
+                if entity.platform:
+                    continue
+                # Check sides
                 if side == 'bottom':
                     player.place(player.pos.x, player.pos.y + value)
                 if side == 'left':
                     player.place(player.pos.x - value, player.pos.y)
                 if side == 'right':
                     player.place(player.pos.x + value, player.pos.y)
+            # Keep track if the player is above this platform or not
+            entity.player_above = rect_above(player.rect, entity.rect)
         if isinstance(entity, Portal):
             side, value = colliderect_info(entity.rect, player.rect)
             if side:  # Inside

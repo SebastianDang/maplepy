@@ -40,7 +40,8 @@ class Obstacle(pygame.sprite.Sprite):
         self.rect = None
 
         # Parameters
-        self.can_fall = False
+        self.platform = False
+        self.player_above = False
 
         # Config
         config = Config.instance()

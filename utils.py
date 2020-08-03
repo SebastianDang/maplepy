@@ -49,3 +49,18 @@ def colliderect_info(rect_a, rect_b):
         index = values.index(min(values))
         return side[index], values[index]
     return None, 0
+
+
+def rect_above(rect_a, rect_b):
+    """
+    Returns if a rect is above the other rect
+    This also allows if both objects intersect by 1 pixel
+
+    Args:
+        rect_a (Rect): The object to check
+        rect_b (Rect): The object to check against
+
+    Returns:
+        bool: Returns if rect_a is above rect_b
+    """
+    return rect_a.bottom <= rect_b.top

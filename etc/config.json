@@ -69,6 +69,15 @@
           "can_fall": 1
         },
         {
+          "name": "left top platform",
+          "type": "Obstacle",
+          "x": 1158,
+          "y": 645,
+          "width": 679,
+          "height": 1,
+          "platform": 1
+        },
+        {
           "name": "left step",
           "type": "Obstacle",
           "x": 1044,
