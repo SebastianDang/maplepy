@@ -1,8 +1,12 @@
 {
   "caption": "Maplestory",
-  "height": 560,
-  "width": 1024,
+  "width": 600,
+  "height": 400,
   "fps": 60,
+  "bounds": {
+    "width": 1024,
+    "height": 560
+  },
   "obstacle": {
     "debug": {
       "enable": 0,
@@ -68,7 +72,7 @@
       "sprites": [
         {
           "type": "Background",
-          "img": "./data/backgrounds/background_0.png"
+          "img": "./data/backgrounds/background_1.png"
         },
         {
           "type": "Obstacle",

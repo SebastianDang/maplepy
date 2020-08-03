@@ -21,8 +21,15 @@ class Background(pygame.sprite.Sprite):
     def update(self):
         pass
 
-    def blit(self):
-        self.screen.blit(self.image, self.rect)
+    def blit(self, offset=None):
+
+        # Draw with offset
+        rect = self.rect.copy()
+        if offset:
+            rect = rect.move(-offset.x, -offset.y)
+
+        # Draw image
+        self.screen.blit(self.image, rect)
 
 
 class Obstacle(pygame.sprite.Sprite):
@@ -50,14 +57,21 @@ class Obstacle(pygame.sprite.Sprite):
     def update(self):
         pass
 
-    def blit(self):
+    def blit(self, offset=None):
         if self.surface and self.rect:
-            self.screen.blit(self.surface, self.rect)
+
+            # Draw with offset
+            rect = self.rect.copy()
+            if offset:
+                rect = rect.move(-offset.x, -offset.y)
+
+            # Draw surface
+            self.screen.blit(self.surface, rect)
 
             # Draw debug
             if self.debug_enable:
                 if self.debug_rect:
-                    pygame.draw.rect(self.screen, (255, 0, 0), self.rect, 2)
+                    pygame.draw.rect(self.screen, (255, 0, 0), rect, 2)
 
 
 class Portal(pygame.sprite.Sprite):
@@ -104,11 +118,17 @@ class Portal(pygame.sprite.Sprite):
         frame = int(self.frame_count / 25 % len(self.sprite_portal))
         self.image = self.sprite_portal[frame]
 
-    def blit(self):
+    def blit(self, offset=None):
+
+        # Draw with offset
+        rect = self.rect.copy()
+        if offset:
+            rect = rect.move(-offset.x, -offset.y)
+
         # Draw image
-        self.screen.blit(self.image, self.rect)
+        self.screen.blit(self.image, rect)
 
         # Draw debug
         if self.debug_enable:
             if self.debug_rect:
-                pygame.draw.rect(self.screen, (255, 0, 0), self.rect, 2)
+                pygame.draw.rect(self.screen, (255, 0, 0), rect, 2)

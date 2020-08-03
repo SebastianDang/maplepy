@@ -203,14 +203,20 @@ class Player (pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.midbottom = self.pos
 
-    def blit(self):
+    def blit(self, offset=None):
+
+        # Draw with offset
+        rect = self.rect.copy()
+        if offset:
+            rect = rect.move(-offset.x, -offset.y)
+
         # Flip the image across x, y
         image = pygame.transform.flip(self.image, self.dir.x > 0, False)
 
         # Draw image
-        self.screen.blit(image, self.rect)
+        self.screen.blit(image, rect)
 
         # Draw debug
         if self.debug_enable:
             if self.debug_rect:
-                pygame.draw.rect(self.screen, (255, 0, 0), self.rect, 2)
+                pygame.draw.rect(self.screen, (255, 0, 0), rect, 2)

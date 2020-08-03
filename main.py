@@ -9,12 +9,21 @@ from world import Background, Obstacle, Portal
 config = Config.instance()
 config.init('etc/config.json')
 
+# Get variables from config
+caption = config['caption']
+width = config['width']
+height = config['height']
+fps = config['fps']
+bounds_width = config['bounds']['width']
+bounds_height = config['bounds']['height']
+
 # Initialize pygame
 pygame.init()
-screen = pygame.display.set_mode((config['width'], config['height']))
-pygame.display.set_caption(config['caption'])
+pygame.display.set_caption(caption)
+screen = pygame.display.set_mode((width, height))
 clock = pygame.time.Clock()
-fps = config['fps']
+cam = pygame.Rect(0, 0, width, height)
+bounds = pygame.Rect(0, 0, bounds_width, bounds_height)
 is_loading = None
 key_delay = {}
 
@@ -51,16 +60,16 @@ while is_running:
     # Render black
     screen.fill((0, 0, 0))
 
-    # Loading
-    if is_loading:
-        # Update variable
-        is_loading -= 1
-        if is_loading <= 0:
-            is_loading = None
-        # Update display and clock
-        pygame.display.update()
-        clock.tick(fps)
-        continue
+    # # Loading
+    # if is_loading:
+    #     # Update variable
+    #     is_loading -= 1
+    #     if is_loading <= 0:
+    #         is_loading = None
+    #     # Update display and clock
+    #     pygame.display.update()
+    #     clock.tick(fps)
+    #     continue
 
     # Event handling
     for event in pygame.event.get():
@@ -71,10 +80,6 @@ while is_running:
 
     # Input key handling
     pressed_keys = pygame.key.get_pressed()
-    # Experimental
-    if pressed_keys[pygame.K_TAB] and pygame.K_TAB not in key_delay:
-        key_delay[pygame.K_TAB] = 60
-        sprite_group_index = (sprite_group_index + 1) % len(sprite_groups)
     # Player pressed up on portal
     if pressed_keys[pygame.K_UP] and player.portal:
         if player.portal.dest in range(0, len(sprite_groups)):
@@ -110,6 +115,8 @@ while is_running:
 
     # Reset any states for this loop
     player.portal = None
+    cam.center = player.pos # Move player to center
+    cam = cam.clamp(bounds) # Clamp inside boundary rect
 
     # Collision detection
     for entity in sprite_groups[sprite_group_index]:
@@ -134,7 +141,7 @@ while is_running:
     # Render entities
     for entity in sprite_groups[sprite_group_index]:
         entity.update()
-        entity.blit()
+        entity.blit(cam)
 
     # Update display and clock
     pygame.display.update()
