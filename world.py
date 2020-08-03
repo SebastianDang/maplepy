@@ -6,14 +6,14 @@ class Background(pygame.sprite.Sprite):
     def __init__(self, screen):
         super().__init__()
         self.screen = screen
+        self.image = None
+        self.rect = None
 
-        self.backgrounds = []
-        for i in range(0, 1):
-            image = pygame.image.load(
-                './data/backgrounds/{}_{}.png'.format('background', str(i)))
-            self.backgrounds.append(image)
-
-        self.image = self.backgrounds[0]
+    def init(self, img):
+        if self.image:
+            print('Already initialized.')
+            return
+        self.image = pygame.image.load(img)
         self.rect = self.image.get_rect()
 
     def update(self):

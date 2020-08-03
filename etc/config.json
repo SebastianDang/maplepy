@@ -20,5 +20,72 @@
       "enable": 1,
       "rect": 1
     }
-  }
+  },
+  "maps": [
+    {
+      "sprites": [
+        {
+          "type": "Background",
+          "img": "./data/backgrounds/background_0.png"
+        },
+        {
+          "type": "Obstacle",
+          "x": 512,
+          "y": 533,
+          "width": 1024,
+          "height": 54
+        },
+        {
+          "type": "Obstacle",
+          "x": 0,
+          "y": 280,
+          "width": 1,
+          "height": 560
+        },
+        {
+          "type": "Obstacle",
+          "x": 1023,
+          "y": 280,
+          "width": 1,
+          "height": 560
+        }
+      ]
+    },
+    {
+      "sprites": [
+        {
+          "type": "Background",
+          "img": "./data/backgrounds/background_0.png"
+        },
+        {
+          "type": "Obstacle",
+          "x": 512,
+          "y": 533,
+          "width": 1024,
+          "height": 54
+        },
+        {
+          "type": "Obstacle",
+          "x": 0,
+          "y": 280,
+          "width": 1,
+          "height": 560
+        },
+        {
+          "type": "Obstacle",
+          "x": 1023,
+          "y": 280,
+          "width": 1,
+          "height": 560
+        },
+        {
+          "type": "Obstacle",
+          "x": 800,
+          "y": 280,
+          "width": 1,
+          "height": 560
+        }
+      ]
+    }
+  ]
 }
