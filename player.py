@@ -141,6 +141,7 @@ class Player (pygame.sprite.Sprite):
     def place(self, x, y):
         self.pos.x = x
         self.pos.y = y
+        self.rect.midbottom = self.pos
 
     def update(self):
         # Handle physics

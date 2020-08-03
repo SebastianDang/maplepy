@@ -3,6 +3,12 @@
   "height": 560,
   "width": 1024,
   "fps": 60,
+  "obstacle": {
+    "debug": {
+      "enable": 1,
+      "rect": 1
+    }
+  },
   "player": {
     "jump_force": 2.80,
     "jump_gravity": 0.35,
