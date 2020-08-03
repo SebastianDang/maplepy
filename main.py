@@ -14,8 +14,6 @@ caption = config['caption']
 width = config['width']
 height = config['height']
 fps = config['fps']
-bounds_width = config['bounds']['width']
-bounds_height = config['bounds']['height']
 
 # Initialize pygame
 pygame.init()
@@ -23,7 +21,6 @@ pygame.display.set_caption(caption)
 screen = pygame.display.set_mode((width, height))
 clock = pygame.time.Clock()
 cam = pygame.Rect(0, 0, width, height)
-bounds = pygame.Rect(0, 0, bounds_width, bounds_height)
 is_loading = None
 key_delay = {}
 
@@ -32,27 +29,37 @@ player = Player(screen)
 player.place(512, 300)
 
 # Add sprites
-sprite_groups = []
-sprite_group_index = 0
+entities = []
+entities_index = 0
 for m in config['maps']:
-    sprite_group = pygame.sprite.Group()
+    params = {}
+    # Properties
+    bounds = pygame.Rect(0, 0, m['bounds']['width'], m['bounds']['height'])
+    # Sprites
+    sprites = pygame.sprite.Group()
     for sprite in m['sprites']:
         if sprite['type'] == 'Background':
             background = Background(screen)
             background.init(sprite['img'])
-            sprite_group.add(background)
+            sprites.add(background)
         if sprite['type'] == 'Obstacle':
             obstacle = Obstacle(screen)
             obstacle.init(sprite['x'], sprite['y'],
                           sprite['width'], sprite['height'])
-            sprite_group.add(obstacle)
+            if 'can_fall' in sprite:
+                obstacle.can_fall = sprite['can_fall']
+            sprites.add(obstacle)
         if sprite['type'] == 'Portal':
             portal = Portal(screen)
             portal.place(sprite['x'], sprite['y'])
             portal.dest = sprite['dest']
-            sprite_group.add(portal)
-    sprite_group.add(player)
-    sprite_groups.append(sprite_group)
+            sprites.add(portal)
+    sprites.add(player)
+    # Add to dictionary
+    params['bounds'] = bounds
+    params['sprites'] = sprites
+    # Add dictionary to list
+    entities.append(params)
 
 is_running = True
 while is_running:
@@ -82,8 +89,8 @@ while is_running:
     pressed_keys = pygame.key.get_pressed()
     # Player pressed up on portal
     if pressed_keys[pygame.K_UP] and player.portal:
-        if player.portal.dest in range(0, len(sprite_groups)):
-            sprite_group_index = player.portal.dest
+        if player.portal.dest in range(0, len(entities)):
+            entities_index = player.portal.dest
             is_loading = 10
             player.place_fall(player.pos.x, player.portal.rect.top)
     # Player prone on and off
@@ -115,17 +122,22 @@ while is_running:
 
     # Reset any states for this loop
     player.portal = None
-    cam.center = player.pos # Move player to center
-    cam = cam.clamp(bounds) # Clamp inside boundary rect
+
+    # Adjust camera
+    bounds = entities[entities_index]['bounds']
+    cam.center = player.pos  # Move player to center
+    cam = cam.clamp(bounds)  # Clamp inside boundary rect
 
     # Collision detection
-    for entity in sprite_groups[sprite_group_index]:
+    for entity in entities[entities_index]['sprites']:
         if isinstance(entity, Obstacle):
             side, value = colliderect_info(entity.rect, player.rect)
-            if side and value:  # Collision happened
+            if side:  # Collision happened
                 if side == 'top':
-                    player.off_jump()  # Disable falling
+                    player.off_jump()  # Disable falling or jumping
                     player.place(player.pos.x, player.pos.y - value)
+                    if entity.can_fall:
+                        player.floor = entity
                 if side == 'bottom':
                     player.place(player.pos.x, player.pos.y + value)
                 if side == 'left':
@@ -138,8 +150,14 @@ while is_running:
                 if side == 'inside' or value > (entity.rect.width * 0.6):
                     player.portal = entity
 
+    # Check player floor
+    if player.floor:
+        if player.rect.right < player.floor.rect.left or player.rect.left > player.floor.rect.right:
+            player.floor = None
+            player.on_fall()
+
     # Render entities
-    for entity in sprite_groups[sprite_group_index]:
+    for entity in entities[entities_index]['sprites']:
         entity.update()
         entity.blit(cam)
 

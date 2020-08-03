@@ -39,6 +39,9 @@ class Obstacle(pygame.sprite.Sprite):
         self.surface = None
         self.rect = None
 
+        # Parameters
+        self.can_fall = False
+
         # Config
         config = Config.instance()
 

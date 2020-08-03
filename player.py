@@ -45,6 +45,7 @@ class Player (pygame.sprite.Sprite):
         self.falling = True
         self.moving = False
         self.portal = None
+        self.floor = None
 
         # Frame rate from screen
         self.frame_count = 0
@@ -137,6 +138,9 @@ class Player (pygame.sprite.Sprite):
         self.vel.y = 0
         self.acc.y = 0
         self.falling = False
+
+    def on_fall(self):
+        self.falling = True
 
     def on_attack(self):
         if self.attacking:

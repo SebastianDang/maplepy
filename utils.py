@@ -48,4 +48,4 @@ def colliderect_info(rect_a, rect_b):
         # Return closest side
         index = values.index(min(values))
         return side[index], values[index]
-    return None, None
+    return None, 0
