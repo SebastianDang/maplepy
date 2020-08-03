@@ -45,7 +45,6 @@ def colliderect_info(rect_a, rect_b):
             values[2] = abs(rect_a.left - rect_b.right)
         if rect_a.right >= rect_b.left:
             values[3] = abs(rect_a.right - rect_b.left)
-
         # Return closest side
         index = values.index(min(values))
         return side[index], values[index]

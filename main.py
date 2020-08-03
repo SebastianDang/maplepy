@@ -80,6 +80,7 @@ while is_running:
         if player.portal.dest in range(0, len(sprite_groups)):
             sprite_group_index = player.portal.dest
             is_loading = 10
+            player.place_fall(player.pos.x, player.portal.rect.top)
     # Player prone on and off
     if pressed_keys[pygame.K_DOWN]:
         player.on_down()
@@ -116,7 +117,7 @@ while is_running:
             side, value = colliderect_info(entity.rect, player.rect)
             if side and value:  # Collision happened
                 if side == 'top':
-                    player.off_jump() # Disable falling
+                    player.off_jump()  # Disable falling
                     player.place(player.pos.x, player.pos.y - value)
                 if side == 'bottom':
                     player.place(player.pos.x, player.pos.y + value)
@@ -127,7 +128,7 @@ while is_running:
         if isinstance(entity, Portal):
             side, value = colliderect_info(entity.rect, player.rect)
             if side:  # Inside
-                if side == 'inside':
+                if side == 'inside' or value > (entity.rect.width * 0.6):
                     player.portal = entity
 
     # Render entities

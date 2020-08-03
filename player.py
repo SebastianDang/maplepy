@@ -149,6 +149,11 @@ class Player (pygame.sprite.Sprite):
         self.pos.update(x, y)
         self.rect.midbottom = self.pos
 
+    def place_fall(self, x, y):
+        self.falling = True
+        self.pos.update(x, y)
+        self.rect.midbottom = self.pos
+
     def update(self):
         # Handle physics
         if self.moving:
