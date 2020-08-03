@@ -23,6 +23,7 @@
   },
   "player": {
     "fall_max_speed": 4.0,
+    "jump_max_speed": 100.0,
     "jump_force": 2.80,
     "jump_gravity": 0.35,
     "move_speed": 1.00,
