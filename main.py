@@ -14,6 +14,8 @@ caption = config['caption']
 width = config['width']
 height = config['height']
 fps = config['fps']
+cam_dx = config['cam_dx']
+cam_dy = config['cam_dy']
 
 # Initialize pygame
 pygame.init()
@@ -69,8 +71,8 @@ while is_running:
 
     # Adjust camera
     bounds = entities[entities_index]['bounds']
-    cam.center = player.pos  # Move player to center
-    cam = cam.clamp(bounds)  # Clamp inside boundary rect
+    cam.center = (round(player.pos.x+cam_dx), round(player.pos.y+cam_dy))
+    cam = cam.clamp(bounds)  # Clamp inside bounds rect
 
     # # Loading
     # if is_loading:

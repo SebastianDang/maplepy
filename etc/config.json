@@ -3,6 +3,8 @@
   "width": 600,
   "height": 400,
   "fps": 60,
+  "cam_dx": 0,
+  "cam_dy": -80,
   "bounds": {
     "width": 1024,
     "height": 560
