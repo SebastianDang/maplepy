@@ -57,7 +57,7 @@ class Config:
     __args = {}
 
     def __init__(self):
-        print('Config:', 'Created.')
+        print('Config:', 'Created', '.')
 
     def __setitem__(self, key, item):
         self.__args[key] = item
@@ -66,7 +66,7 @@ class Config:
         return self.__args[key]
 
     def init(self, filename):
-        print('Config:', 'Initialized.')
+        print('Config:', 'Initialized', '.')
         self.__filename = filename
         self.load()
 

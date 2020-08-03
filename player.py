@@ -169,7 +169,8 @@ class Player (pygame.sprite.Sprite):
         # Handle physics
         if self.falling:
             self.acc.y += self.jump_gravity
-            self.vel.y = clamp(self.vel.y + self.acc.y, -self.jump_max_speed, self.fall_max_speed)
+            self.vel.y = clamp(self.vel.y + self.acc.y,
+                               (-self.jump_max_speed), self.fall_max_speed)
         elif self.moving:
             self.acc.x += self.vel.x * -self.move_ground_friction
             self.vel.x = clamp(self.vel.x + self.acc.x,
