@@ -27,9 +27,10 @@ def colliderect_info(rect_a, rect_b):
     Returns:
         str, int: Returns the direction and magnitude of collision
     """
-    side = {0: 'top', 1: 'bottom', 2: 'left', 3: 'right'}
+    side = {0: 'top', 1: 'bottom', 2: 'left', 3: 'right', 4: 'inside'}
     values = [0, 0, 0, 0]
     if rect_a.colliderect(rect_b):
+        # Check each side of the rect
         if rect_a.top <= rect_b.bottom:
             values[0] = abs(rect_a.top - rect_b.bottom)
         if rect_a.bottom >= rect_b.top:
@@ -38,6 +39,10 @@ def colliderect_info(rect_a, rect_b):
             values[2] = abs(rect_a.left - rect_b.right)
         if rect_a.right >= rect_b.left:
             values[3] = abs(rect_a.right - rect_b.left)
+        # Check if fully inside
+        if all(x > 0 for x in values):
+            return side[4], 0
+        # Return closest side
         index = values.index(min(values))
         return side[index], values[index]
     return None, None

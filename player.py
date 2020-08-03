@@ -44,6 +44,7 @@ class Player (pygame.sprite.Sprite):
         self.prone = False
         self.jumping = False
         self.moving = False
+        self.portal = None
 
         # Frame rate from screen
         self.frame_count = 0

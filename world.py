@@ -70,6 +70,7 @@ class Portal(pygame.sprite.Sprite):
         self.rect = None
 
         self.pos = vec(0, 0)
+        self.dest = 0
 
         # Config
         config = Config.instance()
