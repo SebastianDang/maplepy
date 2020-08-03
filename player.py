@@ -17,8 +17,7 @@ class Player (pygame.sprite.Sprite):
         self.screen = screen
 
         # Movement
-        self.dir = vec(-1, 0)  # Start facing left, since the sprites face left
-        self.f_dir = vec(-1, 0)
+        self.dir = vec(0, 0)
         self.pos = vec(0, 0)
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
@@ -40,6 +39,7 @@ class Player (pygame.sprite.Sprite):
         self.debug_rect = config['player']['debug']['rect']
 
         # States
+        self.sprite_dir = vec(-1, 0)  # Start facing left
         self.attacking = False
         self.prone = False
         self.falling = True
@@ -105,16 +105,20 @@ class Player (pygame.sprite.Sprite):
         self.prone = False
 
     def on_left(self):
-        self.f_dir.x = -1 # Facing direction
-        if self.attacking or self.prone or self.falling:
+        if self.attacking:
+            return
+        self.sprite_dir.x = -1
+        if self.prone or self.falling:
             return
         self.dir.x = -1
         self.acc.x = -self.move_speed
         self.moving = True
 
     def on_right(self):
-        self.f_dir.x = 1 # Facing direction
-        if self.attacking or self.prone or self.falling:
+        if self.attacking:
+            return
+        self.sprite_dir.x = 1
+        if self.prone or self.falling:
             return
         self.dir.x = 1
         self.acc.x = self.move_speed
@@ -215,7 +219,7 @@ class Player (pygame.sprite.Sprite):
             rect = rect.move(-offset.x, -offset.y)
 
         # Flip the image across x, y
-        image = pygame.transform.flip(self.image, self.f_dir.x > 0, False)
+        image = pygame.transform.flip(self.image, self.sprite_dir.x > 0, False)
 
         # Draw image
         self.screen.blit(image, rect)
