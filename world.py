@@ -1,6 +1,8 @@
 import pygame
 from config import Config
 
+vec = pygame.math.Vector2
+
 
 class Background(pygame.sprite.Sprite):
     def __init__(self, screen):
@@ -56,3 +58,56 @@ class Obstacle(pygame.sprite.Sprite):
             if self.debug_enable:
                 if self.debug_rect:
                     pygame.draw.rect(self.screen, (255, 0, 0), self.rect, 2)
+
+
+class Portal(pygame.sprite.Sprite):
+    def __init__(self, screen):
+
+        super().__init__()
+        self.screen = screen
+
+        self.surface = None
+        self.rect = None
+
+        self.pos = vec(0, 0)
+
+        # Config
+        config = Config.instance()
+
+        # Debug parameters
+        self.debug_enable = config['portal']['debug']['enable']
+        self.debug_rect = config['portal']['debug']['rect']
+
+        # Frame rate from screen
+        self.frame_count = 0
+
+        # Sprites
+        self.sprite_portal = []
+        for i in range(0, 6):
+            image = pygame.image.load(
+                './data/sprites/portal/{}_{}.png'.format('portal', str(i)))
+            self.sprite_portal.append(image)
+
+        # Blit
+        self.image = self.sprite_portal[0]
+        self.rect = self.image.get_rect()
+
+    def place(self, x, y):
+        self.pos.x = x
+        self.pos.y = y
+        self.rect.midbottom = self.pos
+
+    def update(self):
+        # Update animation
+        self.frame_count = (self.frame_count + 1) % 180  # 3 seconds
+        frame = int(self.frame_count / 25 % len(self.sprite_portal))
+        self.image = self.sprite_portal[frame]
+
+    def blit(self):
+        # Draw image
+        self.screen.blit(self.image, self.rect)
+
+        # Draw debug
+        if self.debug_enable:
+            if self.debug_rect:
+                pygame.draw.rect(self.screen, (255, 0, 0), self.rect, 2)

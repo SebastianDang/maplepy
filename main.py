@@ -3,7 +3,7 @@ import pygame
 from utils import colliderect_info
 from config import Config
 from player import Player
-from world import Background, Obstacle
+from world import Background, Obstacle, Portal
 
 # Get configuration parameters
 config = Config.instance()
@@ -36,6 +36,10 @@ for m in config['maps']:
             obstacle.init(sprite['x'], sprite['y'],
                           sprite['width'], sprite['height'])
             sprite_group.add(obstacle)
+        if sprite['type'] == 'Portal':
+            portal = Portal(screen)
+            portal.place(sprite['x'], sprite['y'])
+            sprite_group.add(portal)
     sprite_group.add(player)
     sprite_groups.append(sprite_group)
 

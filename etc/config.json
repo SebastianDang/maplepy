@@ -5,7 +5,13 @@
   "fps": 60,
   "obstacle": {
     "debug": {
-      "enable": 1,
+      "enable": 0,
+      "rect": 1
+    }
+  },
+  "portal": {
+    "debug": {
+      "enable": 0,
       "rect": 1
     }
   },
@@ -17,7 +23,7 @@
     "move_ground_friction": 0.20,
     "move_air_drag": 0.15,
     "debug": {
-      "enable": 1,
+      "enable": 0,
       "rect": 1
     }
   },
@@ -48,6 +54,11 @@
           "y": 280,
           "width": 1,
           "height": 560
+        },
+        {
+          "type": "Portal",
+          "x": 900,
+          "y": 505
         }
       ]
     },
@@ -79,11 +90,9 @@
           "height": 560
         },
         {
-          "type": "Obstacle",
-          "x": 800,
-          "y": 280,
-          "width": 1,
-          "height": 560
+          "type": "Portal",
+          "x": 100,
+          "y": 505
         }
       ]
     }
