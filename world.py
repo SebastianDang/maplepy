@@ -75,7 +75,8 @@ class Obstacle(pygame.sprite.Sprite):
             # Draw debug
             if self.debug_enable:
                 if self.debug_rect:
-                    pygame.draw.rect(self.screen, (255, 0, 0), rect, 2)
+                    # TODO: Set to 0. Some weird bug in pygame 2.0.0.dev10
+                    pygame.draw.rect(self.screen, (255, 0, 0), rect, 0)
 
 
 class Portal(pygame.sprite.Sprite):
