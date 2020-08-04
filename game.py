@@ -75,19 +75,17 @@ class Game:
             return
         m = self.maps[index]
 
+        # Background
+        background = Background(self.screen)
+        background.init(m['background']['img'])
+
         # Properties
         bounds = pygame.Rect(
             0, 0, m['bounds']['width'], m['bounds']['height'])
 
         # Sprites
         sprites = pygame.sprite.Group()
-
-        # Add all sprites
         for sprite in m['sprites']:
-            if sprite['type'] == 'Background':
-                background = Background(self.screen)
-                background.init(sprite['img'])
-                sprites.add(background)
             if sprite['type'] == 'Obstacle':
                 obstacle = Obstacle(self.screen)
                 obstacle.init(sprite['x'], sprite['y'],
@@ -101,10 +99,8 @@ class Game:
                 portal.dest = sprite['dest']
                 sprites.add(portal)
 
-        # Add player
-        sprites.add(self.player)
-
         # Add to dictionary
+        self.entities['background'] = background
         self.entities['bounds'] = bounds
         self.entities['sprites'] = sprites
 
@@ -173,57 +169,48 @@ class Game:
         for key in key_delay_removal:
             self.key_delay.pop(key, None)
 
-    def handle_collisions(self):
+    def handle_collisions(self, player):
 
         # Off collision detection
-        if self.player.floor and rect_outside(self.player.rect, self.player.floor.rect):
-            self.player.floor = None
-            self.player.on_fall()
+        if player.floor and rect_outside(player.rect, player.floor.rect):
+            player.floor = None
+            player.on_fall()
 
         # Collision detection
         for entity in self.entities['sprites']:
-
             if isinstance(entity, Obstacle):
-
                 side, value = colliderect_info(
-                    entity.rect, self.player.rect)
+                    entity.rect, player.rect)
                 if side:
-
                     # Top
                     if side == 'top' and entity.player_above:
-                        self.player.off_jump()  # Disable falling or jumping
-                        self.player.place(self.player.pos.x,
-                                          self.player.pos.y - value)
-                        self.player.floor = entity
-
+                        player.off_jump()  # Disable falling or jumping
+                        player.place(player.pos.x,
+                                     player.pos.y - value)
+                        player.floor = entity
                     # If platform, stop checking
                     if entity.platform:
                         continue
-
                     # Sides
                     if side == 'bottom':
-                        self.player.place(self.player.pos.x,
-                                          self.player.pos.y + value)
+                        player.place(player.pos.x,
+                                     player.pos.y + value)
                     if side == 'left':
-                        self.player.place(
-                            self.player.pos.x - value, self.player.pos.y)
+                        player.place(
+                            player.pos.x - value, player.pos.y)
                     if side == 'right':
-                        self.player.place(
-                            self.player.pos.x + value, self.player.pos.y)
-
+                        player.place(
+                            player.pos.x + value, player.pos.y)
                 # Keep track if the player is above this obstacle or not
                 entity.player_above = rect_above(
-                    self.player.rect, entity.rect)
-
+                    player.rect, entity.rect)
             if isinstance(entity, Portal):
-
                 side, value = colliderect_info(
-                    entity.rect, self.player.rect)
+                    entity.rect, player.rect)
                 if side:
-
                     # Inside
                     if side == 'inside' or value > (entity.rect.width * 0.6):
-                        self.player.portal = entity
+                        player.portal = entity
 
     def update(self):
 
@@ -238,7 +225,7 @@ class Game:
         self.handle_events()
 
         # Handle collisions
-        self.handle_collisions()
+        self.handle_collisions(self.player)
 
         # Handle user input
         self.handle_inputs()
@@ -246,6 +233,9 @@ class Game:
         # Handle entities
         for entity in self.entities['sprites']:
             entity.update()
+
+        # Handle player
+        self.player.update()
 
         # Update clock
         self.clock.tick(self.fps)
@@ -255,10 +245,17 @@ class Game:
         # Render black
         self.screen.fill((0, 0, 0))
 
+        # Draw background
+        if 'background' in self.entities:
+            self.entities['background'].blit(self.cam)
+
         # Draw entities
         for entity in self.entities['sprites']:
             if entity.rect.colliderect(self.cam):
                 entity.blit(self.cam)
+
+        # Draw player
+        self.player.blit(self.cam)
 
         # Update display
         pygame.display.update()

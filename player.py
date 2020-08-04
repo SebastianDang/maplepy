@@ -55,37 +55,37 @@ class Player (pygame.sprite.Sprite):
         self.sprite_prone_attack = []
         for i in range(0, 3):
             image = pygame.image.load(
-                './data/sprites/player/{}_{}.png'.format('proneStab', str(i)))
+                './data/sprites/player/{}_{}.png'.format('proneStab', str(i))).convert_alpha()
             self.sprite_prone_attack.append(image)
 
         self.sprite_attack = []
         for i in range(0, 3):
             image = pygame.image.load(
-                './data/sprites/player/{}_{}.png'.format('stabO1', str(i)))
+                './data/sprites/player/{}_{}.png'.format('stabO1', str(i))).convert_alpha()
             self.sprite_attack.append(image)
 
         self.sprite_prone = []
         for i in range(0, 2):
             image = pygame.image.load(
-                './data/sprites/player/{}_{}.png'.format('prone', str(i)))
+                './data/sprites/player/{}_{}.png'.format('prone', str(i))).convert_alpha()
             self.sprite_prone.append(image)
 
         self.sprite_jump = []
         for i in range(0, 2):
             image = pygame.image.load(
-                './data/sprites/player/{}_{}.png'.format('jump', str(i)))
+                './data/sprites/player/{}_{}.png'.format('jump', str(i))).convert_alpha()
             self.sprite_jump.append(image)
 
         self.sprite_walk = []
         for i in range(0, 4):
             image = pygame.image.load(
-                './data/sprites/player/{}_{}.png'.format('walk1', str(i)))
+                './data/sprites/player/{}_{}.png'.format('walk1', str(i))).convert_alpha()
             self.sprite_walk.append(image)
 
         self.sprite_stand = []
         for i in range(0, 4):
             image = pygame.image.load(
-                './data/sprites/player/{}_{}.png'.format('stand1', str(i)))
+                './data/sprites/player/{}_{}.png'.format('stand1', str(i))).convert_alpha()
             self.sprite_stand.append(image)
 
         # Sounds
@@ -93,6 +93,7 @@ class Player (pygame.sprite.Sprite):
 
         # Blit
         self.image = self.sprite_stand[0]
+        self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
 
     def on_down(self):
@@ -166,6 +167,7 @@ class Player (pygame.sprite.Sprite):
         self.rect.midbottom = self.pos
 
     def update(self):
+
         # Handle physics
         if self.falling:
             self.acc.y += self.jump_gravity
@@ -208,6 +210,9 @@ class Player (pygame.sprite.Sprite):
         else:
             frame = int(self.frame_count / 45 % len(self.sprite_stand))
             self.image = self.sprite_stand[frame]
+
+        # Update mask
+        self.mask = pygame.mask.from_surface(self.image)
 
         # Update rect
         self.rect = self.image.get_rect()

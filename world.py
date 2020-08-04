@@ -15,7 +15,7 @@ class Background(pygame.sprite.Sprite):
         if self.image:
             print('Already initialized.')
             return
-        self.image = pygame.image.load(img)
+        self.image = pygame.image.load(img).convert_alpha()
         self.rect = self.image.get_rect()
 
     def update(self):
@@ -104,7 +104,7 @@ class Portal(pygame.sprite.Sprite):
         self.sprite_portal = []
         for i in range(0, 6):
             image = pygame.image.load(
-                './data/sprites/portal/{}_{}.png'.format('portal', str(i)))
+                './data/sprites/portal/{}_{}.png'.format('portal', str(i))).convert_alpha()
             self.sprite_portal.append(image)
 
         # Blit

@@ -37,11 +37,10 @@
         "width": 4927,
         "height": 1190
       },
+      "background": {
+        "img": "./data/backgrounds/henesys_park.png"
+      },
       "sprites": [
-        {
-          "type": "Background",
-          "img": "./data/backgrounds/henesys_park.png"
-        },
         {
           "name": "left_wall",
           "type": "Obstacle",
@@ -140,11 +139,10 @@
         "width": 1024,
         "height": 560
       },
+      "background": {
+        "img": "./data/backgrounds/background_1.png"
+      },
       "sprites": [
-        {
-          "type": "Background",
-          "img": "./data/backgrounds/background_1.png"
-        },
         {
           "name": "left wall",
           "type": "Obstacle",
