@@ -9,6 +9,10 @@ config.init('etc/config.json')
 # Init pygame
 pygame.init()
 
+# Set icon
+icon = pygame.image.load(config['icon'])
+pygame.display.set_icon(icon)
+
 # Create game
 game = Game()
 game.init()

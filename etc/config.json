@@ -1,4 +1,5 @@
 {
+  "icon": "./data/icon/maple_pie.png",
   "caption": "MaplePie",
   "width": 600,
   "height": 400,
