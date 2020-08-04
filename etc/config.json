@@ -40,7 +40,17 @@
       "background": {
         "img": "./data/backgrounds/henesys_park.png"
       },
+      "music": {
+        "file": "./data/sounds/FloralLife.ogg",
+        "volume": 0.7
+      },
       "sprites": [
+        {
+          "type": "Portal",
+          "x": 1080,
+          "y": 640,
+          "dest": 0
+        },
         {
           "name": "left_wall",
           "type": "Obstacle",
@@ -166,12 +176,6 @@
           "y": 505,
           "width": 1024,
           "height": 1
-        },
-        {
-          "type": "Portal",
-          "x": 850,
-          "y": 505,
-          "dest": 0
         }
       ]
     }

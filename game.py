@@ -75,13 +75,20 @@ class Game:
             return
         m = self.maps[index]
 
+        # Properties
+        bounds = pygame.Rect(
+            0, 0, m['bounds']['width'], m['bounds']['height'])
+
         # Background
         background = Background(self.screen)
         background.init(m['background']['img'])
 
-        # Properties
-        bounds = pygame.Rect(
-            0, 0, m['bounds']['width'], m['bounds']['height'])
+        # Music
+        if 'music' in m:
+            pygame.mixer.init()
+            pygame.mixer.music.load(m['music']['file'])
+            pygame.mixer.music.set_volume(m['music']['volume'])
+            pygame.mixer.music.play(-1)  # Loop
 
         # Sprites
         sprites = pygame.sprite.Group()
