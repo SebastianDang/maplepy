@@ -43,50 +43,41 @@
           "img": "./data/backgrounds/henesys_park.png"
         },
         {
-          "name": "left wall",
+          "name": "left_wall",
           "type": "Obstacle",
-          "x": 52,
+          "x": 50,
           "y": 595,
           "width": 1,
           "height": 1190
         },
         {
-          "name": "right wall",
+          "name": "right_wall",
           "type": "Obstacle",
-          "x": 4870,
+          "x": 4875,
           "y": 595,
           "width": 1,
           "height": 1190
         },
         {
-          "name": "left platform",
+          "name": "bottom_platform",
           "type": "Obstacle",
-          "x": 524,
+          "x": 530,
           "y": 675,
-          "width": 945,
+          "width": 940,
           "height": 1,
           "can_fall": 1
         },
         {
-          "name": "left top platform",
+          "name": "bottom_step",
           "type": "Obstacle",
-          "x": 1158,
-          "y": 645,
-          "width": 679,
-          "height": 1,
-          "platform": 1
-        },
-        {
-          "name": "left step",
-          "type": "Obstacle",
-          "x": 1044,
+          "x": 1045,
           "y": 735,
-          "width": 88,
+          "width": 85,
           "height": 1,
           "can_fall": 1
         },
         {
-          "name": "middle platform",
+          "name": "bottom_platform",
           "type": "Obstacle",
           "x": 2308,
           "y": 795,
@@ -95,22 +86,52 @@
           "can_fall": 1
         },
         {
-          "name": "right step",
+          "name": "bottom_step",
           "type": "Obstacle",
           "x": 3610,
           "y": 855,
-          "width": 175,
+          "width": 170,
           "height": 1,
           "can_fall": 1
         },
         {
-          "name": "right platform",
+          "name": "bottom_platform",
           "type": "Obstacle",
-          "x": 4287,
+          "x": 4285,
           "y": 915,
-          "width": 1168,
+          "width": 1165,
           "height": 1,
           "can_fall": 1
+        },
+        {
+          "name": "top_platform",
+          "type": "Obstacle",
+          "x": 1160,
+          "y": 645,
+          "width": 675,
+          "height": 1,
+          "can_fall": 1,
+          "platform": 1
+        },
+        {
+          "name": "top_step",
+          "type": "Obstacle",
+          "x": 1540,
+          "y": 705,
+          "width": 80,
+          "height": 1,
+          "can_fall": 1,
+          "platform": 1
+        },
+        {
+          "name": "top_step",
+          "type": "Obstacle",
+          "x": 1630,
+          "y": 765,
+          "width": 80,
+          "height": 1,
+          "can_fall": 1,
+          "platform": 1
         }
       ]
     },

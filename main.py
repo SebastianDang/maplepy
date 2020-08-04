@@ -17,7 +17,7 @@ pygame.display.set_icon(icon)
 game = Game()
 game.init()
 game.load_player()
-game.load_map(1)
+game.load_map(0)
 game.running = True
 
 # Game running loop
