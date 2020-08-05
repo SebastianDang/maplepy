@@ -141,6 +141,7 @@ class map_wz:
                     for value in child:
                         info[value.get('name')] = value.get('value')
                 if child.attrib.get('name') == 'tile':
+                    child[:] = sorted(child, key=lambda c: (c.tag,c.get('name')))
                     for subchild in child:
                         tile = {}
                         for value in subchild:

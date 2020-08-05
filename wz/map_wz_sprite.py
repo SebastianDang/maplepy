@@ -45,9 +45,9 @@ class map_wz_sprite(pygame.sprite.Sprite):
 
         # Get unique tiles
         name = []
-        for t in self.map_wz.all_tiles:
-            if 'tS' in t['info']:
-                name.append(t['info']['tS'])
+        for tile in self.map_wz.all_tiles:
+            if 'tS' in tile['info']:
+                name.append(tile['info']['tS'])
         name = set(name)
 
         # Load tiles
@@ -76,11 +76,11 @@ class map_wz_sprite(pygame.sprite.Sprite):
         l0_set = []
         l1_set = []
         l2_set = []
-        for t in self.map_wz.all_objects:
-            oS_set.append(t['oS'])
-            l0_set.append(t['l0'])
-            l1_set.append(t['l1'])
-            l2_set.append(t['l2'])
+        for obj in self.map_wz.all_objects:
+            oS_set.append(obj['oS'])
+            l0_set.append(obj['l0'])
+            l1_set.append(obj['l1'])
+            l2_set.append(obj['l2'])
         oS_set = set(oS_set)
         l0_set = set(l0_set)
         l1_set = set(l1_set)
@@ -123,9 +123,9 @@ class map_wz_sprite(pygame.sprite.Sprite):
                 # Get image
                 images = self.images[bS]
                 image = images[no]
+                rect = image.get_rect().copy()
 
                 # Image offset
-                rect = image.get_rect().copy()
                 rect.topleft = vec(x, y)
 
                 # Image flip
@@ -178,7 +178,9 @@ class map_wz_sprite(pygame.sprite.Sprite):
         # Draw tiles
         for tile in self.map_wz.all_tiles:
             try:
-                name = tile['info']['tS']
+                tS = tile['info']['tS']
+                tSMag = tile['info']['tSMag'] if 'tSMag' in tile['info'] else None
+                forbidFallDown = tile['info']['forbidFallDown'] if 'forbidFallDown' in tile['info'] else None
                 x = int(tile['x'])
                 y = int(tile['y'])
                 u = tile['u']
@@ -186,11 +188,11 @@ class map_wz_sprite(pygame.sprite.Sprite):
                 zM = int(tile['zM'])
 
                 # Get image
-                images = self.images[name][u]
+                images = self.images[tS][u]
                 image = images[no]
+                rect = image.get_rect().copy()
 
                 # Image offset
-                rect = image.get_rect().copy()
                 rect.bottomleft = vec(x, y)
 
                 # Camera offset
@@ -219,9 +221,9 @@ class map_wz_sprite(pygame.sprite.Sprite):
                 # Get image
                 images = self.images[oS]["{}.{}.{}".format(l0, l1, l2)]
                 image = images[0]
+                rect = image.get_rect().copy()
 
                 # Image offset
-                rect = image.get_rect().copy()
                 rect.center = vec(x, y)
 
                 # Image flip
