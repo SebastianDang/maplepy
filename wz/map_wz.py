@@ -77,6 +77,7 @@ class map_wz:
             value_tags = ['int', 'string']
             for child in parent:
                 bg_value = {}
+                bg_value['name'] = child.attrib.get('name')
                 for value in child:
                     if value.tag in value_tags:
                         bg_value[value.get('name')] = value.get('value')

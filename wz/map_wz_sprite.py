@@ -39,18 +39,19 @@ class map_wz_sprite(pygame.sprite.Sprite):
                     break
             self.images[n] = images
 
-    def update(self):
-        pass
+    def draw_bg(self, offset):
 
-    def blit(self, offset=None):
+        # Get surface properties
+        w, h = pygame.display.get_surface().get_size()
 
-        # Render backgroundF
+        # Render background
         for bg in self.map_wz.bg:
             try:
+                name = bg['name']
                 bS = bg['bS']
                 no = int(bg['no'])
-                x = int(bg['cx'])
-                y = int(bg['cy'])
+                x = int(bg['x'])
+                y = int(bg['y'])
                 t = int(bg['type'])
 
                 # Get image
@@ -60,42 +61,61 @@ class map_wz_sprite(pygame.sprite.Sprite):
                 # Image offset
                 rect = image.get_rect().copy().move(x, y)
 
+                # Camera offset
+                if offset:
+                    rect = rect.move(-offset.x, -offset.y)
+
+                # 0 - Simple image (eg. the hill with the tree in the background of Henesys)
+                # 1 - Image is copied horizontally (eg. the sea in Lith Harbor)
+                # 2 - Image is copied vertically (eg. trees in maps near Ellinia)
+                # 3 - Image is copied in both directions (eg. the background sky color square in many maps)
+                # 4 - Image scrolls and is copied horizontally (eg. clouds)
+                # 5 - Image scrolls and is copied vertically (eg. background in the Helios Tower elevator)
+                # 6 - Image scrolls horizontally, and is copied in both directions (eg. the train in Kerning City subway JQ)
+                # 7 - Image scrolls vertically, and is copied in both directions (eg. rain drops in Ellin PQ maps)
+                # TODO: Handle velocities
+                horizontal = [1, 3, 4, 6, 7]
+                vertical = [2, 3, 5, 6, 7]
+
                 # Type
                 if t == 0:  # Static image
-                    if offset:
-                        rect = rect.move(-offset.x, -offset.y)
                     self.screen.blit(image, rect)
-                elif t == 1:  # Copied horizontally
-                    w, h = pygame.display.get_surface().get_size()
-                    while rect.x < w:
-                        self.screen.blit(image, rect)
-                        rect = rect.move(rect.width, 0)
-                elif t == 2:  # Copied vertically
-                    w, h = pygame.display.get_surface().get_size()
-                    while rect.y < h:
-                        self.screen.blit(image, rect)
-                        rect = rect.move(0, rect.height)
-                elif t == 4:  # Scrolls and copied horizontally
-                    if offset:
-                        rect = rect.move(-offset.x, -offset.y)
-                    w, h = pygame.display.get_surface().get_size()
-                    while rect.x < w:
-                        self.screen.blit(image, rect)
-                        rect = rect.move(rect.width, 0)
-                else:
-                    if offset:
-                        rect = rect.move(-offset.x, -offset.y)
-                    self.screen.blit(image, rect)
+                elif t in horizontal:  # Copied horizontally
+                    tile = rect.copy()
+                    while tile.x > -tile.width:  # TODO: Don't do this the lazy way
+                        self.screen.blit(image, tile)
+                        tile = tile.move(-tile.width, 0)
+                    tile = rect.copy()
+                    while tile.x < w:
+                        self.screen.blit(image, tile)
+                        tile = tile.move(tile.width, 0)
+                elif t in vertical:  # Copied vertically
+                    tile = rect.copy()
+                    while tile.y > -tile.height:  # TODO: Don't do this the lazy way
+                        self.screen.blit(image, tile)
+                        tile = tile.move(0, -tile.height)
+                    tile = rect.copy()
+                    while tile.y < h:
+                        self.screen.blit(image, tile)
+                        tile = tile.move(0, tile.height)
 
             except:
                 continue
+
+    def update(self):
+        pass
+
+    def blit(self, offset=None):
+
+        self.draw_bg(offset)
 
 
 if __name__ == "__main__":
     print(map_wz_sprite.__name__)
     pygame.init()
-    screen = pygame.display.set_mode((1920, 1080))
-    cam = pygame.Rect(0, 0, 1920, 1080)
+    w, h = 1920, 1200
+    screen = pygame.display.set_mode((w, h))
+    cam = pygame.Rect(0, 0, w, h)
     m = map_wz_sprite(screen)
     m.load_wz('./xml/100000000.xml')  # Henesys
     m.load_bg_images()
