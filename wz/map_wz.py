@@ -75,8 +75,9 @@ class map_wz:
                 if imgdir_name == 'portal':
                     pass
 
-            self.all_tiles = sorted(self.all_tiles, key=lambda k: k['zM'], reverse=True)
-            self.all_objects = sorted(self.all_objects, key=lambda k: k['zM'])
+            for i in range(0, len(self.all_objects)):
+                self.all_objects[i] = sorted(
+                    self.all_objects[i], key=lambda k: k['zM'])
 
             print('Done!')
 
@@ -133,14 +134,10 @@ class map_wz:
         print('Parsing tile set')
         try:
             info = {}
-            tile_lookup = {}
             tiles = []
             objects = []
             value_tags = ['int', 'string']
             for child in parent:
-                if 'tS' in info and not tile_lookup:
-                    tile_lookup = self.parse_tile(
-                        './data/Tile/{}/{}.xml'.format(info['tS'], info['tS']))
                 if child.attrib.get('name') == 'info':
                     for value in child:
                         info[value.get('name')] = value.get('value')
@@ -153,10 +150,6 @@ class map_wz:
                             tile['info'] = info
                             if value.tag in value_tags:
                                 tile[value.get('name')] = value.get('value')
-                        if tile_lookup:
-                            tile.update(tile_lookup[tile['u']])
-                        if 'z' in tile and tile['z'] != '0':
-                            tile['zM'] = tile['z']
                         tiles.append(tile)
                 if child.attrib.get('name') == 'obj':
                     for subchild in child:
@@ -166,35 +159,10 @@ class map_wz:
                             if value.tag in value_tags:
                                 obj[value.get('name')] = value.get('value')
                         objects.append(obj)
-            self.all_tiles += tiles
-            self.all_objects += objects
+            self.all_tiles.append({"info": info, "tiles": tiles})
+            self.all_objects.append(objects)
         except Exception:
             print('Error while parsing tile set.')
-
-    def parse_tile(self, file):
-        print('Parsing tile')
-        try:
-            tile = {}
-            vector_tags = ['vector']
-            value_tags = ['int', 'string']
-            root = ET.parse(file).getroot()
-            for child in root:
-                if child.attrib.get('name') == 'info':
-                    pass
-                else:
-                    for subchild in child:
-                        obj = {}
-                        for value in subchild:
-                            if value.tag in vector_tags:
-                                obj['cx'] = value.get('x')
-                                obj['cy'] = value.get('y')
-                            if value.tag in value_tags:
-                                obj[value.get('name')] = value.get('value')
-                    tile[child.attrib.get('name')] = obj
-            return tile
-        except Exception:
-            print('Error while parsing tile.')
-        return None
 
 
 if __name__ == "__main__":

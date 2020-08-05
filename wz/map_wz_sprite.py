@@ -2,6 +2,9 @@ import os
 import sys
 import pygame
 from map_wz import *
+from Tile_sprites import Tile_sprites
+from Tile_xml import Tile_xml
+from Tile_obj import Tile_obj
 vec = pygame.math.Vector2
 
 
@@ -11,6 +14,7 @@ class map_wz_sprite(pygame.sprite.Sprite):
         self.screen = screen
         self.map_wz = None
         self.images = {}
+        self.tile_sprites_list = []
 
     def load_wz(self, xml):
         self.map_wz = map_wz()
@@ -39,33 +43,22 @@ class map_wz_sprite(pygame.sprite.Sprite):
                     break
             self.images[n] = images
 
-    def load_tile_images(self):
+    def load_tile_sprites(self):
         if not self.map_wz:
             return
 
-        # Get unique tiles
-        name = []
-        for tile in self.map_wz.all_tiles:
-            if 'tS' in tile['info']:
-                name.append(tile['info']['tS'])
-        name = set(name)
-
-        # Load tiles
-        image_set = {}
-        types = ['bsc', 'edD', 'edU', 'enH0', 'enH1',
-                 'enV0', 'enV1', 'slLD', 'slLU', 'slRD', 'slRU']
-        for n in name:
-            for t in types:
-                images = []
-                for i in range(0, 100):  # Max num of images
-                    path = './data/Tile/{}/{}.{}.png'.format(n, t, str(i))
-                    if os.path.isfile(path):
-                        image = pygame.image.load(path).convert_alpha()
-                        images.append(image)
-                    else:
-                        break
-                image_set[t] = images
-            self.images[n] = image_set
+        for tile_instances in self.map_wz.all_tiles:
+            info = tile_instances['info']
+            if 'tS' in info:
+                # Get tile name
+                tile_name = info['tS']
+                # Create sprites
+                tile_sprites = Tile_sprites(self.screen)
+                tile_sprites.load_xml(
+                    "{}/data/Tile/{}.img.xml".format('.', tile_name))
+                tile_sprites.load_sprites("{}".format('.'))
+                tile_sprites.load_tiles(tile_instances['tiles'])
+            self.tile_sprites_list.append(tile_sprites)
 
     def load_object_images(self):
         if not self.map_wz:
@@ -76,11 +69,12 @@ class map_wz_sprite(pygame.sprite.Sprite):
         l0_set = []
         l1_set = []
         l2_set = []
-        for obj in self.map_wz.all_objects:
-            oS_set.append(obj['oS'])
-            l0_set.append(obj['l0'])
-            l1_set.append(obj['l1'])
-            l2_set.append(obj['l2'])
+        for objs in self.map_wz.all_objects:
+            for obj in objs:
+                oS_set.append(obj['oS'])
+                l0_set.append(obj['l0'])
+                l1_set.append(obj['l1'])
+                l2_set.append(obj['l2'])
         oS_set = set(oS_set)
         l0_set = set(l0_set)
         l1_set = set(l1_set)
@@ -174,73 +168,44 @@ class map_wz_sprite(pygame.sprite.Sprite):
                 continue
 
     def draw_tiles(self, offset=None):
-
-        # Draw tiles
-        for tile in self.map_wz.all_tiles:
-            try:
-                tS = tile['info']['tS']
-                tSMag = tile['info']['tSMag'] if 'tSMag' in tile['info'] else None
-                forbidFallDown = tile['info']['forbidFallDown'] if 'forbidFallDown' in tile['info'] else None
-                cx = int(tile['cx']) if 'cx' in tile else None
-                cy = int(tile['cy']) if 'cy' in tile else None
-                x = int(tile['x'])
-                y = int(tile['y'])
-                u = tile['u']
-                no = int(tile['no'])
-                zM = int(tile['zM'])
-
-                # Get image
-                images = self.images[tS][u]
-                image = images[no]
-                rect = image.get_rect().copy()
-
-                # Image offset
-                rect.bottomleft = vec(x, y)
-
-                # Camera offset
-                if offset:
-                    rect = rect.move(-offset.x, -offset.y)
-
-                # Draw
-                self.screen.blit(image, rect)
-
-            except:
-                continue
+        for tile_sprites in self.tile_sprites_list:
+            tile_sprites.blit(offset)
 
     def draw_objects(self, offset=None):
 
         # Draw tiles
-        for obj in self.map_wz.all_objects:
-            try:
-                x = int(obj['x'])
-                y = int(obj['y'])
-                f = int(obj['f'])
-                oS = obj['oS']
-                l0 = obj['l0']
-                l1 = obj['l1']
-                l2 = obj['l2']
+        for objs in self.map_wz.all_objects:
+            for obj in objs:
+                try:
+                    x = int(obj['x'])
+                    y = int(obj['y'])
+                    f = int(obj['f'])
+                    oS = obj['oS']
+                    l0 = obj['l0']
+                    l1 = obj['l1']
+                    l2 = obj['l2']
 
-                # Get image
-                images = self.images[oS]["{}.{}.{}".format(l0, l1, l2)]
-                image = images[0]
-                rect = image.get_rect().copy()
+                    # Get image
+                    images = self.images[oS]["{}.{}.{}".format(l0, l1, l2)]
+                    image = images[0]
+                    rect = image.get_rect().copy()
 
-                # Image offset
-                rect.center = vec(x, y)
+                    # Image offset
+                    rect.center = vec(x, y)
 
-                # Image flip
-                if f > 0:
-                    image = pygame.transform.flip(image, True, False)
+                    # Image flip
+                    if f > 0:
+                        image = pygame.transform.flip(image, True, False)
 
-                # Camera offset
-                if offset:
-                    rect = rect.move(-offset.x, -offset.y)
+                    # Camera offset
+                    if offset:
+                        rect = rect.move(-offset.x, -offset.y)
 
-                # Draw
-                self.screen.blit(image, rect)
+                    # Draw
+                    self.screen.blit(image, rect)
 
-            except:
-                continue
+                except:
+                    continue
 
     def update(self):
         pass
@@ -261,7 +226,7 @@ if __name__ == "__main__":
     m = map_wz_sprite(screen)
     m.load_wz('./xml/000010000.xml')
     m.load_bg_images()
-    m.load_tile_images()
+    m.load_tile_sprites()
     m.load_object_images()
     while(True):
         # Events
