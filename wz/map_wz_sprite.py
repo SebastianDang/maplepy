@@ -31,7 +31,7 @@ class map_wz_sprite(pygame.sprite.Sprite):
         for n in name:
             images = []
             for i in range(0, 100):  # Max num of images
-                path = './Back/{}/{}.{}.png'.format(n, 'back', str(i))
+                path = './data/Back/{}/{}.{}.png'.format(n, 'back', str(i))
                 if os.path.isfile(path):
                     image = pygame.image.load(path).convert_alpha()
                     images.append(image)
@@ -181,6 +181,8 @@ class map_wz_sprite(pygame.sprite.Sprite):
                 tS = tile['info']['tS']
                 tSMag = tile['info']['tSMag'] if 'tSMag' in tile['info'] else None
                 forbidFallDown = tile['info']['forbidFallDown'] if 'forbidFallDown' in tile['info'] else None
+                cx = int(tile['cx']) if 'cx' in tile else None
+                cy = int(tile['cy']) if 'cy' in tile else None
                 x = int(tile['x'])
                 y = int(tile['y'])
                 u = tile['u']
