@@ -7,7 +7,8 @@ class map_wz:
         self.root = None
         self.info = None
         self.bg = None
-        self.all_tiles = {}
+        self.all_tiles = []
+        self.all_objects = []
 
     def open(self, file):
         """
@@ -48,7 +49,7 @@ class map_wz:
                     pass
                 # Digit
                 if imgdir_name.isdigit():
-                    self.parse_tile(imgdir)
+                    self.parse_tile_set(imgdir)
                 # Reactor
                 if imgdir_name == 'reactor':
                     pass
@@ -73,6 +74,11 @@ class map_wz:
                 # Portal
                 if imgdir_name == 'portal':
                     pass
+
+            self.all_tiles = sorted(self.all_tiles, key=lambda k: k['zM'])
+            self.all_objects = sorted(self.all_objects, key=lambda k: k['zM'])
+
+            print('Done!')
 
         except Exception:
             print('Error while parsing root.')
@@ -117,18 +123,18 @@ class map_wz:
         except Exception:
             print('Error while parsing info.')
 
-    def parse_tile(self, parent):
+    def parse_tile_set(self, parent):
         """
         Parse individual tile sets
 
         Args:
             parent (xml node):  Xml node at tile num
         """
-        print('Parsing tile')
+        print('Parsing tile set')
         try:
-            tile_dict = {}
             info = {}
             tiles = []
+            objects = []
             value_tags = ['int', 'string']
             for child in parent:
                 if child.attrib.get('name') == 'info':
@@ -138,12 +144,20 @@ class map_wz:
                     for subchild in child:
                         tile = {}
                         for value in subchild:
+                            tile['info'] = info
                             if value.tag in value_tags:
                                 tile[value.get('name')] = value.get('value')
                         tiles.append(tile)
-            tile_dict['info'] = info
-            tile_dict['tiles'] = tiles
-            self.all_tiles[parent.get('name')] = tile_dict
+                if child.attrib.get('name') == 'obj':
+                    for subchild in child:
+                        obj = {}
+                        for value in subchild:
+                            obj['info'] = info
+                            if value.tag in value_tags:
+                                obj[value.get('name')] = value.get('value')
+                        objects.append(obj)
+            self.all_tiles += tiles
+            self.all_objects += objects
         except Exception:
             print('Error while parsing info.')
 
@@ -151,5 +165,5 @@ class map_wz:
 if __name__ == "__main__":
     print(map_wz.__name__)
     m = map_wz()
-    m.open('./xml/100000000.xml')  # Henesys
+    m.open('./xml/000010000.xml')
     m.parse_root()
