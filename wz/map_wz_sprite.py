@@ -39,12 +39,40 @@ class map_wz_sprite(pygame.sprite.Sprite):
                     break
             self.images[n] = images
 
-    def draw_bg(self, offset):
+    def load_tile_images(self):
+        if not self.map_wz:
+            return
+
+        # Get unique backgrounds
+        name = []
+        for k, v in self.map_wz.all_tiles.items():
+            if 'tS' in v['info']:
+                name.append(v['info']['tS'])
+        name = set(name)
+
+        # Load tiles
+        image_dict = {}
+        types = ['bsc', 'edD', 'edU', 'enH0', 'enH1',
+                 'enV0', 'enV1', 'slLD', 'slLU', 'slRD', 'slRU']
+        for n in name:
+            for t in types:
+                images = []
+                for i in range(0, 100):  # Max num of images
+                    path = './img/{}/{}.{}.png'.format(n, t, str(i))
+                    if os.path.isfile(path):
+                        image = pygame.image.load(path).convert_alpha()
+                        images.append(image)
+                    else:
+                        break
+                image_dict[t] = images
+            self.images[n] = image_dict
+
+    def draw_bg(self, offset=None):
 
         # Get surface properties
         w, h = pygame.display.get_surface().get_size()
 
-        # Render background
+        # Draw background
         for bg in self.map_wz.bg:
             try:
                 name = bg['name']
@@ -102,12 +130,41 @@ class map_wz_sprite(pygame.sprite.Sprite):
             except:
                 continue
 
+    def draw_tiles(self, offset=None):
+
+        # Get surface properties
+        w, h = pygame.display.get_surface().get_size()
+
+        # Draw tiles
+        for k, v in self.map_wz.all_tiles.items():
+            for tile in v['tiles']:
+                name = v['info']['tS']
+                x = int(tile['x'])
+                y = int(tile['y'])
+                u = tile['u']
+                no = int(tile['no'])
+
+                # Get image
+                images = self.images[name][u]
+                image = images[no]
+
+                # Image offset
+                rect = image.get_rect().copy().move(x, y)
+
+                # Camera offset
+                if offset:
+                    rect = rect.move(-offset.x, -offset.y)
+
+                # Draw
+                self.screen.blit(image, rect)
+
     def update(self):
         pass
 
     def blit(self, offset=None):
 
         self.draw_bg(offset)
+        self.draw_tiles(offset)
 
 
 if __name__ == "__main__":
@@ -119,6 +176,7 @@ if __name__ == "__main__":
     m = map_wz_sprite(screen)
     m.load_wz('./xml/100000000.xml')  # Henesys
     m.load_bg_images()
+    m.load_tile_images()
     while(True):
         # Events
         events = pygame.event.get()

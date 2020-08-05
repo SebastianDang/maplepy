@@ -7,6 +7,7 @@ class map_wz:
         self.root = None
         self.info = None
         self.bg = None
+        self.all_tiles = {}
 
     def open(self, file):
         """
@@ -42,6 +43,36 @@ class map_wz:
                 # Background images
                 if imgdir_name == 'back':
                     self.parse_bg(imgdir)
+                # Life
+                if imgdir_name == 'life':
+                    pass
+                # Digit
+                if imgdir_name.isdigit():
+                    self.parse_tile(imgdir)
+                # Reactor
+                if imgdir_name == 'reactor':
+                    pass
+                # ToolTip
+                if imgdir_name == 'ToolTip':
+                    pass
+                # RectInfo
+                if imgdir_name == 'rectInfo':
+                    pass
+                # Foothold
+                if imgdir_name == 'foothold':
+                    pass
+                # Ladder/Ropes
+                if imgdir_name == 'ladderRope':
+                    pass
+                # Seat
+                if imgdir_name == 'seat':
+                    pass
+                # Mini map
+                if imgdir_name == 'miniMap':
+                    pass
+                # Portal
+                if imgdir_name == 'portal':
+                    pass
 
         except Exception:
             print('Error while parsing root.')
@@ -83,6 +114,36 @@ class map_wz:
                         bg_value[value.get('name')] = value.get('value')
                 bg.append(bg_value)
             self.bg = bg
+        except Exception:
+            print('Error while parsing info.')
+
+    def parse_tile(self, parent):
+        """
+        Parse individual tile sets
+
+        Args:
+            parent (xml node):  Xml node at tile num
+        """
+        print('Parsing tile')
+        try:
+            tile_dict = {}
+            info = {}
+            tiles = []
+            value_tags = ['int', 'string']
+            for child in parent:
+                if child.attrib.get('name') == 'info':
+                    for value in child:
+                        info[value.get('name')] = value.get('value')
+                if child.attrib.get('name') == 'tile':
+                    for subchild in child:
+                        tile = {}
+                        for value in subchild:
+                            if value.tag in value_tags:
+                                tile[value.get('name')] = value.get('value')
+                        tiles.append(tile)
+            tile_dict['info'] = info
+            tile_dict['tiles'] = tiles
+            self.all_tiles[parent.get('name')] = tile_dict
         except Exception:
             print('Error while parsing info.')
 
