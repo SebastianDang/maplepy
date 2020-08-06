@@ -1,9 +1,14 @@
+import time
 import pygame
 from Map.Map_sprites import Map_sprites
 
 pygame.init()
 w, h = 800, 600
 screen = pygame.display.set_mode((w, h))
+
+# Timer start
+t0 = time.time()
+print('Loading.')
 
 # Load
 m = Map_sprites(screen)
@@ -13,6 +18,11 @@ m.load_info()
 m.load_back_sprites()
 m.load_tile_sprites()
 m.load_object_sprites()
+
+# Timer stop
+t1 = time.time()
+total = t1-t0
+print('Loading took', "{0:0.2f}".format(total), 'seconds.')
 
 while(True):
     # Events
