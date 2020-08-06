@@ -1,8 +1,8 @@
 import os
 import pygame
 
-from Object_xml import Object_xml
-from Object_obj import Object_obj
+from Object.Object_xml import Object_xml
+from Object.Object_obj import Object_obj
 
 
 vec = pygame.math.Vector2
