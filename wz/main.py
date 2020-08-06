@@ -7,7 +7,7 @@ screen = pygame.display.set_mode((w, h))
 
 # Load
 m = Map_sprites(screen)
-m.path = './Map.wz'
+m.path = 'P:\Downloads\MapleStory\Map.wz'
 m.load_map('000010000')  # 100000000
 m.load_info()
 m.load_back_sprites()

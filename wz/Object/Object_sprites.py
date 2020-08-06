@@ -1,5 +1,6 @@
 import os
 import pygame
+import traceback
 
 from Object.Object_xml import Object_xml
 from Object.Object_obj import Object_obj
@@ -29,46 +30,10 @@ class Object_sprites(pygame.sprite.Sprite):
         self.xml[name].open(file)
         self.xml[name].parse_root()
 
-    def load_sprites(self, name, path):
-
-        # Check if xml has finished loading
-        if name not in self.xml or not self.xml[name].objects:
-            print('{} was not loaded yet.'.format(name))
-            return
-
-        # Load sprites for a given xml file
-        xml = self.xml[name]
-        for tag, objects in xml.objects.items():
-            for item_name, item_array in objects.items():
-                for canvases_index in range(0, len(item_array)):
-
-                    # Create key
-                    key = "{}.{}.{}.{}".format(
-                        name, tag, item_name, str(canvases_index))
-
-                    # Get a list of images for the key
-                    images = []
-                    for index in range(0, 20):  # Num frames
-                        file = '{}/Obj/{}/{}.{}.{}.{}.png'.format(
-                            path, xml.name, tag, item_name, str(canvases_index), str(index))
-                        if os.path.isfile(file):
-                            image = pygame.image.load(file).convert_alpha()
-                            images.append(image)
-                        else:
-                            break
-
-                    # Add images for the key (This will overrite any existing keys!)
-                    self.sprites[key] = images
-
     def clear_objects(self):
         self.objects.clear()
 
-    def load_objects(self, name, object_instances):
-
-        # Check if xml has finished loading
-        if name not in self.xml or not self.xml[name].objects:
-            print('{} was not loaded yet.'.format(name))
-            return
+    def load_objects(self, object_instances, path):
 
         # Go through instances list and add
         for instance in object_instances:
@@ -84,7 +49,6 @@ class Object_sprites(pygame.sprite.Sprite):
                 obj.l2 = instance['l2']
                 obj.x = int(instance['x'])
                 obj.y = int(instance['y'])
-                obj.z = int(instance['z'])
                 obj.f = int(instance['f'])
                 obj.zM = int(instance['zM'])
 
@@ -98,68 +62,65 @@ class Object_sprites(pygame.sprite.Sprite):
                 if 'piece' in instance:
                     piece = int(instance['piece'])
 
-                # Get sprite by key
-                key = "{}.{}.{}.{}".format(obj.oS, obj.l0, obj.l1, obj.l2)
-                if key not in self.sprites:
-                    print('{} was not loaded yet.'.format(key))
+                # Check if xml has finished loading
+                if obj.oS not in self.xml or not self.xml[obj.oS].objects:
+                    print('{} was not loaded yet.'.format(obj.oS))
                     continue
-                obj.sprites = self.sprites[key]
+
+                # Extract data
+                objects = self.xml[obj.oS].objects
+                l0 = objects[obj.l0]
+                l1 = l0[obj.l1]
+                l2 = l1[int(obj.l2)]
+
+                # Get information for each frame
+                for item in l2:
+                    obj.cx.append(int(item['x']))
+                    obj.cy.append(int(item['y']))
+                    obj.z.append(int(item['z']))
+
+                # Load sprites
+                obj.sprites = self.load_sprites(
+                    path, obj.oS, obj.l0, obj.l1, obj.l2)
 
                 # Explicit special case
-                if obj.z:
-                    obj.zM = obj.z
-
-                # Get additional properties
-                try:
-
-                    # Set default data
-                    obj.cx = 0
-                    obj.cy = 0
-                    obj.z = 0
-
-                    # Extract data
-                    objects = self.xml[name].objects
-                    l0 = objects[obj.l0]
-                    l1 = l0[obj.l1]
-                    l2 = l1[int(obj.l2)]
-
-                    # Set data
-                    data = l2[0]
-                    obj.cx = int(data['x'])
-                    obj.cy = int(data['y'])
-                    obj.z = int(data['z'])
-
-                except:
-                    pass
+                instance_z = int(instance['z'])
+                for z in obj.z:
+                    obj.zM = instance_z
 
                 # Add to list
                 self.objects.append(obj)
 
             except:
-                print('Error while loading objects')
+                traceback.print_exc()
+                # print('Error while loading objects')
                 continue
 
         # Pre process and sort by z
         self.objects = sorted(self.objects, key=lambda k: k.zM)
 
-    def load_sprite(self, oS, l0, l1, l2):
+    def load_sprites(self, path, oS, l0, l1, l2):
+
+        # Get a list of images for the key
+        images = []
+        for index in range(0, 20):  # Num frames
+            file = '{}/Obj/{}.img/{}.{}.{}.{}.png'.format(
+                path, oS, l0, l1, l2, str(index))
+            if os.path.isfile(file):
+                image = pygame.image.load(file).convert_alpha()
+                images.append(image)
+            else:
+                break
+
         # Create key
         key = "{}.{}.{}.{}".format(
             oS, l0, l1, l2)
 
-        # # Get a list of images for the key
-        # images = []
-        # for index in range(0, 20):  # Num frames
-        #     file = '{}/Obj/{}/{}.{}.{}.{}.png'.format(
-        #         path, xml.name, tag, item_name, str(canvases_index), str(index))
-        #     if os.path.isfile(file):
-        #         image = pygame.image.load(file).convert_alpha()
-        #         images.append(image)
-        #     else:
-        #         break
+        # Store images
+        self.sprites[key] = images
 
-        # # Add images for the key (This will overrite any existing keys!)
-        # self.sprites[key] = images
+        # Return list of images
+        return images
 
     def update(self):
         for obj in self.objects:
@@ -179,8 +140,12 @@ class Object_sprites(pygame.sprite.Sprite):
                 image = obj.sprites[obj.frame_index]
                 rect = image.get_rect().copy()
 
+                # Get offets
+                cx = obj.cx[obj.frame_index]
+                cy = obj.cy[obj.frame_index]
+
                 # Image offset
-                rect.topleft = vec(-obj.cx, -obj.cy)
+                rect.topleft = vec(-cx, -cy)
                 rect = rect.move(obj.x, obj.y)
 
                 # Check offset

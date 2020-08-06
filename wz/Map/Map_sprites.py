@@ -112,10 +112,10 @@ class Map_sprites(pygame.sprite.Sprite):
             oS_set = set(oS_set)
             for oS in oS_set:
                 self.object_sprites.load_xml(oS, self.path)
-                self.object_sprites.load_sprites(oS, self.path)
 
             # Load objects after
-            self.object_sprites.load_objects(oS, object_instances['objects'])
+            self.object_sprites.load_objects(
+                object_instances['objects'], self.path)
 
     def update_backs(self):
         if self.back_sprites:
