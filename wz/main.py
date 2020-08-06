@@ -21,7 +21,7 @@ while(True):
         if event.type == pygame.QUIT:
             pygame.event.clear()
             pygame.quit()
-            sys.exit()
+            exit()
     pygame.event.pump()
     # Camera movement test
     speed = 10

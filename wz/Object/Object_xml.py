@@ -65,8 +65,8 @@ class Object_xml:
             if value.tag in extended_tags:
                 item['extended'] = self.parse_extended(value)
             if value.tag in vector_tags:
-                item['cx'] = value.get('x')
-                item['cy'] = value.get('y')
+                item['x'] = value.get('x')
+                item['y'] = value.get('y')
             if value.tag in value_tags:
                 item[value.get('name')] = value.get('value')
         return item
@@ -79,6 +79,6 @@ class Object_xml:
             item['name'] = value.get('name')
             if value.tag in vector_tags:
                 item['x'] = value.get('x')
-                item['x'] = value.get('y')
+                item['y'] = value.get('y')
             items.append(item)
         return items

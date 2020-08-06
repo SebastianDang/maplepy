@@ -125,8 +125,8 @@ class Object_sprites(pygame.sprite.Sprite):
 
                     # Set data
                     data = l2[0]
-                    obj.cx = int(data['cx'])
-                    obj.cy = int(data['cy'])
+                    obj.cx = int(data['x'])
+                    obj.cy = int(data['y'])
                     obj.z = int(data['z'])
 
                 except:
@@ -141,6 +141,25 @@ class Object_sprites(pygame.sprite.Sprite):
 
         # Pre process and sort by z
         self.objects = sorted(self.objects, key=lambda k: k.zM)
+
+    def load_sprite(self, oS, l0, l1, l2):
+        # Create key
+        key = "{}.{}.{}.{}".format(
+            oS, l0, l1, l2)
+
+        # # Get a list of images for the key
+        # images = []
+        # for index in range(0, 20):  # Num frames
+        #     file = '{}/Obj/{}/{}.{}.{}.{}.png'.format(
+        #         path, xml.name, tag, item_name, str(canvases_index), str(index))
+        #     if os.path.isfile(file):
+        #         image = pygame.image.load(file).convert_alpha()
+        #         images.append(image)
+        #     else:
+        #         break
+
+        # # Add images for the key (This will overrite any existing keys!)
+        # self.sprites[key] = images
 
     def update(self):
         for obj in self.objects:

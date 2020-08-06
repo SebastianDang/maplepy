@@ -43,7 +43,7 @@ class Back_sprites(pygame.sprite.Sprite):
         sprites = []
         for index in range(0, 100):  # Num images
             file = "{}/Back/{}/back.{}.png".format(
-                path, name, str(index))
+                path, xml.name, str(index))
             if os.path.isfile(file):
                 image = pygame.image.load(file).convert_alpha()
                 sprites.append(image)
