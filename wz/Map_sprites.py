@@ -13,6 +13,9 @@ class Map_sprites(pygame.sprite.Sprite):
         super().__init__()
         self.screen = screen
 
+        self.cam = None
+        self.bounds = None
+
         self.path = '.'
         self.map_xml = None
         self.back_sprites = None
@@ -32,6 +35,15 @@ class Map_sprites(pygame.sprite.Sprite):
         self.map_xml = Map_xml()
         self.map_xml.open(file)
         self.map_xml.parse_root()
+
+    def load_info(self):
+
+        # Get screen boundaries
+        top = int(self.map_xml.info['VRTop'])
+        left = int(self.map_xml.info['VRLeft'])
+        bottom = int(self.map_xml.info['VRBottom'])
+        right = int(self.map_xml.info['VRRight'])
+        self.bounds = pygame.Rect(left, top, right - left, bottom - top)
 
     def load_back_sprites(self):
         if not self.map_xml:
@@ -101,27 +113,44 @@ class Map_sprites(pygame.sprite.Sprite):
             # Load objects after
             self.object_sprites.load_objects(oS, object_instances['objects'])
 
+    def update_backs(self):
+        if self.back_sprites:
+            self.back_sprites.update()
+
     def draw_backs(self, offset=None):
-        self.back_sprites.blit(offset)
+        if self.back_sprites:
+            self.back_sprites.blit(offset)
+
+    def update_tiles(self):
+        for tile_sprites in self.tile_sprites_list:
+            tile_sprites.update()
 
     def draw_tiles(self, offset=None):
         for tile_sprites in self.tile_sprites_list:
             tile_sprites.blit(offset)
 
-    def draw_objects(self, offset=None):
-        self.object_sprites.blit(offset)
-
     def update_objects(self):
-        self.object_sprites.update()
+        if self.object_sprites:
+            self.object_sprites.update()
+
+    def draw_objects(self, offset=None):
+        if self.object_sprites:
+            self.object_sprites.blit(offset)
 
     def update(self):
+        self.update_backs()
         self.update_objects()
 
-    def blit(self, offset=None):
+    def blit(self):
 
-        self.draw_backs(offset)
-        self.draw_tiles(offset)
-        self.draw_objects(offset)
+        # Update camera
+        if self.cam and self.bounds:
+            self.cam = self.cam.clamp(self.bounds)
+
+        # Blit
+        self.draw_backs(self.cam)
+        self.draw_tiles(self.cam)
+        self.draw_objects(self.cam)
 
 
 if __name__ == "__main__":
@@ -129,16 +158,17 @@ if __name__ == "__main__":
     pygame.init()
     w, h = 1920, 1200
     screen = pygame.display.set_mode((w, h))
-    cam = pygame.Rect(0, 0, w, h)
 
     # Load
     m = Map_sprites(screen)
     m.path = './Map.wz'
-    m.load_map('000010000')
-    # m.load_map('100000000')
+    m.load_map('000010000')  # 100000000
+    m.load_info()
     m.load_back_sprites()
     m.load_tile_sprites()
     m.load_object_sprites()
+
+    m.cam = pygame.Rect(0, 0, w, h)
 
     while(True):
         # Events
@@ -153,18 +183,18 @@ if __name__ == "__main__":
         speed = 10
         inputs = pygame.key.get_pressed()
         if inputs[pygame.K_UP]:
-            cam = cam.move(0, -speed)
+            m.cam = m.cam.move(0, -speed)
         if inputs[pygame.K_DOWN]:
-            cam = cam.move(0, speed)
+            m.cam = m.cam.move(0, speed)
         if inputs[pygame.K_LEFT]:
-            cam = cam.move(-speed, 0)
+            m.cam = m.cam.move(-speed, 0)
         if inputs[pygame.K_RIGHT]:
-            cam = cam.move(speed, 0)
+            m.cam = m.cam.move(speed, 0)
         if inputs[pygame.K_r]:
-            cam.x = 0
-            cam.y = 0
+            m.cam.update(0, 0)
+
         # Draw
         screen.fill((0, 0, 0))
         m.update()
-        m.blit(cam)
+        m.blit()
         pygame.display.update()

@@ -94,13 +94,24 @@ class Back_sprites(pygame.sprite.Sprite):
                 # Get additional properties
                 try:
                     obj.z = 0
+                    obj.width = 0
+                    obj.height = 0
 
                     # Extract data
                     object_data = self.xml[name].objects
+                    back_data = object_data['back']
 
                     # Set data
-                    data = object_data[obj.no]
+                    data = back_data[obj.no]
                     obj.z = int(data['z'])
+                    obj.width = int(data['width'])
+                    obj.height = int(data['height'])
+
+                    # Explicit special case
+                    if obj.cx == 0:
+                        obj.cx = int(instance['cx'])
+                    if obj.cy == 0:
+                        obj.cy = int(instance['cy'])
 
                 except:
                     pass
@@ -114,9 +125,18 @@ class Back_sprites(pygame.sprite.Sprite):
 
         self.objects = objects
 
+    def calculate_back_x(self, dx, rx, z):
+        return (rx * (dx + z) / 100)
+
+    def calculate_back_y(self, dy, ry, z):
+        return (ry * (dy + z) / 100)
+
     def update(self):
+        horizontal = [4, 6]
+        vertical = [5, 7]
         for obj in self.objects:
-            obj.frame_count = (obj.frame_count + 1) % 180
+            if obj.width > 0:
+                obj.frame_count = (obj.frame_count + 1) % obj.width
 
     def blit(self, offset=None):
         if not self.objects:
@@ -133,7 +153,7 @@ class Back_sprites(pygame.sprite.Sprite):
                 rect = image.get_rect().copy()
 
                 # Image offset
-                rect.topleft = (-obj.cx, -obj.cy)
+                rect.center = (-obj.cx, -obj.cy)
                 rect = rect.move(obj.x, obj.y)
 
                 # Image flip
@@ -152,31 +172,71 @@ class Back_sprites(pygame.sprite.Sprite):
                 # 5 - Image scrolls and is copied vertically (eg. background in the Helios Tower elevator)
                 # 6 - Image scrolls horizontally, and is copied in both directions (eg. the train in Kerning City subway JQ)
                 # 7 - Image scrolls vertically, and is copied in both directions (eg. rain drops in Ellin PQ maps)
-                horizontal = [1, 3, 4, 6, 7]
-                vertical = [2, 3, 5, 6, 7]
 
-                # Type
-                if obj.type == 0:  # Static image
+                if obj.type == 0:
                     self.screen.blit(image, rect)
-                elif obj.type in horizontal:  # Copied horizontally
-                    tile = rect.copy()
-                    while tile.x > -tile.width:  # TODO: Don't do this the lazy way
-                        self.screen.blit(image, tile)
-                        tile = tile.move(-tile.width, 0)
+                elif obj.type == 1:
+                    delta = obj.cx if obj.cx > 0 else rect.width
                     tile = rect.copy()
                     while tile.x < w:
                         self.screen.blit(image, tile)
-                        tile = tile.move(tile.width, 0)
-                elif obj.type in vertical:  # Copied vertically
+                        tile = tile.move(delta, 0)
                     tile = rect.copy()
-                    while tile.y > -tile.height:  # TODO: Don't do this the lazy way
+                    while tile.x > -tile.width:
                         self.screen.blit(image, tile)
-                        tile = tile.move(0, -tile.height)
-                    tile = rect.copy()
-                    while tile.y < h:
-                        self.screen.blit(image, tile)
-                        tile = tile.move(0, tile.height)
+                        tile = tile.move(-delta, 0)
+                elif obj.type == 2:
+                    pass
+                elif obj.type == 3:
+                    pass
+                elif obj.type == 4:
 
-            except:
-                print('Error while drawing back')
+                    # # Tile rect
+                    # tile = rect.copy()
+
+                    # # Scroll horizontally
+                    # if obj.rx != 0:
+                    #     delta = obj.frame_count / obj.rx
+                    #     tile = tile.move(int(delta), 0)
+
+                    # # Copy horizontally
+                    # if tile.right > 0:
+                    #     delta = tile.width * (tile.right % tile.width)
+                    #     tile = tile.move(-delta, 0)
+                    # while tile.x < w:
+                    #     self.screen.blit(image, tile)
+                    #     tile = tile.move(tile.width, 0)
+
+                    pass
+                elif obj.type == 5:
+                    pass
+                elif obj.type == 6:
+                    pass
+                elif obj.type == 7:
+                    pass
+
+                # # Type
+                # if obj.type == 0:  # Static image
+                #     self.screen.blit(image, rect)
+                # elif obj.type in horizontal:  # Copied horizontally
+                #     tile = rect.copy()
+                #     while tile.x > -tile.width:  # TODO: Don't do this the lazy way
+                #         self.screen.blit(image, tile)
+                #         tile = tile.move(-tile.width, 0)
+                #     tile = rect.copy()
+                #     while tile.x < w:
+                #         self.screen.blit(image, tile)
+                #         tile = tile.move(tile.width, 0)
+                # elif obj.type in vertical:  # Copied vertically
+                #     tile = rect.copy()
+                #     while tile.y > -tile.height:  # TODO: Don't do this the lazy way
+                #         self.screen.blit(image, tile)
+                #         tile = tile.move(0, -tile.height)
+                #     tile = rect.copy()
+                #     while tile.y < h:
+                #         self.screen.blit(image, tile)
+                #         tile = tile.move(0, tile.height)
+
+            except Exception as e:
+                print(e)
                 continue

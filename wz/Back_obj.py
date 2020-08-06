@@ -14,6 +14,8 @@ class Back_obj:
         self.a = None
         self.front = None
         self.ani = None
+        self.width = None
+        self.height = None
         self.sprite = None
         self.frame_count = 0
 
