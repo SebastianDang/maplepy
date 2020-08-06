@@ -14,8 +14,8 @@ class Object_obj:
         self.dynamic = None
         self.piece = None
         # Values from individual mapping
-        self.cx = []
-        self.cy = []
+        self.center_x = []
+        self.center_y = []
         self.z = []
         # Values for drawing
         self.sprites = []

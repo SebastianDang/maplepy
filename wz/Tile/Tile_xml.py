@@ -77,8 +77,8 @@ class Tile_xml:
         # Inner items
         for value in canvas:
             if value.tag in vector_tags:
-                item['cx'] = value.get('x')
-                item['cy'] = value.get('y')
+                item['x'] = value.get('x')
+                item['y'] = value.get('y')
             if value.tag in value_tags:
                 item[value.get('name')] = value.get('value')
         return item

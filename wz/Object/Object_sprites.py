@@ -75,9 +75,12 @@ class Object_sprites(pygame.sprite.Sprite):
 
                 # Get information for each frame
                 for item in l2:
-                    obj.cx.append(int(item['x']))
-                    obj.cy.append(int(item['y']))
-                    obj.z.append(int(item['z']))
+                    if 'x' in item:
+                        obj.center_x.append(int(item['x']))
+                    if 'y' in item:
+                        obj.center_y.append(int(item['y']))
+                    if 'z' in item:
+                        obj.z.append(int(item['z']))
 
                 # Load sprites
                 obj.sprites = self.load_sprites(
@@ -141,11 +144,11 @@ class Object_sprites(pygame.sprite.Sprite):
                 rect = image.get_rect().copy()
 
                 # Get offets
-                cx = obj.cx[obj.frame_index]
-                cy = obj.cy[obj.frame_index]
+                center_x = obj.center_x[obj.frame_index]
+                center_y = obj.center_y[obj.frame_index]
 
                 # Image offset
-                rect.topleft = vec(-cx, -cy)
+                rect.topleft = vec(-center_x, -center_y)
                 rect = rect.move(obj.x, obj.y)
 
                 # Check offset

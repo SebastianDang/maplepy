@@ -84,8 +84,8 @@ class Tile_sprites(pygame.sprite.Sprite):
 
                 # Get additional properties
                 obj_data = self.xml.objects[obj.u][obj.no]
-                obj.cx = int(obj_data['cx'])
-                obj.cy = int(obj_data['cy'])
+                obj.center_x = int(obj_data['x'])
+                obj.center_y = int(obj_data['y'])
                 obj.z = int(obj_data['z'])
 
                 # Explicit special case
@@ -116,7 +116,7 @@ class Tile_sprites(pygame.sprite.Sprite):
                 rect = image.get_rect().copy()
 
                 # Image offset
-                rect.topleft = (-obj.cx, -obj.cy)
+                rect.topleft = (-obj.center_x, -obj.center_y)
                 rect = rect.move(obj.x, obj.y)
 
                 # Check offset
