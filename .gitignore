@@ -127,6 +127,3 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-
-# Local MapleStory Files
-Map.wz/
