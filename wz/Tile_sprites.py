@@ -29,7 +29,7 @@ class Tile_sprites(pygame.sprite.Sprite):
             images = []
             for index in range(0, 20):  # Max num of frames
                 file = "{}/data/Tile/{}/{}.{}.png".format(
-                    path, self.xml.name, tile, index)
+                    path, self.xml.name, tile, str(index))
                 if os.path.isfile(file):
                     image = pygame.image.load(file).convert_alpha()
                     images.append(image)
@@ -72,11 +72,12 @@ class Tile_sprites(pygame.sprite.Sprite):
                     tile.zM = tile.z
                 # Add to list
                 tiles.append(tile)
-                # Pre process and sort by z
-                tiles = sorted(tiles, key=lambda k: k.zM)
+
             except:
                 print('Error while loading tiles')
                 continue
+        # Pre process and sort by z
+        tiles = sorted(tiles, key=lambda k: k.zM)
         self.tiles = tiles
 
     def update(self):

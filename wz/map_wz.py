@@ -75,10 +75,6 @@ class map_wz:
                 if imgdir_name == 'portal':
                     pass
 
-            for i in range(0, len(self.all_objects)):
-                self.all_objects[i] = sorted(
-                    self.all_objects[i], key=lambda k: k['zM'])
-
             print('Done!')
 
         except Exception:
@@ -160,13 +156,6 @@ class map_wz:
                                 obj[value.get('name')] = value.get('value')
                         objects.append(obj)
             self.all_tiles.append({"info": info, "tiles": tiles})
-            self.all_objects.append(objects)
+            self.all_objects.append({"info": info, "objects": objects})
         except Exception:
             print('Error while parsing tile set.')
-
-
-if __name__ == "__main__":
-    print(map_wz.__name__)
-    m = map_wz()
-    m.open('./xml/000010000.xml')
-    m.parse_root()

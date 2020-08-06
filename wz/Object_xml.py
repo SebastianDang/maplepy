@@ -1,13 +1,12 @@
 import xml.etree.ElementTree as ET
 
 
-class Tile_xml:
+class Object_xml:
 
     def __init__(self):
         self.root = None
         self.name = None
-        self.info = None
-        self.tiles = None
+        self.objects = None
 
     def open(self, file):
         if self.root:
@@ -20,23 +19,15 @@ class Tile_xml:
             print('No xml file opened.')
             return
         try:
-            info = {}
-            tiles = {}
+            objects = {}
             vector_tags = ['vector']
             value_tags = ['int', 'string']
-            # Parse xml
+
             for child in self.root:
-                if child.attrib.get('name') == 'info':
-                    for value in child:
-                        if value.tag in value_tags:
-                            info[value.get('name')] = value.get('value')
-                else:
-                    tile_data = self.parse_canvas_array(child)
-                    tiles[child.attrib.get('name')] = tile_data
-            # Set variables
+                objects[child.get('name')] = self.parse_tags(child)
             self.name = self.root.get('name')
-            self.info = info
-            self.tiles = tiles
+            self.objects = objects
+
         except Exception:
             print('Error while parsing tile.')
 
@@ -76,9 +67,24 @@ class Tile_xml:
                     'value')
         return item
 
+import os
 
 if __name__ == "__main__":
-    print(Tile_xml.__name__)
-    m = Tile_xml()
-    m.open('./data/Tile/grassySoil.img.xml')
+    print(Object_xml.__name__)
+    m = Object_xml()
+    m.open('./data/Obj/connect.img.xml')
     m.parse_root()
+
+    path = '.'
+    for tag, objects in m.objects.items():
+        for item_name, item_array in objects.items():
+            for canvases_index in range(0, len(item_array)):
+                # canvases = item_array[canvases_index]
+                images = []
+                for index in range(0, 10):  # Max num of frames
+                    file = '{}/data/Obj/{}/{}.{}.{}.{}.png'.format(
+                        path, m.name, tag, item_name, canvases_index, index)
+                    if os.path.isfile(file):
+                        print(file)
+                    else:
+                        break
