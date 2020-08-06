@@ -12,8 +12,8 @@ print('Loading.')
 
 # Load
 m = Map_sprites(screen)
-m.path = 'P:\Downloads\MapleStory\Map.wz'
-m.load_map('100000000')  # 000010000
+m.path = 'P:\Downloads\MapleStory'
+m.load_map('000010000')  # 100000000
 m.load_info()
 m.load_back_sprites()
 m.load_tile_sprites()

@@ -5,6 +5,7 @@ from Map.Map_xml import Map_xml
 from Back.Back_sprites import Back_sprites
 from Tile.Tile_sprites import Tile_sprites
 from Object.Object_sprites import Object_sprites
+from Sound.Bgm import Sound_Bgm
 vec = pygame.math.Vector2
 
 
@@ -15,6 +16,8 @@ class Map_sprites(pygame.sprite.Sprite):
         # Camera movement
         self.cam = None
         self.bounds = None
+        # Music
+        self.bgm = None
         # Objects in the map
         self.path = '.'
         self.map_xml = None
@@ -28,7 +31,7 @@ class Map_sprites(pygame.sprite.Sprite):
             return
 
         # Build filename
-        file = "{}/Map/Map{}/{}.img.xml".format(
+        file = "{}/Map.wz/Map/Map{}/{}.img.xml".format(
             self.path,  map_id[0:1], map_id)
 
         # Load xml
@@ -49,6 +52,12 @@ class Map_sprites(pygame.sprite.Sprite):
         w, h = self.screen.get_size()
         self.cam = pygame.Rect(0, 0, w, h)
 
+        # Get bgm
+        if 'bgm' in self.map_xml.info:
+            self.bgm = Sound_Bgm()
+            self.bgm.play_bgm("{}/Sound.wz".format(self.path),
+                              self.map_xml.info['bgm'])
+
     def load_back_sprites(self):
         if not self.map_xml:
             return
@@ -68,8 +77,8 @@ class Map_sprites(pygame.sprite.Sprite):
 
         # Load sets of sprites only once
         for bS in bS_set:
-            self.back_sprites.load_xml(bS, self.path)
-            self.back_sprites.load_sprites(bS, self.path)
+            self.back_sprites.load_xml(bS, "{}/Map.wz".format(self.path))
+            self.back_sprites.load_sprites(bS, "{}/Map.wz".format(self.path))
 
         # Load objects after
         self.back_sprites.load_objects(bS, self.map_xml.all_backs)
@@ -86,8 +95,8 @@ class Map_sprites(pygame.sprite.Sprite):
                 tile_name = info['tS']
                 # Create sprites
                 sprites = Tile_sprites(self.screen)
-                sprites.load_xml(tile_name, self.path)
-                sprites.load_sprites(self.path)
+                sprites.load_xml(tile_name, "{}/Map.wz".format(self.path))
+                sprites.load_sprites("{}/Map.wz".format(self.path))
                 sprites.load_objects(object_instances['tiles'])
             self.tile_sprites_list.append(sprites)
 
@@ -111,11 +120,11 @@ class Map_sprites(pygame.sprite.Sprite):
                 oS_set.append(obj['oS'])
             oS_set = set(oS_set)
             for oS in oS_set:
-                self.object_sprites.load_xml(oS, self.path)
+                self.object_sprites.load_xml(oS, "{}/Map.wz".format(self.path))
 
             # Load objects after
             self.object_sprites.load_objects(
-                object_instances['objects'], self.path)
+                object_instances['objects'], "{}/Map.wz".format(self.path))
 
     def update_backs(self):
         if self.back_sprites:
