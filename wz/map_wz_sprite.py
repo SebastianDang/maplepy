@@ -160,8 +160,12 @@ class map_wz_sprite(pygame.sprite.Sprite):
         for object_sprites in self.object_sprites_list:
             object_sprites.blit(offset)
 
+    def update_objects(self):
+        for object_sprites in self.object_sprites_list:
+            object_sprites.update()
+
     def update(self):
-        pass
+        self.update_objects()
 
     def blit(self, offset=None):
 
@@ -207,5 +211,6 @@ if __name__ == "__main__":
             cam.y = 0
         # Draw
         screen.fill((0, 0, 0))
+        m.update()
         m.blit(cam)
         pygame.display.update()

@@ -13,3 +13,6 @@ class Object_obj:
         self.dynamic = None
         self.piece = None
         self.sprite = None
+        self.sprites = None
+        self.frame_count = 0
+        self.frame_index = 0

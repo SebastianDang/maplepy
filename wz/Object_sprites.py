@@ -81,6 +81,7 @@ class Object_sprites(pygame.sprite.Sprite):
                 obj.dynamic = dynamic
                 obj.piece = piece
                 obj.sprite = sprite
+                obj.sprites = sprites
                 # Explicit special case
                 if obj.z:
                     obj.zM = obj.z
@@ -95,15 +96,21 @@ class Object_sprites(pygame.sprite.Sprite):
         self.objects = objects
 
     def update(self):
-        pass
+        for obj in self.objects:
+            obj.frame_count = (obj.frame_count + 1) % 180
+            obj.frame_index = int(obj.frame_count / 20 % len(obj.sprites))
 
     def blit(self, offset=None):
 
         for obj in self.objects:
             try:
                 # Get image
-                image = obj.sprite
+                image = obj.sprites[obj.frame_index]
                 rect = image.get_rect().copy()
+
+                # Check offset
+                if offset and not rect.colliderect(offset):
+                    continue
 
                 # Image offset
                 rect.center = vec(obj.x, obj.y)

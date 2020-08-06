@@ -90,12 +90,19 @@ class Tile_sprites(pygame.sprite.Sprite):
                 # Get image
                 image = tile.sprite
                 rect = image.get_rect().copy()
+
+                # Check offset
+                if offset and not rect.colliderect(offset):
+                    continue
+
                 # Image offset
                 rect.topleft = (-tile.cx, -tile.cy)
                 rect = rect.move(tile.x, tile.y)
+
                 # Camera offset
                 if offset:
                     rect = rect.move(-offset.x, -offset.y)
+
                 # Draw
                 self.screen.blit(image, rect)
             except:
