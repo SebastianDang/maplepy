@@ -5,8 +5,9 @@ class Map_xml:
 
     def __init__(self):
         self.root = None
+        self.name = None
         self.info = None
-        self.bg = None
+        self.all_backs = None
         self.all_tiles = []
         self.all_objects = []
 
@@ -30,26 +31,26 @@ class Map_xml:
             print('No xml file opened.')
             return
 
-        print('Parsing root')
         try:
-            # Top level wz img
-            wzimg = self.root.find('wzimg')
+
+            # Set name
+            self.name = self.root.get('name')
 
             # Imgdirs
-            for imgdir in wzimg.findall('imgdir'):
-                imgdir_name = imgdir.get('name')
+            for child in self.root:
+                imgdir_name = child.get('name')
                 # Info
                 if imgdir_name == 'info':
-                    self.parse_info(imgdir)
+                    self.parse_info(child)
                 # Background images
                 if imgdir_name == 'back':
-                    self.parse_bg(imgdir)
+                    self.parse_back(child)
                 # Life
                 if imgdir_name == 'life':
                     pass
                 # Digit
                 if imgdir_name.isdigit():
-                    self.parse_tile_set(imgdir)
+                    self.parse_digit_arrays(child)
                 # Reactor
                 if imgdir_name == 'reactor':
                     pass
@@ -75,9 +76,7 @@ class Map_xml:
                 if imgdir_name == 'portal':
                     pass
 
-            print('Done!')
-
-        except Exception:
+        except:
             print('Error while parsing root.')
 
     def parse_info(self, parent):
@@ -87,7 +86,6 @@ class Map_xml:
         Args:
             parent (xml node): Xml node at 'info'
         """
-        print('Parsing info')
         try:
             info = {}
             value_tags = ['int', 'string', 'float']
@@ -98,36 +96,35 @@ class Map_xml:
         except Exception:
             print('Error while parsing info.')
 
-    def parse_bg(self, parent):
+    def parse_back(self, parent):
         """
         Parse background image nodes and store in class variable
 
         Args:
             parent (xml node): Xml node at 'back'
         """
-        print('Parsing bg')
         try:
-            bg = []
+            back = []
             value_tags = ['int', 'string']
             for child in parent:
-                bg_value = {}
-                bg_value['name'] = child.attrib.get('name')
+                back_value = {}
+                back_value['name'] = child.attrib.get('name')
                 for value in child:
                     if value.tag in value_tags:
-                        bg_value[value.get('name')] = value.get('value')
-                bg.append(bg_value)
-            self.bg = bg
+                        back_value[value.get('name')] = value.get('value')
+                back.append(back_value)
+            self.all_backs = back
         except Exception:
             print('Error while parsing bg.')
 
-    def parse_tile_set(self, parent):
+    def parse_digit_arrays(self, parent):
         """
-        Parse individual tile sets
+        Parse individual arrays that begins with digits,
+        containing tiles and objs
 
         Args:
-            parent (xml node):  Xml node at tile num
+            parent (xml node):  Xml node at digit arrays
         """
-        print('Parsing tile set')
         try:
             info = {}
             tiles = []
@@ -158,4 +155,4 @@ class Map_xml:
             self.all_tiles.append({"info": info, "tiles": tiles})
             self.all_objects.append({"info": info, "objects": objects})
         except Exception:
-            print('Error while parsing tile set.')
+            print('Error while parsing digit arrays.')
