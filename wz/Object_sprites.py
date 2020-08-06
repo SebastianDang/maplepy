@@ -13,7 +13,6 @@ class Object_sprites(pygame.sprite.Sprite):
         super().__init__()
         self.screen = screen
         self.xml = {}
-        self.xml_done = []
         self.sprites = {}
         self.objects = []
 
@@ -25,7 +24,7 @@ class Object_sprites(pygame.sprite.Sprite):
             return
 
         # Load and parse the xml
-        file = "{}/data/Obj/{}.img.xml".format(path, name)
+        file = "{}/Obj/{}.img.xml".format(path, name)
         self.xml[name] = Object_xml()
         self.xml[name].open(file)
         self.xml[name].parse_root()
@@ -50,7 +49,7 @@ class Object_sprites(pygame.sprite.Sprite):
                     # Get a list of images for the key
                     images = []
                     for index in range(0, 20):  # Num frames
-                        file = '{}/data/Obj/{}/{}.{}.{}.{}.png'.format(
+                        file = '{}/Obj/{}/{}.{}.{}.{}.png'.format(
                             path, xml.name, tag, item_name, str(canvases_index), str(index))
                         if os.path.isfile(file):
                             image = pygame.image.load(file).convert_alpha()

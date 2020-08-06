@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 
 
-class map_wz:
+class Map_xml:
 
     def __init__(self):
         self.root = None

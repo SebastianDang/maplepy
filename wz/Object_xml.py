@@ -24,15 +24,13 @@ class Object_xml:
             return
         try:
             objects = {}
-            vector_tags = ['vector']
-            value_tags = ['int', 'string']
-
+            # Parse xml
             for child in self.root:
                 objects[child.get('name')] = self.parse_tags(child)
+            # Set variables
             self.name = self.root.get('name')
             self.objects = objects
-
-        except Exception:
+        except:
             print('Error while parsing.')
 
     def parse_tags(self, tags):
@@ -67,15 +65,5 @@ class Object_xml:
                 item['cx'] = value.get('x')
                 item['cy'] = value.get('y')
             if value.tag in value_tags:
-                item[value.get('name')] = value.get(
-                    'value')
+                item[value.get('name')] = value.get('value')
         return item
-
-if __name__ == "__main__":
-    print(Object_xml.__name__)
-    m = Object_xml()
-    m.open('./data/Obj/acc1.img.xml')
-    m.parse_root()
-    result = m.objects.get('mapleIsland', {}).get('maple')
-    result = result[0]
-    print(result)

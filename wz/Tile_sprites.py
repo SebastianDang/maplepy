@@ -14,90 +14,110 @@ class Tile_sprites(pygame.sprite.Sprite):
         self.screen = screen
         self.xml = None
         self.sprites = None
-        self.tiles = None
+        self.objects = None
 
-    def load_xml(self, xml):
+    def load_xml(self, name, path):
+
+        # Check if xml has already been loaded before
+        if self.xml:
+            print('Xml was already loaded.')
+            return
+
+        # Load and parse the xml
+        file = "{}/Tile/{}.img.xml".format(path, name)
         self.xml = Tile_xml()
-        self.xml.open(xml)
+        self.xml.open(file)
         self.xml.parse_root()
 
     def load_sprites(self, path):
-        if not self.xml or not self.xml.tiles:
+
+        # Check if xml has finished loading
+        if not self.xml or not self.xml.objects:
+            print('Xml was not loaded yet.')
             return
+
+        # Load sprites for a given xml file
         sprites = {}
-        for tile in self.xml.tiles:
+        for obj in self.xml.objects:
             images = []
             for index in range(0, 20):  # Max num of frames
-                file = "{}/data/Tile/{}/{}.{}.png".format(
-                    path, self.xml.name, tile, str(index))
+                file = "{}/Tile/{}/{}.{}.png".format(
+                    path, self.xml.name, obj, str(index))
                 if os.path.isfile(file):
                     image = pygame.image.load(file).convert_alpha()
                     images.append(image)
                 else:
                     break
-            sprites[tile] = images
+            sprites[obj] = images
+
+        # Set images
         self.sprites = sprites
 
-    def load_tiles(self, tile_instances):
-        if not self.xml or not self.xml.tiles:
+    def clear_objects(self):
+        self.objects.clear()
+
+    def load_objects(self, object_instances):
+
+        # Check if xml has finished loading
+        if not self.xml or not self.xml.objects:
             return
-        tiles = []
 
         # Go through instances list and add
-        for instance in tile_instances:
+        objects = []
+        for instance in object_instances:
             try:
 
                 # Build object
-                tile = Tile_obj()
+                obj = Tile_obj()
 
                 # Required properties
-                tile.x = int(instance['x'])
-                tile.y = int(instance['y'])
-                tile.u = instance['u']
-                tile.no = int(instance['no'])
-                tile.zM = int(instance['zM'])
+                obj.x = int(instance['x'])
+                obj.y = int(instance['y'])
+                obj.u = instance['u']
+                obj.no = int(instance['no'])
+                obj.zM = int(instance['zM'])
 
                 # Get sprite by key and index
-                sprites = self.sprites[tile.u]
-                sprite = sprites[tile.no]
-                tile.sprite = sprite
+                sprites = self.sprites[obj.u]
+                sprite = sprites[obj.no]
+                obj.sprite = sprite
 
                 # Get additional properties
-                tile_data = self.xml.tiles[tile.u][tile.no]
-                tile.cx = int(tile_data['cx'])
-                tile.cy = int(tile_data['cy'])
-                tile.z = int(tile_data['z'])
+                obj_data = self.xml.objects[obj.u][obj.no]
+                obj.cx = int(obj_data['cx'])
+                obj.cy = int(obj_data['cy'])
+                obj.z = int(obj_data['z'])
 
                 # Explicit special case
-                if tile.z:
-                    tile.zM = tile.z
+                if obj.z:
+                    obj.zM = obj.z
 
                 # Add to list
-                tiles.append(tile)
+                objects.append(obj)
 
             except:
                 print('Error while loading tiles')
                 continue
 
         # Pre process and sort by z
-        tiles = sorted(tiles, key=lambda k: k.zM)
-        self.tiles = tiles
+        objects = sorted(objects, key=lambda k: k.zM)
+        self.objects = objects
 
     def update(self):
         pass
 
     def blit(self, offset=None):
-        if not self.tiles:
+        if not self.objects:
             return
-        for tile in self.tiles:
+        for obj in self.objects:
             try:
                 # Get image
-                image = tile.sprite
+                image = obj.sprite
                 rect = image.get_rect().copy()
 
                 # Image offset
-                rect.topleft = (-tile.cx, -tile.cy)
-                rect = rect.move(tile.x, tile.y)
+                rect.topleft = (-obj.cx, -obj.cy)
+                rect = rect.move(obj.x, obj.y)
 
                 # Check offset
                 if offset and not rect.colliderect(offset):
@@ -110,4 +130,5 @@ class Tile_sprites(pygame.sprite.Sprite):
                 # Draw
                 self.screen.blit(image, rect)
             except:
+                print('Error while drawing tiles')
                 continue

@@ -1,13 +1,9 @@
 import os
 import sys
 import pygame
-from map_wz import *
+from Map_xml import *
 from Tile_sprites import Tile_sprites
-from Tile_xml import Tile_xml
-from Tile_obj import Tile_obj
 from Object_sprites import Object_sprites
-from Object_xml import Object_xml
-from Object_obj import Object_obj
 vec = pygame.math.Vector2
 
 
@@ -15,23 +11,23 @@ class map_wz_sprite(pygame.sprite.Sprite):
     def __init__(self, screen):
         super().__init__()
         self.screen = screen
-        self.map_wz = None
+        self.map_xml = None
         self.images = {}
         self.tile_sprites_list = []
         self.object_sprites = None
 
     def load_wz(self, xml):
-        self.map_wz = map_wz()
-        self.map_wz.open(xml)
-        self.map_wz.parse_root()
+        self.map_xml = Map_xml()
+        self.map_xml.open(xml)
+        self.map_xml.parse_root()
 
     def load_bg_images(self):
-        if not self.map_wz:
+        if not self.map_xml:
             return
 
         # Get unique backgrounds
         name = []
-        for bg in self.map_wz.bg:
+        for bg in self.map_xml.bg:
             name.append(bg['bS'])
         name = set(name)
 
@@ -48,24 +44,24 @@ class map_wz_sprite(pygame.sprite.Sprite):
             self.images[n] = images
 
     def load_tile_sprites(self):
-        if not self.map_wz:
+        if not self.map_xml:
             return
 
-        for tile_instances in self.map_wz.all_tiles:
-            info = tile_instances['info']
+        # Load instances
+        for object_instances in self.map_xml.all_tiles:
+            info = object_instances['info']
             if 'tS' in info:
                 # Get tile name
                 tile_name = info['tS']
                 # Create sprites
-                tile_sprites = Tile_sprites(self.screen)
-                tile_sprites.load_xml(
-                    "{}/data/Tile/{}.img.xml".format('.', tile_name))
-                tile_sprites.load_sprites("{}".format('.'))
-                tile_sprites.load_tiles(tile_instances['tiles'])
-            self.tile_sprites_list.append(tile_sprites)
+                sprites = Tile_sprites(self.screen)
+                sprites.load_xml(tile_name, './data')
+                sprites.load_sprites('./data')
+                sprites.load_objects(object_instances['tiles'])
+            self.tile_sprites_list.append(sprites)
 
     def load_object_sprites(self):
-        if not self.map_wz:
+        if not self.map_xml:
             return
 
         # If variable is not yet initialized
@@ -75,8 +71,8 @@ class map_wz_sprite(pygame.sprite.Sprite):
         # Clear objects before beginning
         self.object_sprites.clear_objects()
 
-        # Load object instances
-        for object_instances in self.map_wz.all_objects:
+        # Load instances
+        for object_instances in self.map_xml.all_objects:
 
             # Load sets of sprites only once
             oS_set = []
@@ -84,8 +80,8 @@ class map_wz_sprite(pygame.sprite.Sprite):
                 oS_set.append(obj['oS'])
             oS_set = set(oS_set)
             for oS in oS_set:
-                self.object_sprites.load_xml(oS, '.')
-                self.object_sprites.load_sprites(oS, '.')
+                self.object_sprites.load_xml(oS, './data')
+                self.object_sprites.load_sprites(oS, './data')
 
             # Load objects after
             self.object_sprites.load_objects(oS, object_instances['objects'])
@@ -96,7 +92,7 @@ class map_wz_sprite(pygame.sprite.Sprite):
         w, h = pygame.display.get_surface().get_size()
 
         # Draw background
-        for bg in self.map_wz.bg:
+        for bg in self.map_xml.bg:
             try:
                 name = bg['name']
                 bS = bg['bS']

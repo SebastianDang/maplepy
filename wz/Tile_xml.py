@@ -8,41 +8,45 @@ class Tile_xml:
         self.root = None
         self.name = None
         self.info = None
-        self.tiles = None
+        self.objects = None
 
     def open(self, file):
         if self.root:
-            print('Xml file already opened.')
+            print('{} already opened.'.format(file))
             return
         if not os.path.isfile(file):
-            print('Xml file does not exist.')
+            print('{} does not exist.'.format(file))
             return
         self.root = ET.parse(file).getroot()
 
     def parse_root(self):
         if not self.root:
-            print('No xml file opened.')
+            print('No file opened.')
             return
         try:
             info = {}
-            tiles = {}
-            vector_tags = ['vector']
-            value_tags = ['int', 'string']
+            objects = {}
             # Parse xml
             for child in self.root:
                 if child.attrib.get('name') == 'info':
-                    for value in child:
-                        if value.tag in value_tags:
-                            info[value.get('name')] = value.get('value')
+                    info = self.parse_info(child)
                 else:
-                    tile_data = self.parse_canvas_array(child)
-                    tiles[child.attrib.get('name')] = tile_data
+                    object_data = self.parse_canvas_array(child)
+                    objects[child.attrib.get('name')] = object_data
             # Set variables
             self.name = self.root.get('name')
             self.info = info
-            self.tiles = tiles
-        except Exception:
-            print('Error while parsing tile.')
+            self.objects = objects
+        except:
+            print('Error while parsing.')
+
+    def parse_info(self, info):
+        item = {}
+        value_tags = ['int', 'string']
+        for value in info:
+            if value.tag in value_tags:
+                item[value.get('name')] = value.get('value')
+        return item
 
     def parse_tags(self, tags):
         items = {}
@@ -76,6 +80,5 @@ class Tile_xml:
                 item['cx'] = value.get('x')
                 item['cy'] = value.get('y')
             if value.tag in value_tags:
-                item[value.get('name')] = value.get(
-                    'value')
+                item[value.get('name')] = value.get('value')
         return item
