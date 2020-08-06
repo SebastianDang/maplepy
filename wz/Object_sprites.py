@@ -21,11 +21,11 @@ class Object_sprites(pygame.sprite.Sprite):
 
         # Check if xml has already been loaded before
         if name in self.xml:
-            # print('{} was already loaded.'.format(name))
+            print('{} was already loaded.'.format(name))
             return
 
         # Load and parse the xml
-        file = "{}/data/Obj/{}.img.xml".format('.', name)
+        file = "{}/data/Obj/{}.img.xml".format(path, name)
         self.xml[name] = Object_xml()
         self.xml[name].open(file)
         self.xml[name].parse_root()
@@ -34,7 +34,7 @@ class Object_sprites(pygame.sprite.Sprite):
 
         # Check if xml has finished loading
         if name not in self.xml or not self.xml[name].objects:
-            # print('{} was not loaded yet.'.format(name))
+            print('{} was not loaded yet.'.format(name))
             return
 
         # Load sprites for a given xml file
@@ -68,10 +68,10 @@ class Object_sprites(pygame.sprite.Sprite):
 
         # Check if xml has finished loading
         if name not in self.xml or not self.xml[name].objects:
-            # print('{} was not loaded yet.'.format(name))
+            print('{} was not loaded yet.'.format(name))
             return
 
-        # Go through object instances list and add object
+        # Go through instances list and add
         for instance in object_instances:
             try:
 
@@ -102,7 +102,7 @@ class Object_sprites(pygame.sprite.Sprite):
                 # Get sprite by key
                 key = "{}.{}.{}.{}".format(obj.oS, obj.l0, obj.l1, obj.l2)
                 if key not in self.sprites:
-                    # print('{} was not loaded yet.'.format(key))
+                    print('{} was not loaded yet.'.format(key))
                     continue
                 obj.sprites = self.sprites[key]
 
@@ -112,6 +112,7 @@ class Object_sprites(pygame.sprite.Sprite):
 
                 # Get additional properties
                 try:
+
                     # Set default data
                     obj.cx = 0
                     obj.cy = 0
@@ -122,9 +123,9 @@ class Object_sprites(pygame.sprite.Sprite):
                     l0 = objects[obj.l0]
                     l1 = l0[obj.l1]
                     l2 = l1[int(obj.l2)]
-                    data = l2[0]
 
                     # Set data
+                    data = l2[0]
                     obj.cx = int(data['cx'])
                     obj.cy = int(data['cy'])
                     obj.z = int(data['z'])
@@ -157,7 +158,7 @@ class Object_sprites(pygame.sprite.Sprite):
                 rect = image.get_rect().copy()
 
                 # Image offset
-                rect.center = vec(-obj.cx, -obj.cy)
+                rect.topleft = vec(-obj.cx, -obj.cy)
                 rect = rect.move(obj.x, obj.y)
 
                 # Check offset

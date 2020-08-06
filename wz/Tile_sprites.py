@@ -42,42 +42,43 @@ class Tile_sprites(pygame.sprite.Sprite):
         if not self.xml or not self.xml.tiles:
             return
         tiles = []
+
+        # Go through instances list and add
         for instance in tile_instances:
             try:
-                # Instance properties
-                x = int(instance['x'])
-                y = int(instance['y'])
-                u = instance['u']
-                no = int(instance['no'])
-                zM = int(instance['zM'])
-                # Tile properties
-                tile_data = self.xml.tiles[u][no]
-                cx = int(tile_data['cx'])
-                cy = int(tile_data['cy'])
-                z = int(tile_data['z'])
-                # Tile sprite
-                sprites = self.sprites[u]
-                sprite = sprites[no]
-                # Build tile object
+
+                # Build object
                 tile = Tile_obj()
-                tile.x = x
-                tile.y = y
-                tile.z = z
-                tile.cx = cx
-                tile.cy = cy
-                tile.u = u
-                tile.no = no
-                tile.zM = zM
+
+                # Required properties
+                tile.x = int(instance['x'])
+                tile.y = int(instance['y'])
+                tile.u = instance['u']
+                tile.no = int(instance['no'])
+                tile.zM = int(instance['zM'])
+
+                # Get sprite by key and index
+                sprites = self.sprites[tile.u]
+                sprite = sprites[tile.no]
                 tile.sprite = sprite
+
+                # Get additional properties
+                tile_data = self.xml.tiles[tile.u][tile.no]
+                tile.cx = int(tile_data['cx'])
+                tile.cy = int(tile_data['cy'])
+                tile.z = int(tile_data['z'])
+
                 # Explicit special case
                 if tile.z:
                     tile.zM = tile.z
+
                 # Add to list
                 tiles.append(tile)
 
             except:
                 print('Error while loading tiles')
                 continue
+
         # Pre process and sort by z
         tiles = sorted(tiles, key=lambda k: k.zM)
         self.tiles = tiles
