@@ -1,3 +1,4 @@
+import os
 import xml.etree.ElementTree as ET
 
 
@@ -10,13 +11,16 @@ class Object_xml:
 
     def open(self, file):
         if self.root:
-            print('Xml file already opened.')
+            print('{} already opened.'.format(file))
+            return
+        if not os.path.isfile(file):
+            print('{} does not exist.'.format(file))
             return
         self.root = ET.parse(file).getroot()
 
     def parse_root(self):
         if not self.root:
-            print('No xml file opened.')
+            print('No file opened.')
             return
         try:
             objects = {}
@@ -29,7 +33,7 @@ class Object_xml:
             self.objects = objects
 
         except Exception:
-            print('Error while parsing tile.')
+            print('Error while parsing.')
 
     def parse_tags(self, tags):
         items = {}
@@ -67,24 +71,11 @@ class Object_xml:
                     'value')
         return item
 
-import os
-
 if __name__ == "__main__":
     print(Object_xml.__name__)
     m = Object_xml()
-    m.open('./data/Obj/connect.img.xml')
+    m.open('./data/Obj/acc1.img.xml')
     m.parse_root()
-
-    path = '.'
-    for tag, objects in m.objects.items():
-        for item_name, item_array in objects.items():
-            for canvases_index in range(0, len(item_array)):
-                # canvases = item_array[canvases_index]
-                images = []
-                for index in range(0, 10):  # Max num of frames
-                    file = '{}/data/Obj/{}/{}.{}.{}.{}.png'.format(
-                        path, m.name, tag, item_name, canvases_index, index)
-                    if os.path.isfile(file):
-                        print(file)
-                    else:
-                        break
+    result = m.objects.get('mapleIsland', {}).get('maple')
+    result = result[0]
+    print(result)

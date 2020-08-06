@@ -22,7 +22,7 @@ class Tile_sprites(pygame.sprite.Sprite):
         self.xml.parse_root()
 
     def load_sprites(self, path):
-        if not self.xml:
+        if not self.xml or not self.xml.tiles:
             return
         sprites = {}
         for tile in self.xml.tiles:
@@ -39,6 +39,8 @@ class Tile_sprites(pygame.sprite.Sprite):
         self.sprites = sprites
 
     def load_tiles(self, tile_instances):
+        if not self.xml or not self.xml.tiles:
+            return
         tiles = []
         for instance in tile_instances:
             try:
@@ -84,20 +86,21 @@ class Tile_sprites(pygame.sprite.Sprite):
         pass
 
     def blit(self, offset=None):
-
+        if not self.tiles:
+            return
         for tile in self.tiles:
             try:
                 # Get image
                 image = tile.sprite
                 rect = image.get_rect().copy()
 
-                # Check offset
-                if offset and not rect.colliderect(offset):
-                    continue
-
                 # Image offset
                 rect.topleft = (-tile.cx, -tile.cy)
                 rect = rect.move(tile.x, tile.y)
+
+                # Check offset
+                if offset and not rect.colliderect(offset):
+                    continue
 
                 # Camera offset
                 if offset:

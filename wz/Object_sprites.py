@@ -12,108 +12,157 @@ class Object_sprites(pygame.sprite.Sprite):
     def __init__(self, screen):
         super().__init__()
         self.screen = screen
-        self.xml = None
+        self.xml = {}
+        self.xml_done = []
         self.sprites = {}
-        self.objects = None
+        self.objects = []
 
-    def load_xml(self, xml):
-        self.xml = Object_xml()
-        self.xml.open(xml)
-        self.xml.parse_root()
+    def load_xml(self, name, path):
 
-    def load_sprites(self, path):
-        if not self.xml:
+        # Check if xml has already been loaded before
+        if name in self.xml:
+            # print('{} was already loaded.'.format(name))
             return
-        sprites = {}
-        for tag, objects in self.xml.objects.items():
+
+        # Load and parse the xml
+        file = "{}/data/Obj/{}.img.xml".format('.', name)
+        self.xml[name] = Object_xml()
+        self.xml[name].open(file)
+        self.xml[name].parse_root()
+
+    def load_sprites(self, name, path):
+
+        # Check if xml has finished loading
+        if name not in self.xml or not self.xml[name].objects:
+            # print('{} was not loaded yet.'.format(name))
+            return
+
+        # Load sprites for a given xml file
+        xml = self.xml[name]
+        for tag, objects in xml.objects.items():
             for item_name, item_array in objects.items():
                 for canvases_index in range(0, len(item_array)):
+
+                    # Create key
+                    key = "{}.{}.{}.{}".format(
+                        name, tag, item_name, str(canvases_index))
+
+                    # Get a list of images for the key
                     images = []
-                    for index in range(0, 20):  # Max num of frames
+                    for index in range(0, 20):  # Num frames
                         file = '{}/data/Obj/{}/{}.{}.{}.{}.png'.format(
-                            path, self.xml.name, tag, item_name, str(canvases_index), str(index))
+                            path, xml.name, tag, item_name, str(canvases_index), str(index))
                         if os.path.isfile(file):
                             image = pygame.image.load(file).convert_alpha()
                             images.append(image)
                         else:
                             break
-                    key = "{}.{}.{}".format(
-                        tag, item_name, str(canvases_index))
-                    sprites[key] = images
-        self.sprites = sprites
 
-    def load_objects(self, object_instances):
-        objects = []
+                    # Add images for the key (This will overrite any existing keys!)
+                    self.sprites[key] = images
+
+    def clear_objects(self):
+        self.objects.clear()
+
+    def load_objects(self, name, object_instances):
+
+        # Check if xml has finished loading
+        if name not in self.xml or not self.xml[name].objects:
+            # print('{} was not loaded yet.'.format(name))
+            return
+
+        # Go through object instances list and add object
         for instance in object_instances:
             try:
-                # Instance properties
-                oS = instance['oS']
-                l0 = instance['l0']
-                l1 = instance['l1']
-                l2 = instance['l2']
-                x = int(instance['x'])
-                y = int(instance['y'])
-                z = int(instance['z'])
-                f = int(instance['f'])
-                zM = int(instance['zM'])
-                r = int(instance['r'])
-                move = int(instance['move'])
-                dynamic = int(instance['dynamic'])
-                piece = int(instance['piece'])
-                # Special case
-                if oS not in self.xml.name:
-                    continue
-                # Object sprite
-                sprites = self.sprites["{}.{}.{}".format(l0, l1, l2)]
-                sprite = sprites[0]  # start with 0
+
                 # Build object
                 obj = Object_obj()
-                obj.l0 = l0
-                obj.l1 = l1
-                obj.l2 = l2
-                obj.x = x
-                obj.y = y
-                obj.z = z
-                obj.f = f
-                obj.zM = zM
-                obj.r = r
-                obj.move = move
-                obj.dynamic = dynamic
-                obj.piece = piece
-                obj.sprite = sprite
-                obj.sprites = sprites
+
+                # Required properties
+                obj.oS = instance['oS']
+                obj.l0 = instance['l0']
+                obj.l1 = instance['l1']
+                obj.l2 = instance['l2']
+                obj.x = int(instance['x'])
+                obj.y = int(instance['y'])
+                obj.z = int(instance['z'])
+                obj.f = int(instance['f'])
+                obj.zM = int(instance['zM'])
+
+                # Optional properties
+                if 'r' in instance:
+                    obj.r = int(instance['r'])
+                if 'move' in instance:
+                    obj.move = int(instance['move'])
+                if 'dynamic' in instance:
+                    obj.dynamic = int(instance['dynamic'])
+                if 'piece' in instance:
+                    piece = int(instance['piece'])
+
+                # Get sprite by key
+                key = "{}.{}.{}.{}".format(obj.oS, obj.l0, obj.l1, obj.l2)
+                if key not in self.sprites:
+                    # print('{} was not loaded yet.'.format(key))
+                    continue
+                obj.sprites = self.sprites[key]
+
                 # Explicit special case
                 if obj.z:
                     obj.zM = obj.z
+
+                # Get additional properties
+                try:
+                    # Set default data
+                    obj.cx = 0
+                    obj.cy = 0
+                    obj.z = 0
+
+                    # Extract data
+                    objects = self.xml[name].objects
+                    l0 = objects[obj.l0]
+                    l1 = l0[obj.l1]
+                    l2 = l1[int(obj.l2)]
+                    data = l2[0]
+
+                    # Set data
+                    obj.cx = int(data['cx'])
+                    obj.cy = int(data['cy'])
+                    obj.z = int(data['z'])
+
+                except:
+                    pass
+
                 # Add to list
-                objects.append(obj)
+                self.objects.append(obj)
 
             except:
                 print('Error while loading objects')
                 continue
+
         # Pre process and sort by z
-        objects = sorted(objects, key=lambda k: k.zM)
-        self.objects = objects
+        self.objects = sorted(self.objects, key=lambda k: k.zM)
 
     def update(self):
         for obj in self.objects:
             obj.frame_count = (obj.frame_count + 1) % 180
-            obj.frame_index = int(obj.frame_count / 20 % len(obj.sprites))
+            n = len(obj.sprites)
+            if n > 0:
+                obj.frame_index = int(obj.frame_count / 10 % n)
 
     def blit(self, offset=None):
-
         for obj in self.objects:
             try:
                 # Get image
                 image = obj.sprites[obj.frame_index]
                 rect = image.get_rect().copy()
 
+                # Image offset
+                rect.center = vec(-obj.cx, -obj.cy)
+                rect = rect.move(obj.x, obj.y)
+
                 # Check offset
                 if offset and not rect.colliderect(offset):
                     continue
-
-                # Image offset
-                rect.center = vec(obj.x, obj.y)
 
                 # Image flip
                 if obj.f > 0:

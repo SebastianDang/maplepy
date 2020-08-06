@@ -1,3 +1,4 @@
+import os
 import xml.etree.ElementTree as ET
 
 
@@ -12,6 +13,9 @@ class Tile_xml:
     def open(self, file):
         if self.root:
             print('Xml file already opened.')
+            return
+        if not os.path.isfile(file):
+            print('Xml file does not exist.')
             return
         self.root = ET.parse(file).getroot()
 
@@ -75,10 +79,3 @@ class Tile_xml:
                 item[value.get('name')] = value.get(
                     'value')
         return item
-
-
-if __name__ == "__main__":
-    print(Tile_xml.__name__)
-    m = Tile_xml()
-    m.open('./data/Tile/grassySoil.img.xml')
-    m.parse_root()

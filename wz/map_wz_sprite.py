@@ -18,7 +18,7 @@ class map_wz_sprite(pygame.sprite.Sprite):
         self.map_wz = None
         self.images = {}
         self.tile_sprites_list = []
-        self.object_sprites_list = []
+        self.object_sprites = None
 
     def load_wz(self, xml):
         self.map_wz = map_wz()
@@ -67,21 +67,28 @@ class map_wz_sprite(pygame.sprite.Sprite):
     def load_object_sprites(self):
         if not self.map_wz:
             return
+
+        # If variable is not yet initialized
+        if not self.object_sprites:
+            self.object_sprites = Object_sprites(self.screen)
+
+        # Clear objects before beginning
+        self.object_sprites.clear_objects()
+
+        # Load object instances
         for object_instances in self.map_wz.all_objects:
-            info = object_instances['info']
-            # TODO: Check if really unique, we only want to do this once
+
+            # Load sets of sprites only once
             oS_set = []
             for obj in object_instances['objects']:
                 oS_set.append(obj['oS'])
             oS_set = set(oS_set)
             for oS in oS_set:
-                # Create sprites
-                object_sprites = Object_sprites(self.screen)
-                object_sprites.load_xml(
-                    "{}/data/Obj/{}.img.xml".format('.', oS))
-                object_sprites.load_sprites("{}".format('.'))
-                object_sprites.load_objects(object_instances['objects'])
-                self.object_sprites_list.append(object_sprites)
+                self.object_sprites.load_xml(oS, '.')
+                self.object_sprites.load_sprites(oS, '.')
+
+            # Load objects after
+            self.object_sprites.load_objects(oS, object_instances['objects'])
 
     def draw_bg(self, offset=None):
 
@@ -157,12 +164,10 @@ class map_wz_sprite(pygame.sprite.Sprite):
             tile_sprites.blit(offset)
 
     def draw_objects(self, offset=None):
-        for object_sprites in self.object_sprites_list:
-            object_sprites.blit(offset)
+        self.object_sprites.blit(offset)
 
     def update_objects(self):
-        for object_sprites in self.object_sprites_list:
-            object_sprites.update()
+        self.object_sprites.update()
 
     def update(self):
         self.update_objects()
@@ -181,8 +186,8 @@ if __name__ == "__main__":
     screen = pygame.display.set_mode((w, h))
     cam = pygame.Rect(0, 0, w, h)
     m = map_wz_sprite(screen)
-    m.load_wz('./xml/000010000.xml')
-    # m.load_wz('./xml/100000000.xml')
+    # m.load_wz('./xml/000010000.xml')
+    m.load_wz('./xml/100000000.xml')
     m.load_bg_images()
     m.load_tile_sprites()
     m.load_object_sprites()
