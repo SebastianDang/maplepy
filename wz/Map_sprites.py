@@ -2,6 +2,7 @@ import os
 import sys
 import pygame
 from Map_xml import Map_xml
+from Back_sprites import Back_sprites
 from Tile_sprites import Tile_sprites
 from Object_sprites import Object_sprites
 vec = pygame.math.Vector2
@@ -14,7 +15,7 @@ class Map_sprites(pygame.sprite.Sprite):
 
         self.path = '.'
         self.map_xml = None
-        self.images = {}
+        self.back_sprites = None
         self.tile_sprites_list = []
         self.object_sprites = None
 
@@ -27,35 +28,35 @@ class Map_sprites(pygame.sprite.Sprite):
         file = "{}/Map/Map{}/{}.img.xml".format(
             self.path,  map_id[0:1], map_id)
 
-        print(file)
-
         # Load xml
         self.map_xml = Map_xml()
         self.map_xml.open(file)
         self.map_xml.parse_root()
 
-    def load_bg_images(self):
+    def load_back_sprites(self):
         if not self.map_xml:
             return
 
-        # Get unique backgrounds
-        name = []
-        for bg in self.map_xml.all_backs:
-            name.append(bg['bS'])
-        name = set(name)
+        # If variable is not yet initialized
+        if not self.back_sprites:
+            self.back_sprites = Back_sprites(self.screen)
 
-        # Load backgrounds
-        for n in name:
-            images = []
-            for i in range(0, 100):  # Max num of images
-                file = '{}/data/Back/{}/{}.{}.png'.format(
-                    self.path, n, 'back', str(i))
-                if os.path.isfile(file):
-                    image = pygame.image.load(file).convert_alpha()
-                    images.append(image)
-                else:
-                    break
-            self.images[n] = images
+        # Clear objects before beginning
+        self.back_sprites.clear_objects()
+
+        # Get back name (should be unique)
+        bS_set = []
+        for back in self.map_xml.all_backs:
+            bS_set.append(back['bS'])
+        bS_set = set(bS_set)
+
+        # Load sets of sprites only once
+        for bS in bS_set:
+            self.back_sprites.load_xml(bS, self.path)
+            self.back_sprites.load_sprites(bS, self.path)
+
+        # Load objects after
+        self.back_sprites.load_objects(bS, self.map_xml.all_backs)
 
     def load_tile_sprites(self):
         if not self.map_xml:
@@ -100,74 +101,8 @@ class Map_sprites(pygame.sprite.Sprite):
             # Load objects after
             self.object_sprites.load_objects(oS, object_instances['objects'])
 
-    def draw_bg(self, offset=None):
-
-        # Get surface properties
-        w, h = pygame.display.get_surface().get_size()
-
-        # Draw background
-        for bg in self.map_xml.all_backs:
-            try:
-                name = bg['name']
-                bS = bg['bS']
-                no = int(bg['no'])
-                x = int(bg['x'])
-                y = int(bg['y'])
-                f = int(bg['f'])
-                t = int(bg['type'])
-
-                # Get image
-                images = self.images[bS]
-                image = images[no]
-                rect = image.get_rect().copy()
-
-                # Image offset
-                rect.topleft = vec(x, y)
-
-                # Image flip
-                if f > 0:
-                    image = pygame.transform.flip(image, True, False)
-
-                # Camera offset
-                if offset:
-                    rect = rect.move(-offset.x, -offset.y)
-
-                # 0 - Simple image (eg. the hill with the tree in the background of Henesys)
-                # 1 - Image is copied horizontally (eg. the sea in Lith Harbor)
-                # 2 - Image is copied vertically (eg. trees in maps near Ellinia)
-                # 3 - Image is copied in both directions (eg. the background sky color square in many maps)
-                # 4 - Image scrolls and is copied horizontally (eg. clouds)
-                # 5 - Image scrolls and is copied vertically (eg. background in the Helios Tower elevator)
-                # 6 - Image scrolls horizontally, and is copied in both directions (eg. the train in Kerning City subway JQ)
-                # 7 - Image scrolls vertically, and is copied in both directions (eg. rain drops in Ellin PQ maps)
-                # TODO: Handle velocities
-                horizontal = [1, 3, 4, 6, 7]
-                vertical = [2, 3, 5, 6, 7]
-
-                # Type
-                if t == 0:  # Static image
-                    self.screen.blit(image, rect)
-                elif t in horizontal:  # Copied horizontally
-                    tile = rect.copy()
-                    while tile.x > -tile.width:  # TODO: Don't do this the lazy way
-                        self.screen.blit(image, tile)
-                        tile = tile.move(-tile.width, 0)
-                    tile = rect.copy()
-                    while tile.x < w:
-                        self.screen.blit(image, tile)
-                        tile = tile.move(tile.width, 0)
-                elif t in vertical:  # Copied vertically
-                    tile = rect.copy()
-                    while tile.y > -tile.height:  # TODO: Don't do this the lazy way
-                        self.screen.blit(image, tile)
-                        tile = tile.move(0, -tile.height)
-                    tile = rect.copy()
-                    while tile.y < h:
-                        self.screen.blit(image, tile)
-                        tile = tile.move(0, tile.height)
-
-            except:
-                continue
+    def draw_backs(self, offset=None):
+        self.back_sprites.blit(offset)
 
     def draw_tiles(self, offset=None):
         for tile_sprites in self.tile_sprites_list:
@@ -184,7 +119,7 @@ class Map_sprites(pygame.sprite.Sprite):
 
     def blit(self, offset=None):
 
-        self.draw_bg(offset)
+        self.draw_backs(offset)
         self.draw_tiles(offset)
         self.draw_objects(offset)
 
@@ -201,7 +136,7 @@ if __name__ == "__main__":
     m.path = './Map.wz'
     m.load_map('000010000')
     # m.load_map('100000000')
-    m.load_bg_images()
+    m.load_back_sprites()
     m.load_tile_sprites()
     m.load_object_sprites()
 

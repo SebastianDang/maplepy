@@ -115,7 +115,7 @@ class Map_xml:
                 back.append(back_value)
             self.all_backs = back
         except Exception:
-            print('Error while parsing bg.')
+            print('Error while parsing back.')
 
     def parse_digit_arrays(self, parent):
         """
