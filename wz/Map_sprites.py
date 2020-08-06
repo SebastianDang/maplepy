@@ -156,7 +156,7 @@ class Map_sprites(pygame.sprite.Sprite):
 if __name__ == "__main__":
     print(Map_sprites.__name__)
     pygame.init()
-    w, h = 1920, 1200
+    w, h = 800, 600
     screen = pygame.display.set_mode((w, h))
 
     # Load

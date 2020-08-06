@@ -91,11 +91,18 @@ class Back_sprites(pygame.sprite.Sprite):
                 sprite = sprites[obj.no]
                 obj.sprite = sprite
 
+                # First set sprite rect as width and height
+                rect = sprite.get_rect()
+                obj.width = rect.width
+                obj.height = rect.height
+
+                # Set other defaults
+                obj.center_x = 0
+                obj.center_y = 0
+                obj.z = 0
+
                 # Get additional properties
                 try:
-                    obj.z = 0
-                    obj.width = 0
-                    obj.height = 0
 
                     # Extract data
                     object_data = self.xml[name].objects
@@ -103,15 +110,11 @@ class Back_sprites(pygame.sprite.Sprite):
 
                     # Set data
                     data = back_data[obj.no]
-                    obj.z = int(data['z'])
                     obj.width = int(data['width'])
                     obj.height = int(data['height'])
-
-                    # Explicit special case
-                    if obj.cx == 0:
-                        obj.cx = int(instance['cx'])
-                    if obj.cy == 0:
-                        obj.cy = int(instance['cy'])
+                    obj.center_x = int(data['x'])
+                    obj.center_y = int(data['y'])
+                    obj.z = int(data['z'])
 
                 except:
                     pass
@@ -125,18 +128,24 @@ class Back_sprites(pygame.sprite.Sprite):
 
         self.objects = objects
 
-    def calculate_back_x(self, dx, rx, z):
-        return (rx * (dx + z) / 100)
+    def calculate_x(self, x, rx, dx, z):
+        return float(rx * (dx + z) / 100) + x + z
 
-    def calculate_back_y(self, dy, ry, z):
-        return (ry * (dy + z) / 100)
+    def calculate_y(self, y, ry, dy, z):
+        return float(ry * (dy + z) / 100) + y + z
 
     def update(self):
-        horizontal = [4, 6]
-        vertical = [5, 7]
-        for obj in self.objects:
-            if obj.width > 0:
-                obj.frame_count = (obj.frame_count + 1) % obj.width
+        pass
+        # horizontal = [4, 6]
+        # vertical = [5, 7]
+        # frame_ticks = 1
+        # for obj in self.objects:
+        #     if obj.type in horizontal and obj.width > 0:
+        #         obj.frame_offset += obj.rx / frame_ticks
+        #         obj.frame_offset %= obj.width
+        #     if obj.type in vertical and obj.height > 0:
+        #         obj.frame_offset += obj.ry / frame_ticks
+        #         obj.frame_offset %= obj.height
 
     def blit(self, offset=None):
         if not self.objects:
@@ -148,21 +157,24 @@ class Back_sprites(pygame.sprite.Sprite):
         # For all objects
         for obj in self.objects:
             try:
+
                 # Get image
                 image = obj.sprite
                 rect = image.get_rect().copy()
 
-                # Image offset
-                rect.center = (-obj.cx, -obj.cy)
-                rect = rect.move(obj.x, obj.y)
+                # Center offset
+                rect.topleft = (-obj.center_x, -obj.center_y)
+
+                # Image and camera offset
+                dx = offset.x if offset else 0
+                dy = offset.y if offset else 0
+                x = self.calculate_x(obj.x, obj.rx, dx, 400)
+                y = self.calculate_y(obj.y, obj.ry, dy, 300)
+                rect = rect.move(x, y)
 
                 # Image flip
                 if obj.f > 0:
                     image = pygame.transform.flip(image, True, False)
-
-                # Camera offset
-                if offset:
-                    rect = rect.move(-offset.x, -offset.y)
 
                 # 0 - Simple image (eg. the hill with the tree in the background of Henesys)
                 # 1 - Image is copied horizontally (eg. the sea in Lith Harbor)
@@ -176,37 +188,21 @@ class Back_sprites(pygame.sprite.Sprite):
                 if obj.type == 0:
                     self.screen.blit(image, rect)
                 elif obj.type == 1:
-                    delta = obj.cx if obj.cx > 0 else rect.width
-                    tile = rect.copy()
-                    while tile.x < w:
-                        self.screen.blit(image, tile)
-                        tile = tile.move(delta, 0)
-                    tile = rect.copy()
-                    while tile.x > -tile.width:
-                        self.screen.blit(image, tile)
-                        tile = tile.move(-delta, 0)
+                    delta = obj.cx if obj.cx > 0 else obj.width
+                    if delta > 0:
+                        tile = rect.copy()
+                        while tile.x < w:
+                            self.screen.blit(image, tile)
+                            tile = tile.move(delta, 0)
+                        tile = rect.copy()
+                        while tile.x > -tile.width:
+                            self.screen.blit(image, tile)
+                            tile = tile.move(-delta, 0)
                 elif obj.type == 2:
                     pass
                 elif obj.type == 3:
                     pass
                 elif obj.type == 4:
-
-                    # # Tile rect
-                    # tile = rect.copy()
-
-                    # # Scroll horizontally
-                    # if obj.rx != 0:
-                    #     delta = obj.frame_count / obj.rx
-                    #     tile = tile.move(int(delta), 0)
-
-                    # # Copy horizontally
-                    # if tile.right > 0:
-                    #     delta = tile.width * (tile.right % tile.width)
-                    #     tile = tile.move(-delta, 0)
-                    # while tile.x < w:
-                    #     self.screen.blit(image, tile)
-                    #     tile = tile.move(tile.width, 0)
-
                     pass
                 elif obj.type == 5:
                     pass
