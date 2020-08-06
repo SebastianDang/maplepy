@@ -53,6 +53,7 @@ class Object_xml:
 
     def parse_canvas(self, canvas):
         item = {}
+        extended_tags = ['extended']
         vector_tags = ['vector']
         value_tags = ['int', 'string']
         # Canvas values
@@ -61,9 +62,23 @@ class Object_xml:
         item['height'] = canvas.get('height')
         # Inner items
         for value in canvas:
+            if value.tag in extended_tags:
+                item['extended'] = self.parse_extended(value)
             if value.tag in vector_tags:
                 item['cx'] = value.get('x')
                 item['cy'] = value.get('y')
             if value.tag in value_tags:
                 item[value.get('name')] = value.get('value')
         return item
+
+    def parse_extended(self, extended):
+        items = []
+        vector_tags = ['vector']
+        for value in extended:
+            item = {}
+            item['name'] = value.get('name')
+            if value.tag in vector_tags:
+                item['x'] = value.get('x')
+                item['x'] = value.get('y')
+            items.append(item)
+        return items
