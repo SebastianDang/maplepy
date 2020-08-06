@@ -147,11 +147,15 @@ class Object_sprites(pygame.sprite.Sprite):
             obj.frame_count = (obj.frame_count + 1) % 180
             n = len(obj.sprites)
             if n > 0:
-                obj.frame_index = int(obj.frame_count / 10 % n)
+                obj.frame_index = int(obj.frame_count / 20 % n)
 
     def blit(self, offset=None):
         for obj in self.objects:
             try:
+                # Was not able to load sprites
+                if not obj.sprites:
+                    continue
+
                 # Get image
                 image = obj.sprites[obj.frame_index]
                 rect = image.get_rect().copy()

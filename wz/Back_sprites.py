@@ -168,8 +168,8 @@ class Back_sprites(pygame.sprite.Sprite):
                 # Image and camera offset
                 dx = offset.x if offset else 0
                 dy = offset.y if offset else 0
-                x = self.calculate_x(obj.x, obj.rx, dx, 400)
-                y = self.calculate_y(obj.y, obj.ry, dy, 300)
+                x = self.calculate_x(obj.x, obj.rx, dx, 0.5 * w)
+                y = self.calculate_y(obj.y, obj.ry, dy, 0.5 * h)
                 rect = rect.move(x, y)
 
                 # Image flip

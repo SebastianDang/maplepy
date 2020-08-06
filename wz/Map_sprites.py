@@ -12,10 +12,10 @@ class Map_sprites(pygame.sprite.Sprite):
     def __init__(self, screen):
         super().__init__()
         self.screen = screen
-
+        # Camera movement
         self.cam = None
         self.bounds = None
-
+        # Objects in the map
         self.path = '.'
         self.map_xml = None
         self.back_sprites = None
@@ -44,6 +44,10 @@ class Map_sprites(pygame.sprite.Sprite):
         bottom = int(self.map_xml.info['VRBottom'])
         right = int(self.map_xml.info['VRRight'])
         self.bounds = pygame.Rect(left, top, right - left, bottom - top)
+
+        # Set up camera
+        w, h = self.screen.get_size()
+        m.cam = pygame.Rect(0, 0, w, h)
 
     def load_back_sprites(self):
         if not self.map_xml:
@@ -167,8 +171,6 @@ if __name__ == "__main__":
     m.load_back_sprites()
     m.load_tile_sprites()
     m.load_object_sprites()
-
-    m.cam = pygame.Rect(0, 0, w, h)
 
     while(True):
         # Events
