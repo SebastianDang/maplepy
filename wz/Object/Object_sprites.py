@@ -119,8 +119,7 @@ class Object_sprites(pygame.sprite.Sprite):
                     delay = int(item['delay']) if 'delay' in item else 120
 
                     # Create a canvas object
-                    canvas = Canvas(sprite, w, h, x, y)
-                    canvas.set_layer(z)
+                    canvas = Canvas(sprite, w, h, x, y, z)
                     canvas.delay = delay
 
                     # Add footholds

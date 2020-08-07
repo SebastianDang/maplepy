@@ -90,8 +90,7 @@ class Tile_sprites(pygame.sprite.Sprite):
                 z = int(item['z'])
 
                 # Create a canvas object
-                canvas = Canvas(sprite, w, h, x, y)
-                canvas.set_layer(z)
+                canvas = Canvas(sprite, w, h, x, y, z)
 
                 # Add footholds
                 if 'extended' in item:
@@ -103,7 +102,7 @@ class Tile_sprites(pygame.sprite.Sprite):
 
                 # Explicit special case
                 if not obj.zM:
-                    obj.zM = canvas.get_layer()
+                    obj.zM = canvas.z
 
                 # Add to object
                 obj.add_canvas(canvas)
