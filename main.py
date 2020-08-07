@@ -2,9 +2,12 @@ import time
 import pygame
 from Wz.Map.Map_sprites import Map_sprites
 
-pygame.init()
 w, h = 800, 600
+fps = 60
+
+pygame.init()
 screen = pygame.display.set_mode((w, h))
+clock = pygame.time.Clock()
 
 # Timer start
 t0 = time.time()
@@ -13,7 +16,8 @@ print('Loading.')
 # Load
 m = Map_sprites(screen)
 m.path = 'P:\Downloads\MapleStory'
-m.load_map('000010000')  # 100000000
+# m.load_map('000010000')  # Maple Tree Hill
+m.load_map('100000000')  # Henesys
 m.load_info()
 m.load_back_sprites()
 m.load_tile_sprites()
@@ -52,3 +56,4 @@ while(True):
     m.update()
     m.blit()
     pygame.display.update()
+    clock.tick(fps)

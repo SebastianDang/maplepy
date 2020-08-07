@@ -117,7 +117,7 @@ class Object_sprites(pygame.sprite.Sprite):
                     x = int(item['x'])
                     y = int(item['y'])
                     z = int(item['z']) if 'z' in item else 0
-                    delay = int(item['delay']) if 'delay' in item else 0
+                    delay = int(item['delay']) if 'delay' in item else 120
 
                     # Create a canvas object
                     canvas = Canvas(sprite, w, h, x, y, z)
@@ -150,10 +150,7 @@ class Object_sprites(pygame.sprite.Sprite):
 
     def update(self):
         for obj in self.objects:
-            obj.frame_count = (obj.frame_count + 1) % 180
-            n = len(obj.canvas)
-            if n > 0:
-                obj.canvas_index = int(obj.frame_count / 20 % n)
+            obj.step_frame()
 
     def blit(self, offset=None):
         for obj in self.objects:

@@ -53,6 +53,26 @@ class Instance:
     def get_canvas(self):
         return self.canvas[self.canvas_index]
 
+    def step_frame(self):
+
+        # Check if this instance can animate
+        n = len(self.canvas)
+        if n < 1:
+            return
+
+        # Update frame count
+        self.frame_count += 1
+
+        # Convert to correct rate
+        factor = 15  # TODO: Verify conversion rate
+        count = self.frame_count * factor
+        delay = self.canvas[self.canvas_index].delay
+
+        # Check individual canvas delay, update if reached
+        if count > delay:
+            self.canvas_index = (self.canvas_index + 1) % n
+            self.frame_count = 0
+
     def draw_footholds(self, screen, offset=None):
 
         # TODO: Set line thickness
