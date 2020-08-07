@@ -2,7 +2,7 @@ import os
 import pygame
 
 from Wz.Tile.Tile_xml import Tile_xml
-from Wz.Info.Tile import Tile
+from Wz.Info.Instance import Instance
 from Wz.Info.Canvas import Canvas
 from Wz.Info.Foothold import Foothold
 
@@ -70,7 +70,7 @@ class Tile_sprites(pygame.sprite.Sprite):
             try:
 
                 # Build object
-                obj = Tile()
+                obj = Instance()
 
                 # Required properties
                 obj.x = int(instance['x'])
@@ -91,7 +91,7 @@ class Tile_sprites(pygame.sprite.Sprite):
                 z = int(item['z'])
 
                 # Create a canvas object
-                obj.canvas = Canvas(sprite, w, h, x, y, z)
+                canvas = Canvas(sprite, w, h, x, y, z)
 
                 # Add footholds
                 if 'extended' in item:
@@ -99,11 +99,14 @@ class Tile_sprites(pygame.sprite.Sprite):
                         fx = int(foothold['x'])
                         fy = int(foothold['y'])
                         foothold = Foothold(fx, fy)
-                        obj.canvas.footholds.append(foothold)
+                        canvas.footholds.append(foothold)
 
                 # Explicit special case
                 if not obj.zM:
-                    obj.zM = obj.canvas.z
+                    obj.zM = canvas.z
+
+                # Add to object
+                obj.add_canvas(canvas)
 
                 # Add to list
                 objects.append(obj)

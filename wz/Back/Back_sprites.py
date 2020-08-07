@@ -2,7 +2,7 @@ import os
 import pygame
 
 from Wz.Back.Back_xml import Back_xml
-from Wz.Info.Back import Back
+from Wz.Info.Instance import Instance
 from Wz.Info.Canvas import Canvas
 
 
@@ -70,7 +70,7 @@ class Back_sprites(pygame.sprite.Sprite):
             try:
 
                 # Build object
-                obj = Back()
+                obj = Instance()
 
                 # Required properties
                 obj.x = int(instance['x'])
@@ -101,7 +101,8 @@ class Back_sprites(pygame.sprite.Sprite):
                 z = int(data['z'])
 
                 # Create a canvas object
-                obj.canvas = Canvas(sprite, w, h, x, y, z)
+                canvas = Canvas(sprite, w, h, x, y, z)
+                obj.add_canvas(canvas)
 
                 # Add to list
                 objects.append(obj)
@@ -143,7 +144,7 @@ class Back_sprites(pygame.sprite.Sprite):
             try:
 
                 # Get canvas
-                canvas = obj.canvas
+                canvas = obj.get_canvas()
 
                 # Get image
                 image = canvas.get_image(obj.f)

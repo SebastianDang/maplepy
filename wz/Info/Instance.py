@@ -1,24 +1,54 @@
 import pygame
 
 
-class Object:
+class Instance:
+    """
+    Class contains canvases use to draw and instance variables for:
+        backgrounds
+        objects
+        tiles
+    """
+
     def __init__(self):
-        self.name = 'Object'
+
+        # Common
         self.x = None
         self.y = None
         self.zM = None
         self.f = None
+
+        # Back
+        self.cx = None
+        self.cy = None
+        self.rx = None
+        self.ry = None
+        self.type = None
+        self.a = None
+        self.front = None
+        self.ani = None
+
+        # Object
         self.r = None
         self.move = None
         self.dynamic = None
         self.piece = None
+
+        # Sprite
+        self.bS = None
         self.oS = None
         self.l0 = None
         self.l1 = None
         self.l2 = None
+        self.u = None
+        self.no = None
+
+        # Canvas
         self.canvas = []
         self.canvas_index = 0
         self.frame_count = 0
+
+    def add_canvas(self, canvas):
+        self.canvas.append(canvas)
 
     def get_canvas(self):
         return self.canvas[self.canvas_index]

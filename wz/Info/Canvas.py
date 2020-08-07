@@ -2,8 +2,9 @@ import pygame
 
 
 class Canvas:
+    """Class contains a single image, center coordinate, and footholds"""
+
     def __init__(self, image, w, h, x=0, y=0, z=0):
-        self.name = 'Canvas'
         self.image = image
         self.width = w
         self.height = h

@@ -2,7 +2,7 @@ import os
 import pygame
 
 from Wz.Object.Object_xml import Object_xml
-from Wz.Info.Object import Object
+from Wz.Info.Instance import Instance
 from Wz.Info.Canvas import Canvas
 from Wz.Info.Foothold import Foothold
 
@@ -68,7 +68,7 @@ class Object_sprites(pygame.sprite.Sprite):
             try:
 
                 # Build object
-                obj = Object()
+                obj = Instance()
 
                 # Required properties
                 obj.x = int(instance['x'])
@@ -122,7 +122,6 @@ class Object_sprites(pygame.sprite.Sprite):
                     # Create a canvas object
                     canvas = Canvas(sprite, w, h, x, y, z)
                     canvas.delay = delay
-                    obj.canvas.append(canvas)
 
                     # Add footholds
                     if 'extended' in item:
@@ -131,6 +130,9 @@ class Object_sprites(pygame.sprite.Sprite):
                             fy = int(foothold['y'])
                             foothold = Foothold(fx, fy)
                             canvas.footholds.append(foothold)
+
+                    # Add to object
+                    obj.add_canvas(canvas)
 
                     # Explicit special case
                     if 'z' in instance:
