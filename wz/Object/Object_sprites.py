@@ -1,7 +1,7 @@
 import os
 import pygame
 
-from Wz.Object.Object_xml import Object_xml
+from Wz.Xml.Xml import Parse, Xml
 from Wz.Info.Instance import Instance
 from Wz.Info.Canvas import Canvas
 from Wz.Info.Foothold import Foothold
@@ -27,9 +27,9 @@ class Object_sprites(pygame.sprite.Sprite):
 
         # Load and parse the xml
         file = "{}/Obj/{}.img.xml".format(path, name)
-        self.xml[name] = Object_xml()
+        self.xml[name] = Xml()
         self.xml[name].open(file)
-        self.xml[name].parse_root()
+        self.xml[name].parse_root(Parse.TAGS)
 
     def load_sprites(self, path, oS, l0, l1, l2):
 
@@ -116,7 +116,7 @@ class Object_sprites(pygame.sprite.Sprite):
                     item = l2[i]
                     x = int(item['x'])
                     y = int(item['y'])
-                    z = int(item['z'])
+                    z = int(item['z']) if 'z' in item else 0
                     delay = int(item['delay']) if 'delay' in item else 0
 
                     # Create a canvas object

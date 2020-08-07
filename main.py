@@ -3,7 +3,7 @@ import pygame
 from Wz.Map.Map_sprites import Map_sprites
 
 pygame.init()
-w, h = 800, 600
+w, h = 2000, 800
 screen = pygame.display.set_mode((w, h))
 
 # Timer start

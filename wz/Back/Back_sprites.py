@@ -1,7 +1,7 @@
 import os
 import pygame
 
-from Wz.Back.Back_xml import Back_xml
+from Wz.Xml.Xml import Parse, Xml
 from Wz.Info.Instance import Instance
 from Wz.Info.Canvas import Canvas
 
@@ -26,9 +26,9 @@ class Back_sprites(pygame.sprite.Sprite):
 
         # Load and parse the xml
         file = "{}/Back/{}.img.xml".format(path, name)
-        self.xml[name] = Back_xml()
+        self.xml[name] = Xml()
         self.xml[name].open(file)
-        self.xml[name].parse_root()
+        self.xml[name].parse_root(Parse.CANVAS_ARRAY)
 
     def load_sprites(self, name, path):
 

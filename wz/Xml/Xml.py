@@ -1,9 +1,14 @@
 import os
+from enum import Enum
 import xml.etree.ElementTree as ET
 
 
-class Tile_xml:
+class Parse(Enum):
+    TAGS = 1
+    CANVAS_ARRAY = 2
 
+
+class Xml:
     def __init__(self):
         self.root = None
         self.name = None
@@ -19,7 +24,7 @@ class Tile_xml:
             return
         self.root = ET.parse(file).getroot()
 
-    def parse_root(self):
+    def parse_root(self, parse_type):
         if not self.root:
             print('No file opened.')
             return
@@ -31,8 +36,11 @@ class Tile_xml:
                 if child.attrib.get('name') == 'info':
                     info = self.parse_info(child)
                 else:
-                    object_data = self.parse_canvas_array(child)
-                    objects[child.attrib.get('name')] = object_data
+                    if parse_type == Parse.TAGS:
+                        objects[child.get('name')] = self.parse_tags(child)
+                    elif parse_type == Parse.CANVAS_ARRAY:
+                        objects[child.attrib.get(
+                            'name')] = self.parse_canvas_array(child)
             # Set variables
             self.name = self.root.get('name')
             self.info = info

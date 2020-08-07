@@ -1,7 +1,7 @@
 import os
 import pygame
 
-from Wz.Tile.Tile_xml import Tile_xml
+from Wz.Xml.Xml import Parse, Xml
 from Wz.Info.Instance import Instance
 from Wz.Info.Canvas import Canvas
 from Wz.Info.Foothold import Foothold
@@ -27,9 +27,9 @@ class Tile_sprites(pygame.sprite.Sprite):
 
         # Load and parse the xml
         file = "{}/Tile/{}.img.xml".format(path, name)
-        self.xml = Tile_xml()
+        self.xml = Xml()
         self.xml.open(file)
-        self.xml.parse_root()
+        self.xml.parse_root(Parse.CANVAS_ARRAY)
 
     def load_sprites(self, path):
 
