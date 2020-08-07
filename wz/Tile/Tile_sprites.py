@@ -1,8 +1,11 @@
 import os
 import pygame
+import traceback
 
 from Wz.Tile.Tile_xml import Tile_xml
-from Wz.Tile.Tile_obj import Tile_obj
+from Wz.Info.Tile import Tile
+from Wz.Info.Canvas import Canvas
+from Wz.Info.Foothold import Foothold
 
 
 vec = pygame.math.Vector2
@@ -68,7 +71,7 @@ class Tile_sprites(pygame.sprite.Sprite):
             try:
 
                 # Build object
-                obj = Tile_obj()
+                obj = Tile()
 
                 # Required properties
                 obj.x = int(instance['x'])
@@ -80,23 +83,33 @@ class Tile_sprites(pygame.sprite.Sprite):
                 # Get sprite by key and index
                 sprites = self.sprites[obj.u]
                 sprite = sprites[obj.no]
-                obj.sprite = sprite
+                w, h = sprite.get_size()
 
                 # Get additional properties
                 obj_data = self.xml.objects[obj.u][obj.no]
-                obj.center_x = int(obj_data['x'])
-                obj.center_y = int(obj_data['y'])
-                obj.z = int(obj_data['z'])
+                x = int(obj_data['x'])
+                y = int(obj_data['y'])
+                z = int(obj_data['z'])
+
+                # Create a canvas object
+                obj.canvas = Canvas(sprite, w, h, x, y, z)
+
+                # Add footholds
+                if 'extended' in obj_data:
+                    for foothold in obj_data['extended']:
+                        fx = int(foothold['x'])
+                        fy = int(foothold['y'])
+                        foothold = Foothold(fx, fy)
+                        obj.canvas.footholds.append(foothold)
 
                 # Explicit special case
-                if obj.z:
-                    obj.zM = obj.z
+                if obj.canvas.z:
+                    obj.zM = obj.canvas.z
 
                 # Add to list
                 objects.append(obj)
 
             except:
-                print('Error while loading tiles')
                 continue
 
         # Pre process and sort by z
@@ -111,13 +124,12 @@ class Tile_sprites(pygame.sprite.Sprite):
             return
         for obj in self.objects:
             try:
-                # Get image
-                image = obj.sprite
-                rect = image.get_rect().copy()
+                # Get canvas
+                canvas = obj.canvas
 
-                # Image offset
-                rect.topleft = (-obj.center_x, -obj.center_y)
-                rect = rect.move(obj.x, obj.y)
+                # Extract image
+                image = canvas.image
+                rect = canvas.get_center_rect(obj.x, obj.y)
 
                 # Check offset
                 if offset and not rect.colliderect(offset):
@@ -129,6 +141,10 @@ class Tile_sprites(pygame.sprite.Sprite):
 
                 # Draw
                 self.screen.blit(image, rect)
+
+                # Draw footholds
+                obj.draw_footholds(self.screen, offset)
+
             except:
                 print('Error while drawing tiles')
                 continue
