@@ -20,6 +20,9 @@ class Object:
         self.canvas_index = 0
         self.frame_count = 0
 
+    def get_canvas(self):
+        return self.canvas[self.canvas_index]
+
     def draw_footholds(self, screen, offset=None):
 
         # TODO: Set line thickness

@@ -125,10 +125,10 @@ class Tile_sprites(pygame.sprite.Sprite):
         for obj in self.objects:
             try:
                 # Get canvas
-                canvas = obj.canvas
+                canvas = obj.get_canvas()
 
                 # Extract image
-                image = canvas.image
+                image = canvas.get_image()
                 rect = canvas.get_center_rect(obj.x, obj.y)
 
                 # Check offset

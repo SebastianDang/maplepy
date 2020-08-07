@@ -156,12 +156,8 @@ class Object_sprites(pygame.sprite.Sprite):
     def blit(self, offset=None):
         for obj in self.objects:
             try:
-                # Was not able to load sprites
-                if not obj.canvas:
-                    continue
-
                 # Get canvas
-                canvas = obj.canvas[obj.canvas_index]
+                canvas = obj.get_canvas()
 
                 # Extract image
                 image = canvas.get_image(obj.f)  # Flip

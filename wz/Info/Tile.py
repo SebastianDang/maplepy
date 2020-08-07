@@ -11,6 +11,9 @@ class Tile:
         self.no = None
         self.canvas = None
 
+    def get_canvas(self):
+        return self.canvas
+
     def draw_footholds(self, screen, offset=None):
 
         # TODO: Set line thickness
