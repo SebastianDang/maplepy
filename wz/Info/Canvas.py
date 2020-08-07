@@ -10,7 +10,14 @@ class Canvas:
         self.x = x
         self.y = y
         self.z = z
+        self.delay = 0
         self.footholds = []
+
+    def get_image(self, f=0):
+        if f:
+            return pygame.transform.flip(self.image, True, False)
+        else:
+            return self.image
 
     def get_center_rect(self, x=0, y=0):
 

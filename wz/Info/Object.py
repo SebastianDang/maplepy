@@ -1,15 +1,24 @@
 import pygame
 
 
-class Tile:
+class Object:
     def __init__(self):
-        self.name = 'Tile'
+        self.name = 'Object'
         self.x = None
         self.y = None
         self.zM = None
-        self.u = None
-        self.no = None
-        self.canvas = None
+        self.f = None
+        self.r = None
+        self.move = None
+        self.dynamic = None
+        self.piece = None
+        self.oS = None
+        self.l0 = None
+        self.l1 = None
+        self.l2 = None
+        self.canvas = []
+        self.canvas_index = 0
+        self.frame_count = 0
 
     def draw_footholds(self, screen, offset=None):
 
@@ -20,11 +29,14 @@ class Tile:
         if not self.canvas:
             return
 
+        # Get current canvas
+        canvas = self.canvas[self.canvas_index]
+
         # Keep track of points
         points = []
 
         # Iterate over footholds
-        for foothold in self.canvas.footholds:
+        for foothold in canvas.footholds:
 
             # Adjust using tile position
             fx = foothold.x + self.x

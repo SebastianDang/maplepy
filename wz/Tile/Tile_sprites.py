@@ -86,30 +86,31 @@ class Tile_sprites(pygame.sprite.Sprite):
                 w, h = sprite.get_size()
 
                 # Get additional properties
-                obj_data = self.xml.objects[obj.u][obj.no]
-                x = int(obj_data['x'])
-                y = int(obj_data['y'])
-                z = int(obj_data['z'])
+                item = self.xml.objects[obj.u][obj.no]
+                x = int(item['x'])
+                y = int(item['y'])
+                z = int(item['z'])
 
                 # Create a canvas object
                 obj.canvas = Canvas(sprite, w, h, x, y, z)
 
                 # Add footholds
-                if 'extended' in obj_data:
-                    for foothold in obj_data['extended']:
+                if 'extended' in item:
+                    for foothold in item['extended']:
                         fx = int(foothold['x'])
                         fy = int(foothold['y'])
                         foothold = Foothold(fx, fy)
                         obj.canvas.footholds.append(foothold)
 
                 # Explicit special case
-                if obj.canvas.z:
+                if not obj.zM:
                     obj.zM = obj.canvas.z
 
                 # Add to list
                 objects.append(obj)
 
             except:
+                print('Error while loading tiles')
                 continue
 
         # Pre process and sort by z
