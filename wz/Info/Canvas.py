@@ -1,11 +1,27 @@
 import pygame
 
 
-class Canvas:
-    """Class contains a single image, center coordinate, and footholds"""
+class Canvas(pygame.sprite.Sprite):
+    """
+    Class contains a single image and footholds.
+
+    The constructor will automatically center the image.
+
+    Note:
+            Set the variables in this canvas once.
+            This canvas should remain static after that.
+            Use functions to update this canvas.
+
+    """
 
     def __init__(self, image, w, h, x=0, y=0, z=0):
+
+        # pygame.sprite.Sprite
+        super().__init__()
         self.image = image
+        self.rect = image.get_rect()
+
+        # Properties
         self.width = w
         self.height = h
         self.x = x
@@ -14,26 +30,17 @@ class Canvas:
         self.delay = 0
         self.footholds = []
 
-    def get_image(self, f=0):
-        if f:
-            return pygame.transform.flip(self.image, True, False)
-        else:
-            return self.image
+        # Update center
+        self.rect.topleft = (-self.x, -self.y)
 
-    def get_center_rect(self, x=0, y=0):
+    def set_delay(self, delay):
+        self.delay = delay
 
-        # TODO: Set to True to use image instead
-        use_image = False
+    def add_foothold(self, foothold):
+        self.footholds.append(foothold)
 
-        # Use image rect
-        if use_image:
-            rect = self.image.get_rect().copy()
-            rect.topleft = (-self.x, -self.y)
-        else:
-            rect = pygame.Rect(-self.x, -self.y, self.width, self.height)
+    def flip(self):
+        self.image = pygame.transform.flip(self.image, True, False)
 
-        # Adjust position
-        rect = rect.move(x, y)
-
-        # Return
-        return rect
+    def update(self):
+        pass

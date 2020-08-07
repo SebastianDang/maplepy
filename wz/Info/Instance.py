@@ -1,7 +1,7 @@
 import pygame
 
 
-class Instance:
+class Instance(pygame.sprite.Sprite):
     """
     Class contains canvases use to draw and instance variables for:
         backgrounds
@@ -10,6 +10,12 @@ class Instance:
     """
 
     def __init__(self):
+
+        # Sprite
+        super().__init__()
+        self.image = None
+        self.rect = None
+        self._layer = 0
 
         # Common
         self.x = None
@@ -33,7 +39,7 @@ class Instance:
         self.dynamic = None
         self.piece = None
 
-        # Sprite
+        # Asset
         self.bS = None
         self.oS = None
         self.l0 = None
@@ -43,22 +49,29 @@ class Instance:
         self.no = None
 
         # Canvas
-        self.canvas = []
-        self.canvas_index = 0
+        self.canvas_list = []
+        self.canvas_list_index = 0
         self.frame_count = 0
 
-    def add_canvas(self, canvas):
-        self.canvas.append(canvas)
+    def update_layer(self, layer):
+        self._layer = layer
 
-    def get_canvas(self):
-        return self.canvas[self.canvas_index]
+    def add_canvas(self, canvas):
+
+        # Add to canvas list
+        self.canvas_list.append(canvas)
+
+        # Update current image and rect
+        if not self.image:
+            self.image = canvas.image
+        if not self.rect:
+            self.rect = canvas.rect.copy()
+            self.rect = canvas.rect.copy().move(self.x, self.y)
 
     def step_frame(self):
 
         # Check if this instance can animate
-        n = len(self.canvas)
-        if n < 1:
-            return
+        n = len(self.canvas_list)
 
         # Update frame count
         self.frame_count += 1
@@ -66,12 +79,23 @@ class Instance:
         # Convert to correct rate
         factor = 15  # TODO: Verify conversion rate
         count = self.frame_count * factor
-        delay = self.canvas[self.canvas_index].delay
+        delay = self.canvas_list[self.canvas_list_index].delay
 
         # Check individual canvas delay, update if reached
         if count > delay:
-            self.canvas_index = (self.canvas_index + 1) % n
+
+            # Update canvas index
+            self.canvas_list_index = (self.canvas_list_index + 1) % n
             self.frame_count = 0
+
+            # Update current image and rect
+            canvas = self.canvas_list[self.canvas_list_index]
+            self.image = canvas.image
+            self.rect = canvas.rect.copy().move(self.x, self.y)
+
+    def update(self):
+        if len(self.canvas_list) > 0:
+            self.step_frame()
 
     def draw_footholds(self, screen, offset=None):
 
@@ -79,11 +103,11 @@ class Instance:
         width = 1
 
         # If canvas does not exist, return
-        if not self.canvas:
+        if not self.canvas_list:
             return
 
         # Get current canvas
-        canvas = self.canvas[self.canvas_index]
+        canvas = self.canvas_list[self.canvas_list_index]
 
         # Keep track of points
         points = []

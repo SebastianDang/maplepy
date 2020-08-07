@@ -15,7 +15,7 @@ class Object_sprites(pygame.sprite.Sprite):
         super().__init__()
         self.xml = {}
         self.sprites = {}
-        self.objects = []
+        self.objects = pygame.sprite.Group()
 
     def load_xml(self, name, path):
 
@@ -56,9 +56,6 @@ class Object_sprites(pygame.sprite.Sprite):
 
         # Return list of images
         return images
-
-    def clear_objects(self):
-        self.objects.clear()
 
     def load_objects(self, object_instances, path):
 
@@ -120,61 +117,52 @@ class Object_sprites(pygame.sprite.Sprite):
 
                     # Create a canvas object
                     canvas = Canvas(sprite, w, h, x, y, z)
-                    canvas.delay = delay
+
+                    # Set delay
+                    canvas.set_delay(delay)
 
                     # Add footholds
                     if 'extended' in item:
                         for foothold in item['extended']:
                             fx = int(foothold['x'])
                             fy = int(foothold['y'])
-                            foothold = Foothold(fx, fy)
-                            canvas.footholds.append(foothold)
+                            canvas.add_foothold(Foothold(fx, fy))
+
+                    # Flip
+                    if obj.f > 0:
+                        canvas.flip()
 
                     # Add to object
                     obj.add_canvas(canvas)
 
                     # Explicit special case
                     if 'z' in instance:
-                        obj.zM = int(instance['z'])
+                        obj.update_layer(int(instance['z']))
 
                 # Add to list
-                self.objects.append(obj)
+                self.objects.add(obj)
 
             except:
                 print('Error while loading objects')
                 continue
 
-        # Pre process and sort by z
-        self.objects = sorted(self.objects, key=lambda k: k.zM)
 
     def update(self):
         for obj in self.objects:
-            obj.step_frame()
+            obj.update()
 
     def blit(self, surface, offset=None):
+        if not self.objects:
+            return
         for obj in self.objects:
             try:
-                # Get canvas
-                canvas = obj.get_canvas()
-
-                # Extract image
-                image = canvas.get_image(obj.f)  # Flip
-                rect = canvas.get_center_rect(obj.x, obj.y)
-
-                # Check offset
-                if offset and not rect.colliderect(offset):
-                    continue
 
                 # Camera offset
                 if offset:
-                    rect = rect.move(-offset.x, -offset.y)
+                    rect = obj.rect.move(-offset.x, -offset.y)
 
                 # Draw
-                surface.blit(image, rect)
-
-                # Draw footholds
-                obj.draw_footholds(surface, offset)
+                surface.blit(obj.image, rect)
 
             except:
-                print('Error while drawing objects')
                 continue

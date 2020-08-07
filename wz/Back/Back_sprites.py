@@ -14,7 +14,7 @@ class Back_sprites(pygame.sprite.Sprite):
         super().__init__()
         self.xml = {}
         self.sprites = {}
-        self.objects = []
+        self.objects = pygame.sprite.Group()
 
     def load_xml(self, name, path):
 
@@ -53,9 +53,6 @@ class Back_sprites(pygame.sprite.Sprite):
         # Set images
         self.sprites[name] = sprites
 
-    def clear_objects(self):
-        self.objects.clear()
-
     def load_objects(self, name, object_instances):
 
         # Check if xml has finished loading
@@ -64,7 +61,6 @@ class Back_sprites(pygame.sprite.Sprite):
             return
 
         # Go through instances list and add
-        objects = []
         for instance in object_instances:
             try:
 
@@ -101,22 +97,26 @@ class Back_sprites(pygame.sprite.Sprite):
 
                 # Create a canvas object
                 canvas = Canvas(sprite, w, h, x, y, z)
+
+                # Flip
+                if obj.f > 0:
+                    canvas.flip()
+
+                # Add to object
                 obj.add_canvas(canvas)
 
                 # Add to list
-                objects.append(obj)
+                self.objects.add(obj)
 
             except:
                 print('Error while loading backs')
                 continue
 
-        self.objects = objects
+    def calculate_x(self, rx, dx, z):
+        return float(rx * (dx + z) / 100) + z
 
-    def calculate_x(self, x, rx, dx, z):
-        return float(rx * (dx + z) / 100) + x + z
-
-    def calculate_y(self, y, ry, dy, z):
-        return float(ry * (dy + z) / 100) + y + z
+    def calculate_y(self, ry, dy, z):
+        return float(ry * (dy + z) / 100) + z
 
     def update(self):
         pass
@@ -142,19 +142,12 @@ class Back_sprites(pygame.sprite.Sprite):
         for obj in self.objects:
             try:
 
-                # Get canvas
-                canvas = obj.get_canvas()
-
-                # Get image
-                image = canvas.get_image(obj.f)
-                rect = canvas.get_center_rect()
-
                 # Image and camera offset
                 dx = offset.x if offset else 0
                 dy = offset.y if offset else 0
-                x = self.calculate_x(obj.x, obj.rx, dx, 0.5 * w)
-                y = self.calculate_y(obj.y, obj.ry, dy, 0.5 * h)
-                rect = rect.move(x, y)
+                x = self.calculate_x(obj.rx, dx, 0.5 * w)
+                y = self.calculate_y(obj.ry, dy, 0.5 * h)
+                rect = obj.rect.move(x, y)
 
                 # 0 - Simple image (eg. the hill with the tree in the background of Henesys)
                 # 1 - Image is copied horizontally (eg. the sea in Lith Harbor)
@@ -166,17 +159,17 @@ class Back_sprites(pygame.sprite.Sprite):
                 # 7 - Image scrolls vertically, and is copied in both directions (eg. rain drops in Ellin PQ maps)
 
                 if obj.type == 0:
-                    surface.blit(image, rect)
+                    surface.blit(obj.image, rect)
                 elif obj.type == 1:
-                    delta = obj.cx if obj.cx > 0 else rect.width
+                    delta = obj.cx if obj.cx > 0 else obj.rect.width
                     if delta > 0:
                         tile = rect.copy()
                         while tile.x < w:
-                            surface.blit(image, tile)
+                            surface.blit(obj.image, tile)
                             tile = tile.move(delta, 0)
                         tile = rect.copy()
-                        while tile.x > -tile.width:
-                            surface.blit(image, tile)
+                        while tile.x > -obj.rect.width:
+                            surface.blit(obj.image, tile)
                             tile = tile.move(-delta, 0)
                 elif obj.type == 2:
                     pass
@@ -192,5 +185,4 @@ class Back_sprites(pygame.sprite.Sprite):
                     pass
 
             except:
-                print('Error while drawing backs')
                 continue

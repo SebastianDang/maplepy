@@ -80,9 +80,6 @@ class Map_sprites(pygame.sprite.Sprite):
         if not self.back_sprites:
             self.back_sprites = Back_sprites()
 
-        # Clear objects before beginning
-        self.back_sprites.clear_objects()
-
         # Get back name (should be unique)
         bS_set = []
         for back in self.map_xml.all_backs:
@@ -121,9 +118,6 @@ class Map_sprites(pygame.sprite.Sprite):
         # If variable is not yet initialized
         if not self.object_sprites:
             self.object_sprites = Object_sprites()
-
-        # Clear objects before beginning
-        self.object_sprites.clear_objects()
 
         # Load instances
         for object_instances in self.map_xml.all_objects:
@@ -178,6 +172,7 @@ class Map_sprites(pygame.sprite.Sprite):
 
         # Background
         if self.back_sprites:
+            self.background.fill((0, 0, 0))
             self.back_sprites.blit(self.background, self.cam)
             background = pygame.transform.scale(
                 self.background, self.screen.get_size())

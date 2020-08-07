@@ -15,7 +15,7 @@ class Tile_sprites(pygame.sprite.Sprite):
         super().__init__()
         self.xml = None
         self.sprites = None
-        self.objects = None
+        self.objects = pygame.sprite.Group()
 
     def load_xml(self, name, path):
 
@@ -54,9 +54,6 @@ class Tile_sprites(pygame.sprite.Sprite):
         # Set images
         self.sprites = sprites
 
-    def clear_objects(self):
-        self.objects.clear()
-
     def load_objects(self, object_instances):
 
         # Check if xml has finished loading
@@ -64,7 +61,6 @@ class Tile_sprites(pygame.sprite.Sprite):
             return
 
         # Go through instances list and add
-        objects = []
         for instance in object_instances:
             try:
 
@@ -97,56 +93,38 @@ class Tile_sprites(pygame.sprite.Sprite):
                     for foothold in item['extended']:
                         fx = int(foothold['x'])
                         fy = int(foothold['y'])
-                        foothold = Foothold(fx, fy)
-                        canvas.footholds.append(foothold)
+                        canvas.add_foothold(Foothold(fx, fy))
 
                 # Explicit special case
                 if not obj.zM:
-                    obj.zM = canvas.z
+                    obj.update_layer(canvas.z)
 
                 # Add to object
                 obj.add_canvas(canvas)
 
                 # Add to list
-                objects.append(obj)
+                self.objects.add(obj)
 
             except:
                 print('Error while loading tiles')
                 continue
 
-        # Pre process and sort by z
-        objects = sorted(objects, key=lambda k: k.zM)
-        self.objects = objects
-
     def update(self):
-        pass
+        for obj in self.objects:
+            obj.step_frame()
 
     def blit(self, surface, offset=None):
         if not self.objects:
             return
         for obj in self.objects:
             try:
-                # Get canvas
-                canvas = obj.get_canvas()
-
-                # Extract image
-                image = canvas.get_image()
-                rect = canvas.get_center_rect(obj.x, obj.y)
-
-                # Check offset
-                if offset and not rect.colliderect(offset):
-                    continue
 
                 # Camera offset
                 if offset:
-                    rect = rect.move(-offset.x, -offset.y)
+                    rect = obj.rect.move(-offset.x, -offset.y)
 
                 # Draw
-                surface.blit(image, rect)
-
-                # Draw footholds
-                obj.draw_footholds(surface, offset)
+                surface.blit(obj.image, rect)
 
             except:
-                print('Error while drawing tiles')
                 continue
