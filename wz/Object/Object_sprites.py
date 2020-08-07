@@ -2,8 +2,8 @@ import os
 import pygame
 import traceback
 
-from Object.Object_xml import Object_xml
-from Object.Object_obj import Object_obj
+from Wz.Object.Object_xml import Object_xml
+from Wz.Object.Object_obj import Object_obj
 
 
 vec = pygame.math.Vector2
@@ -81,6 +81,8 @@ class Object_sprites(pygame.sprite.Sprite):
                         obj.center_y.append(int(item['y']))
                     if 'z' in item:
                         obj.z.append(int(item['z']))
+                    if 'delay' in item:
+                        obj.delay.append(int(item['delay']))
 
                 # Load sprites
                 obj.sprites = self.load_sprites(

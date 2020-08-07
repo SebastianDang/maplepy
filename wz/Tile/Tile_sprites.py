@@ -1,8 +1,8 @@
 import os
 import pygame
 
-from Tile.Tile_xml import Tile_xml
-from Tile.Tile_obj import Tile_obj
+from Wz.Tile.Tile_xml import Tile_xml
+from Wz.Tile.Tile_obj import Tile_obj
 
 
 vec = pygame.math.Vector2

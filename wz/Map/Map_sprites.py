@@ -1,11 +1,11 @@
 import os
 import sys
 import pygame
-from Map.Map_xml import Map_xml
-from Back.Back_sprites import Back_sprites
-from Tile.Tile_sprites import Tile_sprites
-from Object.Object_sprites import Object_sprites
-from Sound.Bgm import Sound_Bgm
+from Wz.Map.Map_xml import Map_xml
+from Wz.Back.Back_sprites import Back_sprites
+from Wz.Tile.Tile_sprites import Tile_sprites
+from Wz.Object.Object_sprites import Object_sprites
+from Wz.Sound.Bgm import Sound_Bgm
 vec = pygame.math.Vector2
 
 

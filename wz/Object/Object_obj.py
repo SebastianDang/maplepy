@@ -17,6 +17,7 @@ class Object_obj:
         self.center_x = []
         self.center_y = []
         self.z = []
+        self.delay = []
         # Values for drawing
         self.sprites = []
         self.frame_count = 0

@@ -1,8 +1,8 @@
 import os
 import pygame
 
-from Back.Back_xml import Back_xml
-from Back.Back_obj import Back_obj
+from Wz.Back.Back_xml import Back_xml
+from Wz.Back.Back_obj import Back_obj
 
 
 vec = pygame.math.Vector2
