@@ -15,7 +15,7 @@ class Tile_sprites(pygame.sprite.Sprite):
         super().__init__()
         self.xml = None
         self.sprites = None
-        self.objects = pygame.sprite.Group()
+        self.objects = pygame.sprite.LayeredUpdates()
 
     def load_xml(self, name, path):
 
