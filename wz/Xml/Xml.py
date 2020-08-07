@@ -3,7 +3,7 @@ from enum import Enum
 import xml.etree.ElementTree as ET
 
 
-class Parse(Enum):
+class Layer(Enum):
     TAGS = 1
     CANVAS_ARRAY = 2
 
@@ -24,7 +24,7 @@ class Xml:
             return
         self.root = ET.parse(file).getroot()
 
-    def parse_root(self, parse_type):
+    def parse_root(self, layer):
         if not self.root:
             print('No file opened.')
             return
@@ -36,9 +36,9 @@ class Xml:
                 if child.attrib.get('name') == 'info':
                     info = self.parse_info(child)
                 else:
-                    if parse_type == Parse.TAGS:
+                    if layer == Layer.TAGS:
                         objects[child.get('name')] = self.parse_tags(child)
-                    elif parse_type == Parse.CANVAS_ARRAY:
+                    elif layer == Layer.CANVAS_ARRAY:
                         objects[child.attrib.get(
                             'name')] = self.parse_canvas_array(child)
             # Set variables
