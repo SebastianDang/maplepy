@@ -10,9 +10,8 @@ vec = pygame.math.Vector2
 
 
 class Back_sprites(pygame.sprite.Sprite):
-    def __init__(self, screen):
+    def __init__(self):
         super().__init__()
-        self.screen = screen
         self.xml = {}
         self.sprites = {}
         self.objects = []
@@ -132,12 +131,12 @@ class Back_sprites(pygame.sprite.Sprite):
         #         obj.frame_offset += obj.ry / frame_ticks
         #         obj.frame_offset %= obj.height
 
-    def blit(self, offset=None):
+    def blit(self, surface, offset=None):
         if not self.objects:
             return
 
         # Get surface properties
-        w, h = pygame.display.get_surface().get_size()
+        w, h = surface.get_size()
 
         # For all objects
         for obj in self.objects:
@@ -167,17 +166,17 @@ class Back_sprites(pygame.sprite.Sprite):
                 # 7 - Image scrolls vertically, and is copied in both directions (eg. rain drops in Ellin PQ maps)
 
                 if obj.type == 0:
-                    self.screen.blit(image, rect)
+                    surface.blit(image, rect)
                 elif obj.type == 1:
                     delta = obj.cx if obj.cx > 0 else rect.width
                     if delta > 0:
                         tile = rect.copy()
                         while tile.x < w:
-                            self.screen.blit(image, tile)
+                            surface.blit(image, tile)
                             tile = tile.move(delta, 0)
                         tile = rect.copy()
                         while tile.x > -tile.width:
-                            self.screen.blit(image, tile)
+                            surface.blit(image, tile)
                             tile = tile.move(-delta, 0)
                 elif obj.type == 2:
                     pass

@@ -2,7 +2,7 @@ import time
 import pygame
 from Wz.Map.Map_sprites import Map_sprites
 
-w, h = 800, 600
+w, h = 1920, 1080
 fps = 60
 
 pygame.init()

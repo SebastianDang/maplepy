@@ -11,9 +11,8 @@ vec = pygame.math.Vector2
 
 
 class Tile_sprites(pygame.sprite.Sprite):
-    def __init__(self, screen):
+    def __init__(self):
         super().__init__()
-        self.screen = screen
         self.xml = None
         self.sprites = None
         self.objects = None
@@ -122,7 +121,7 @@ class Tile_sprites(pygame.sprite.Sprite):
     def update(self):
         pass
 
-    def blit(self, offset=None):
+    def blit(self, surface, offset=None):
         if not self.objects:
             return
         for obj in self.objects:
@@ -143,10 +142,10 @@ class Tile_sprites(pygame.sprite.Sprite):
                     rect = rect.move(-offset.x, -offset.y)
 
                 # Draw
-                self.screen.blit(image, rect)
+                surface.blit(image, rect)
 
                 # Draw footholds
-                obj.draw_footholds(self.screen, offset)
+                obj.draw_footholds(surface, offset)
 
             except:
                 print('Error while drawing tiles')

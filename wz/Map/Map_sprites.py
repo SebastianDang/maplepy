@@ -12,12 +12,20 @@ vec = pygame.math.Vector2
 class Map_sprites(pygame.sprite.Sprite):
     def __init__(self, screen):
         super().__init__()
+
+        # Main screen to draw onto
         self.screen = screen
+
+        # Background to draw into
+        self.background = None
+
         # Camera movement
         self.cam = None
         self.bounds = None
+
         # Music
         self.bgm = None
+
         # Objects in the map
         self.path = '.'
         self.map_xml = None
@@ -26,6 +34,8 @@ class Map_sprites(pygame.sprite.Sprite):
         self.object_sprites = None
 
     def load_map(self, map_id):
+
+        # Check map_id input
         if not map_id or not map_id.isdigit():
             print('{} is not a valid map id'.format(map_id))
             return
@@ -62,9 +72,13 @@ class Map_sprites(pygame.sprite.Sprite):
         if not self.map_xml:
             return
 
+        # Create background
+        if not self.background:
+            self.background = pygame.Surface((800, 600))
+
         # If variable is not yet initialized
         if not self.back_sprites:
-            self.back_sprites = Back_sprites(self.screen)
+            self.back_sprites = Back_sprites()
 
         # Clear objects before beginning
         self.back_sprites.clear_objects()
@@ -94,7 +108,7 @@ class Map_sprites(pygame.sprite.Sprite):
                 # Get tile name
                 tile_name = info['tS']
                 # Create sprites
-                sprites = Tile_sprites(self.screen)
+                sprites = Tile_sprites()
                 sprites.load_xml(tile_name, "{}/Map.wz".format(self.path))
                 sprites.load_sprites("{}/Map.wz".format(self.path))
                 sprites.load_objects(object_instances['tiles'])
@@ -106,7 +120,7 @@ class Map_sprites(pygame.sprite.Sprite):
 
         # If variable is not yet initialized
         if not self.object_sprites:
-            self.object_sprites = Object_sprites(self.screen)
+            self.object_sprites = Object_sprites()
 
         # Clear objects before beginning
         self.object_sprites.clear_objects()
@@ -126,10 +140,6 @@ class Map_sprites(pygame.sprite.Sprite):
             self.object_sprites.load_objects(
                 object_instances['objects'], "{}/Map.wz".format(self.path))
 
-    def update_backs(self):
-        if self.back_sprites:
-            self.back_sprites.update()
-
     def draw_backs(self, offset=None):
         if self.back_sprites:
             self.back_sprites.blit(offset)
@@ -142,25 +152,41 @@ class Map_sprites(pygame.sprite.Sprite):
         for tile_sprites in self.tile_sprites_list:
             tile_sprites.blit(offset)
 
-    def update_objects(self):
-        if self.object_sprites:
-            self.object_sprites.update()
-
     def draw_objects(self, offset=None):
         if self.object_sprites:
             self.object_sprites.blit(offset)
 
     def update(self):
-        self.update_backs()
-        self.update_objects()
 
-    def blit(self):
-
-        # Update camera
+        # Camera
         if self.cam and self.bounds:
             self.cam = self.cam.clamp(self.bounds)
 
-        # Blit
-        self.draw_backs(self.cam)
-        self.draw_tiles(self.cam)
-        self.draw_objects(self.cam)
+        # Background
+        if self.back_sprites:
+            self.back_sprites.update()
+
+        # Tiles
+        for tile_sprites in self.tile_sprites_list:
+            tile_sprites.update()
+
+        # Objects
+        if self.object_sprites:
+            self.object_sprites.update()
+
+    def blit(self):
+
+        # Background
+        if self.back_sprites:
+            self.back_sprites.blit(self.background, self.cam)
+            background = pygame.transform.scale(
+                self.background, self.screen.get_size())
+            self.screen.blit(background, self.screen.get_rect())
+
+        # Tiles
+        for tile_sprites in self.tile_sprites_list:
+            tile_sprites.blit(self.screen, self.cam)
+
+        # Objects
+        if self.object_sprites:
+            self.object_sprites.blit(self.screen, self.cam)
