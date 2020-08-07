@@ -1,18 +1,29 @@
 import pygame
 
 
-class Canvas:
+class Canvas(pygame.sprite.Sprite):
     """Class contains a single image, center coordinate, and footholds"""
 
-    def __init__(self, image, w, h, x=0, y=0, z=0):
+    def __init__(self, image, w, h, x=0, y=0):
+
+        # Sprite
         self.image = image
+        self.rect = image.get_rect()
+        self._layer = 0
+
+        # Info
         self.width = w
         self.height = h
         self.x = x
         self.y = y
-        self.z = z
         self.delay = 0
         self.footholds = []
+
+    def set_layer(self, z):
+        self._layer = z
+
+    def get_layer(self):
+        return self._layer
 
     def get_image(self, f=0):
         if f:

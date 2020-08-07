@@ -100,7 +100,8 @@ class Back_sprites(pygame.sprite.Sprite):
                 z = int(data['z'])
 
                 # Create a canvas object
-                canvas = Canvas(sprite, w, h, x, y, z)
+                canvas = Canvas(sprite, w, h, x, y)
+                canvas.set_layer(z)
                 obj.add_canvas(canvas)
 
                 # Add to list
