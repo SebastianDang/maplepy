@@ -33,6 +33,14 @@ class Object_sprites(pygame.sprite.Sprite):
 
     def load_sprites(self, path, oS, l0, l1, l2):
 
+        # Create key
+        key = "{}.{}.{}.{}".format(
+            oS, l0, l1, l2)
+
+        # Check if sprites are already loaded
+        if key in self.sprites:
+            return self.sprites[key]
+
         # Get a list of images for the key
         images = []
         for index in range(0, 20):  # Num frames
@@ -43,10 +51,6 @@ class Object_sprites(pygame.sprite.Sprite):
                 images.append(image)
             else:
                 break
-
-        # Create key
-        key = "{}.{}.{}.{}".format(
-            oS, l0, l1, l2)
 
         # Store images
         self.sprites[key] = images
