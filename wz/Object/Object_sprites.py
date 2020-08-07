@@ -1,6 +1,5 @@
 import os
 import pygame
-import traceback
 
 from Wz.Object.Object_xml import Object_xml
 from Wz.Info.Object import Object
@@ -179,6 +178,5 @@ class Object_sprites(pygame.sprite.Sprite):
                 obj.draw_footholds(self.screen, offset)
 
             except:
-                traceback.print_exc()
-                # print('Error while drawing objects')
+                print('Error while drawing objects')
                 continue

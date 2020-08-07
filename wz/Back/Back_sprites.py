@@ -2,7 +2,8 @@ import os
 import pygame
 
 from Wz.Back.Back_xml import Back_xml
-from Wz.Back.Back_obj import Back_obj
+from Wz.Info.Back import Back
+from Wz.Info.Canvas import Canvas
 
 
 vec = pygame.math.Vector2
@@ -69,10 +70,9 @@ class Back_sprites(pygame.sprite.Sprite):
             try:
 
                 # Build object
-                obj = Back_obj()
+                obj = Back()
 
                 # Required properties
-                obj.bS = instance['bS']
                 obj.x = int(instance['x'])
                 obj.y = int(instance['y'])
                 obj.cx = int(instance['cx'])
@@ -80,50 +80,34 @@ class Back_sprites(pygame.sprite.Sprite):
                 obj.rx = int(instance['rx'])
                 obj.ry = int(instance['ry'])
                 obj.f = int(instance['f'])
-                obj.no = int(instance['no'])
                 obj.a = int(instance['a'])
                 obj.type = int(instance['type'])
                 obj.front = int(instance['front'])
                 obj.ani = int(instance['ani'])
+                obj.bS = instance['bS']
+                obj.no = int(instance['no'])
 
                 # Get sprite by key and index
                 sprites = self.sprites[obj.bS]
                 sprite = sprites[obj.no]
-                obj.sprite = sprite
-
-                # First set sprite rect as width and height
-                rect = sprite.get_rect()
-                obj.width = rect.width
-                obj.height = rect.height
-
-                # Set other defaults
-                obj.center_x = 0
-                obj.center_y = 0
-                obj.z = 0
+                w, h = sprite.get_size()
 
                 # Get additional properties
-                try:
+                object_data = self.xml[name].objects
+                back_data = object_data['back']
+                data = back_data[obj.no]
+                x = int(data['x'])
+                y = int(data['y'])
+                z = int(data['z'])
 
-                    # Extract data
-                    object_data = self.xml[name].objects
-                    back_data = object_data['back']
-
-                    # Set data
-                    data = back_data[obj.no]
-                    obj.width = int(data['width'])
-                    obj.height = int(data['height'])
-                    obj.center_x = int(data['x'])
-                    obj.center_y = int(data['y'])
-                    obj.z = int(data['z'])
-
-                except:
-                    pass
+                # Create a canvas object
+                obj.canvas = Canvas(sprite, w, h, x, y, z)
 
                 # Add to list
                 objects.append(obj)
 
             except:
-                print('Error while loading back')
+                print('Error while loading backs')
                 continue
 
         self.objects = objects
@@ -158,12 +142,12 @@ class Back_sprites(pygame.sprite.Sprite):
         for obj in self.objects:
             try:
 
-                # Get image
-                image = obj.sprite
-                rect = image.get_rect().copy()
+                # Get canvas
+                canvas = obj.canvas
 
-                # Center offset
-                rect.topleft = (-obj.center_x, -obj.center_y)
+                # Get image
+                image = canvas.get_image(obj.f)
+                rect = canvas.get_center_rect()
 
                 # Image and camera offset
                 dx = offset.x if offset else 0
@@ -171,10 +155,6 @@ class Back_sprites(pygame.sprite.Sprite):
                 x = self.calculate_x(obj.x, obj.rx, dx, 0.5 * w)
                 y = self.calculate_y(obj.y, obj.ry, dy, 0.5 * h)
                 rect = rect.move(x, y)
-
-                # Image flip
-                if obj.f > 0:
-                    image = pygame.transform.flip(image, True, False)
 
                 # 0 - Simple image (eg. the hill with the tree in the background of Henesys)
                 # 1 - Image is copied horizontally (eg. the sea in Lith Harbor)
@@ -188,7 +168,7 @@ class Back_sprites(pygame.sprite.Sprite):
                 if obj.type == 0:
                     self.screen.blit(image, rect)
                 elif obj.type == 1:
-                    delta = obj.cx if obj.cx > 0 else obj.width
+                    delta = obj.cx if obj.cx > 0 else rect.width
                     if delta > 0:
                         tile = rect.copy()
                         while tile.x < w:
@@ -211,28 +191,6 @@ class Back_sprites(pygame.sprite.Sprite):
                 elif obj.type == 7:
                     pass
 
-                # # Type
-                # if obj.type == 0:  # Static image
-                #     self.screen.blit(image, rect)
-                # elif obj.type in horizontal:  # Copied horizontally
-                #     tile = rect.copy()
-                #     while tile.x > -tile.width:  # TODO: Don't do this the lazy way
-                #         self.screen.blit(image, tile)
-                #         tile = tile.move(-tile.width, 0)
-                #     tile = rect.copy()
-                #     while tile.x < w:
-                #         self.screen.blit(image, tile)
-                #         tile = tile.move(tile.width, 0)
-                # elif obj.type in vertical:  # Copied vertically
-                #     tile = rect.copy()
-                #     while tile.y > -tile.height:  # TODO: Don't do this the lazy way
-                #         self.screen.blit(image, tile)
-                #         tile = tile.move(0, -tile.height)
-                #     tile = rect.copy()
-                #     while tile.y < h:
-                #         self.screen.blit(image, tile)
-                #         tile = tile.move(0, tile.height)
-
-            except Exception as e:
-                print(e)
+            except:
+                print('Error while drawing backs')
                 continue

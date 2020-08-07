@@ -1,6 +1,5 @@
 import os
 import pygame
-import traceback
 
 from Wz.Tile.Tile_xml import Tile_xml
 from Wz.Info.Tile import Tile
