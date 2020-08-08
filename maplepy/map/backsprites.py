@@ -135,7 +135,7 @@ class BackSprites():
         for sprite in self.sprites:
             try:
 
-                # Animation offset
+                # Get rect with animation offset
                 rect = sprite.rect.move(sprite.dx, sprite.dy)
 
                 # Camera offset

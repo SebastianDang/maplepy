@@ -50,6 +50,9 @@ class Instance(pygame.sprite.Sprite):
         self.u = None
         self.no = None
 
+        # Collision
+        self.forbidFallDown = None
+
         # Canvas
         self.canvas_list = []
         self.canvas_list_index = 0
@@ -122,7 +125,7 @@ class Instance(pygame.sprite.Sprite):
     def draw_footholds(self, screen, offset=None):
 
         # TODO: Set line thickness
-        width = 1
+        width = 5
 
         # If canvas does not exist, return
         if not self.canvas_list:

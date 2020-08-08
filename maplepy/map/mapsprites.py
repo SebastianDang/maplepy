@@ -63,6 +63,11 @@ class MapSprites():
                 # Build object
                 inst = Instance()
 
+                # Get info
+                info = val['info']
+                if 'forbidFallDown' in info:
+                    inst.forbidFallDown = int(info['forbidFallDown'])
+
                 # Get name
                 tag_name = val['name'] if 'name' in val else None
 
@@ -150,6 +155,11 @@ class MapSprites():
 
                 # Build object
                 inst = Instance()
+
+                # Get info
+                info = val['info']
+                if 'forbidFallDown' in info:
+                    inst.forbidFallDown = int(info['forbidFallDown'])
 
                 # Required properties
                 inst.x = int(val['x'])
@@ -286,6 +296,9 @@ class MapSprites():
 
         for sprite in self.sprites:
             try:
+
+                # Get rect
+                rect = sprite.rect
 
                 # Camera offset
                 if offset:
