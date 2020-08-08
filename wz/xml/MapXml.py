@@ -145,6 +145,7 @@ class MapXml:
                 if child.attrib.get('name') == 'obj':
                     for subchild in child:
                         obj = {}
+                        obj['name'] = subchild.get('name')
                         for value in subchild:
                             obj['info'] = info
                             if value.tag in value_tags:
