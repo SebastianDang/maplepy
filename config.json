@@ -1,0 +1,12 @@
+{
+  "icon": "./img/maple_pie.png",
+  "caption": "MaplePie",
+  "width": 1920,
+  "height": 1080,
+  "fps": 60,
+  "asset_path": "P:/Downloads/MapleStory",
+  "maps": [
+    "000010000",
+    "100000000"
+  ]
+}

@@ -8,10 +8,11 @@ from wz.sound.Bgm import Sound_Bgm
 
 
 class MapDisplay():
-    def __init__(self, screen):
+    def __init__(self, screen, path):
 
-        # Primary surface
+        # Required properties
         self.screen = screen
+        self.path = path
 
         # Background surface
         self.background = None
@@ -24,12 +25,16 @@ class MapDisplay():
         self.bgm = None
 
         # Objects in the map
-        self.path = '.'
         self.map_xml = None
         self.back_sprites = None
         self.map_sprite_layers = []
 
     def load_map(self, map_id):
+
+        # Clear
+        self.map_xml = None
+        self.back_sprites = None
+        self.map_sprite_layers.clear()
 
         # Check input path
         if not os.path.exists(self.path):
