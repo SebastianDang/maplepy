@@ -98,6 +98,12 @@ class BackSprites():
                 if inst.f > 0:
                     canvas.flip()
 
+                # Check cx, cy
+                if not inst.cx:
+                    inst.cx = w
+                if not inst.cy:
+                    inst.cy = h
+
                 # Add to object
                 inst.add_canvas(canvas)
 
@@ -115,17 +121,8 @@ class BackSprites():
         return float(ry * (dy + z) / 100) + z
 
     def update(self):
-        pass
-        # horizontal = [4, 6]
-        # vertical = [5, 7]
-        # frame_ticks = 1
-        # for sprite in self.sprites:
-        #     if sprite.type in horizontal and sprite.rect.width > 0:
-        #         sprite.frame_offset += sprite.rx / frame_ticks
-        #         sprite.frame_offset %= sprite.rect.width
-        #     if sprite.type in vertical and sprite.rect.height > 0:
-        #         sprite.frame_offset += sprite.ry / frame_ticks
-        #         sprite.frame_offset %= sprite.rect.height
+        for sprite in self.sprites:
+            sprite.update()
 
     def blit(self, surface, offset=None):
         if not self.sprites:
@@ -138,14 +135,20 @@ class BackSprites():
         for sprite in self.sprites:
             try:
 
+                # Animation offset
+                rect = sprite.rect.move(sprite.dx, sprite.dy)
+
                 # Camera offset
                 dx = offset.x if offset else 0
                 dy = offset.y if offset else 0
                 x = self.calculate_x(sprite.rx, dx, 0.5 * w)
                 y = self.calculate_y(sprite.ry, dy, 0.5 * h)
-                rect = sprite.rect.move(x, y)
+                rect = rect.move(x, y)
 
                 # 0 - Simple image (eg. the hill with the tree in the background of Henesys)
+                if sprite.type == 0:
+                    surface.blit(sprite.image, rect)
+
                 # 1 - Image is copied horizontally (eg. the sea in Lith Harbor)
                 # 2 - Image is copied vertically (eg. trees in maps near Ellinia)
                 # 3 - Image is copied in both directions (eg. the background sky color square in many maps)
@@ -153,32 +156,28 @@ class BackSprites():
                 # 5 - Image scrolls and is copied vertically (eg. background in the Helios Tower elevator)
                 # 6 - Image scrolls horizontally, and is copied in both directions (eg. the train in Kerning City subway JQ)
                 # 7 - Image scrolls vertically, and is copied in both directions (eg. rain drops in Ellin PQ maps)
-
-                if sprite.type == 0:
-                    surface.blit(sprite.image, rect)
-                elif sprite.type == 1:
-                    delta = sprite.cx if sprite.cx > 0 else sprite.rect.width
-                    if delta > 0:
+                horizontal = [1, 3, 4, 6, 7]
+                if sprite.type in horizontal:
+                    if sprite.cx > 0:
                         tile = rect.copy()
                         while tile.x < w:
                             surface.blit(sprite.image, tile)
-                            tile = tile.move(delta, 0)
+                            tile = tile.move(sprite.cx, 0)
                         tile = rect.copy()
                         while tile.x > -sprite.rect.width:
                             surface.blit(sprite.image, tile)
-                            tile = tile.move(-delta, 0)
-                elif sprite.type == 2:
-                    pass
-                elif sprite.type == 3:
-                    pass
-                elif sprite.type == 4:
-                    pass
-                elif sprite.type == 5:
-                    pass
-                elif sprite.type == 6:
-                    pass
-                elif sprite.type == 7:
-                    pass
+                            tile = tile.move(-sprite.cx, 0)
+                vertical = [2, 3, 5, 6, 7]
+                if sprite.type in vertical:
+                    if sprite.cy > 0:
+                        tile = rect.copy()
+                        while tile.y < h:
+                            surface.blit(sprite.image, tile)
+                            tile = tile.move(0, sprite.cy)
+                        tile = rect.copy()
+                        while tile.y > -sprite.rect.height:
+                            surface.blit(sprite.image, tile)
+                            tile = tile.move(0, -sprite.cy)
 
             except:
                 continue

@@ -32,6 +32,8 @@ class Instance(pygame.sprite.Sprite):
         self.a = None
         self.front = None
         self.ani = None
+        self.dx = 0
+        self.dy = 0
 
         # Object
         self.r = None
@@ -100,9 +102,22 @@ class Instance(pygame.sprite.Sprite):
                 self.image = canvas.image
                 self.rect = canvas.rect.copy().move(self.x, self.y)
 
+    def step_scroll(self):
+        horizontal = [4, 6]
+        vertical = [5, 7]
+        if self.type in horizontal and self.cx > 0:
+            self.dx += self.rx
+            self.dx %= (2 * self.cx)
+        if self.type in vertical and self.cy > 0:
+            self.dy += self.ry
+            self.dy %= (2 * self.cy)
+
     def update(self):
-        if len(self.canvas_list) > 1:
+        n = len(self.canvas_list)
+        if n > 1:
             self.step_frame()
+        elif n > 0:
+            self.step_scroll()
 
     def draw_footholds(self, screen, offset=None):
 
