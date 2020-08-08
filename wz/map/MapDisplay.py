@@ -118,8 +118,8 @@ class MapDisplay():
             info = map_items['info']
             if 'tS' in info:
                 tile_name = info['tS']
-                sprites.load_xml(self.path, 'Tile', tile_name)
-                sprites.load_tiles(self.path, 'Tile',
+                sprites.load_xml(self.path, 'tile', tile_name)
+                sprites.load_tiles(self.path, 'tile',
                                    tile_name, map_items['tiles'])
 
             # Objects
@@ -128,8 +128,8 @@ class MapDisplay():
                 oS_set.append(obj['oS'])
             oS_set = set(oS_set)
             for oS in oS_set:
-                sprites.load_xml(self.path, 'Obj', oS)
-            sprites.load_objects(self.path, 'Obj',
+                sprites.load_xml(self.path, 'obj', oS)
+            sprites.load_objects(self.path, 'obj',
                                  oS, map_items['objects'])
 
             # Add to list

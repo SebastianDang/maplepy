@@ -32,9 +32,9 @@ class MapSprites():
         self.xmls[key].open(file)
 
         # Parse by type
-        if subtype == 'Tile':
+        if subtype == 'tile':
             self.xmls[key].parse_root(Layer.CANVAS_ARRAY)
-        elif subtype == 'Obj':
+        elif subtype == 'obj':
             self.xmls[key].parse_root(Layer.TAGS)
 
     def load_tiles(self, path, subtype, tag_name, values):
