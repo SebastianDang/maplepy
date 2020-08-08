@@ -289,6 +289,11 @@ class MapSprites():
 
                 # Camera offset
                 if offset:
+
+                    # If the sprite is outside the surface
+                    if not sprite.rect.colliderect(offset):
+                        continue
+
                     rect = sprite.rect.move(-offset.x, -offset.y)
 
                 # Draw
