@@ -72,26 +72,27 @@ class Instance(pygame.sprite.Sprite):
 
         # Check if this instance can animate
         n = len(self.canvas_list)
+        if n > 0:
 
-        # Update frame count
-        self.frame_count += 1
+            # Update frame count
+            self.frame_count += 1
 
-        # Convert to correct rate
-        factor = 15  # TODO: Verify conversion rate
-        count = self.frame_count * factor
-        delay = self.canvas_list[self.canvas_list_index].delay
+            # Convert to correct rate
+            factor = 15  # TODO: Verify conversion rate
+            count = self.frame_count * factor
+            delay = self.canvas_list[self.canvas_list_index].delay
 
-        # Check individual canvas delay, update if reached
-        if count > delay:
+            # Check individual canvas delay, update if reached
+            if count > delay:
 
-            # Update canvas index
-            self.canvas_list_index = (self.canvas_list_index + 1) % n
-            self.frame_count = 0
+                # Update canvas index
+                self.canvas_list_index = (self.canvas_list_index + 1) % n
+                self.frame_count = 0
 
-            # Update current image and rect
-            canvas = self.canvas_list[self.canvas_list_index]
-            self.image = canvas.image
-            self.rect = canvas.rect.copy().move(self.x, self.y)
+                # Update current image and rect
+                canvas = self.canvas_list[self.canvas_list_index]
+                self.image = canvas.image
+                self.rect = canvas.rect.copy().move(self.x, self.y)
 
     def update(self):
         if len(self.canvas_list) > 0:

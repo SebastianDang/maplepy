@@ -134,10 +134,9 @@ class MapXml:
                     for value in child:
                         info[value.get('name')] = value.get('value')
                 if child.attrib.get('name') == 'tile':
-                    child[:] = sorted(
-                        child, key=lambda c: (c.tag, c.get('name')))
                     for subchild in child:
                         tile = {}
+                        tile['name'] = subchild.get('name')
                         for value in subchild:
                             tile['info'] = info
                             if value.tag in value_tags:

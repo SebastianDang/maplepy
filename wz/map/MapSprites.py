@@ -37,10 +37,10 @@ class MapSprites():
         elif subtype == 'Obj':
             self.xmls[key].parse_root(Layer.TAGS)
 
-    def load_tiles(self, path, subtype, name, values):
+    def load_tiles(self, path, subtype, tag_name, values):
 
         # Create key
-        key = "{}/{}".format(subtype, name)
+        key = "{}/{}".format(subtype, tag_name)
 
         # Check if file has finished loading
         if key not in self.xmls:
@@ -51,7 +51,7 @@ class MapSprites():
         if key in self.images:
             tile_images = self.images[key]
         else:
-            tile_images = self.load_tile_images(path, subtype, name)
+            tile_images = self.load_tile_images(path, subtype, tag_name)
 
         # Get xml
         xml = self.xmls[key]
@@ -62,6 +62,9 @@ class MapSprites():
 
                 # Build object
                 inst = Instance()
+
+                # Get name
+                tag_name = val['name'] if 'name' in val else None
 
                 # Required properties
                 inst.x = int(val['x'])
@@ -91,11 +94,14 @@ class MapSprites():
                         fy = int(foothold['y'])
                         canvas.add_foothold(Foothold(fx, fy))
 
+                # !!!For tiles, use the tag name!!!
                 # Explicit special case
-                if 'z' in val:
-                    inst.update_layer(int(val['z']))
-                else:
-                    inst.update_layer(inst.zM)
+                # if 'z' in val:
+                #     inst.update_layer(int(val['z']))
+                # else:
+                #     inst.update_layer(inst.zM)
+                if tag_name and tag_name.isdigit():
+                    inst.update_layer(int(tag_name))
 
                 # Add to object
                 inst.add_canvas(canvas)
@@ -219,7 +225,8 @@ class MapSprites():
                     # Add to object
                     inst.add_canvas(canvas)
 
-                # Explicit special case
+                # !!!For objects, use the z value!!!
+                # # Explicit special case
                 if 'z' in val:
                     inst.update_layer(int(val['z']))
                 else:
@@ -265,7 +272,7 @@ class MapSprites():
             return
 
         for sprite in self.sprites:
-            sprite.step_frame()
+            sprite.update()
 
     def blit(self, surface, offset=None):
 
