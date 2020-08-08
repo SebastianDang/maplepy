@@ -1,15 +1,14 @@
 import xml.etree.ElementTree as ET
 
 
-class Map_xml:
+class MapXml:
 
     def __init__(self):
         self.root = None
         self.name = None
         self.info = None
         self.all_backs = None
-        self.all_tiles = []
-        self.all_objects = []
+        self.map_items = []
 
     def open(self, file):
         """
@@ -152,7 +151,7 @@ class Map_xml:
                             if value.tag in value_tags:
                                 obj[value.get('name')] = value.get('value')
                         objects.append(obj)
-            self.all_tiles.append({"info": info, "tiles": tiles})
-            self.all_objects.append({"info": info, "objects": objects})
+            self.map_items.append(
+                {"info": info, "tiles": tiles, "objects": objects})
         except Exception:
             print('Error while parsing digit arrays.')

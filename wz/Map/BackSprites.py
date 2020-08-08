@@ -1,20 +1,16 @@
 import os
 import pygame
 
-from Wz.Xml.Xml import Layer, Xml
-from Wz.Info.Instance import Instance
-from Wz.Info.Canvas import Canvas
+from wz.xml.BaseXml import Layer, BaseXml
+from wz.info.Instance import Instance
+from wz.info.Canvas import Canvas
 
 
-vec = pygame.math.Vector2
-
-
-class Back_sprites(pygame.sprite.Sprite):
+class BackSprites():
     def __init__(self):
-        super().__init__()
         self.xml = {}
-        self.sprites = {}
-        self.objects = pygame.sprite.Group()
+        self.images = {}
+        self.sprites = pygame.sprite.Group()
 
     def load_xml(self, name, path):
 
@@ -24,8 +20,8 @@ class Back_sprites(pygame.sprite.Sprite):
             return
 
         # Load and parse the xml
-        file = "{}/Back/{}.img.xml".format(path, name)
-        self.xml[name] = Xml()
+        file = "{}/map.wz/Back/{}.img.xml".format(path, name)
+        self.xml[name] = BaseXml()
         self.xml[name].open(file)
         self.xml[name].parse_root(Layer.CANVAS_ARRAY)
 
@@ -42,7 +38,7 @@ class Back_sprites(pygame.sprite.Sprite):
         # Load sprites for a given xml file
         sprites = []
         for index in range(0, 100):  # Num images
-            file = "{}/Back/{}/back.{}.png".format(
+            file = "{}/map.wz/Back/{}/back.{}.png".format(
                 path, xml.name, str(index))
             if os.path.isfile(file):
                 image = pygame.image.load(file).convert_alpha()
@@ -51,7 +47,7 @@ class Back_sprites(pygame.sprite.Sprite):
                 break
 
         # Set images
-        self.sprites[name] = sprites
+        self.images[name] = sprites
 
     def load_objects(self, name, object_instances):
 
@@ -83,7 +79,7 @@ class Back_sprites(pygame.sprite.Sprite):
                 obj.no = int(instance['no'])
 
                 # Get sprite by key and index
-                sprites = self.sprites[obj.bS]
+                sprites = self.images[obj.bS]
                 sprite = sprites[obj.no]
                 w, h = sprite.get_size()
 
@@ -106,7 +102,7 @@ class Back_sprites(pygame.sprite.Sprite):
                 obj.add_canvas(canvas)
 
                 # Add to list
-                self.objects.add(obj)
+                self.sprites.add(obj)
 
             except:
                 print('Error while loading backs')
@@ -132,17 +128,17 @@ class Back_sprites(pygame.sprite.Sprite):
         #         obj.frame_offset %= obj.height
 
     def blit(self, surface, offset=None):
-        if not self.objects:
+        if not self.sprites:
             return
 
         # Get surface properties
         w, h = surface.get_size()
 
         # For all objects
-        for obj in self.objects:
+        for obj in self.sprites:
             try:
 
-                # Image and camera offset
+                # Camera offset
                 dx = offset.x if offset else 0
                 dy = offset.y if offset else 0
                 x = self.calculate_x(obj.rx, dx, 0.5 * w)

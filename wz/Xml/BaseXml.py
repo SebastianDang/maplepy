@@ -9,7 +9,7 @@ class Layer(Enum):
     CANVAS_ARRAY = 2
 
 
-class Xml:
+class BaseXml:
     """
     Basic xml reader for elementary objects:
         Back
