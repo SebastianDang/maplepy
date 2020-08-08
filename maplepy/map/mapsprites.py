@@ -101,7 +101,9 @@ class MapSprites():
 
                 # !!!For tiles, use the tag name!!!
                 # Explicit special case
-                # if 'z' in val:
+                # if canvas.z:
+                #     inst.update_layer(canvas.z)
+                # elif 'z' in val:
                 #     inst.update_layer(int(val['z']))
                 # else:
                 #     inst.update_layer(inst.zM)
@@ -117,6 +119,9 @@ class MapSprites():
             except:
                 print('Error while loading tiles')
                 continue
+
+        # Fix tiles that are overlapping
+        self.fix_overlapping_sprites()
 
     def load_tile_images(self, path, subtype, name):
 
@@ -146,6 +151,14 @@ class MapSprites():
 
         # Return
         return image_group
+
+    def fix_overlapping_sprites(self):
+        for sprite in self.sprites:
+            collisions = pygame.sprite.spritecollide(
+                sprite, self.sprites, False)
+            for collision in collisions:
+                if sprite.canvas_list[0].z > collision.canvas_list[0].z:
+                    self.sprites.change_layer(sprite, collision._layer+1)
 
     def load_objects(self, path, subtype, name, values):
 
