@@ -116,16 +116,16 @@ class BackSprites():
 
     def update(self):
         pass
-        horizontal = [4, 6]
-        vertical = [5, 7]
-        frame_ticks = 1
-        for sprite in self.sprites:
-            if sprite.type in horizontal and sprite.rect.width > 0:
-                sprite.frame_offset += sprite.rx / frame_ticks
-                sprite.frame_offset %= sprite.rect.width
-            if sprite.type in vertical and sprite.rect.height > 0:
-                sprite.frame_offset += sprite.ry / frame_ticks
-                sprite.frame_offset %= sprite.rect.height
+        # horizontal = [4, 6]
+        # vertical = [5, 7]
+        # frame_ticks = 1
+        # for sprite in self.sprites:
+        #     if sprite.type in horizontal and sprite.rect.width > 0:
+        #         sprite.frame_offset += sprite.rx / frame_ticks
+        #         sprite.frame_offset %= sprite.rect.width
+        #     if sprite.type in vertical and sprite.rect.height > 0:
+        #         sprite.frame_offset += sprite.ry / frame_ticks
+        #         sprite.frame_offset %= sprite.rect.height
 
     def blit(self, surface, offset=None):
         if not self.sprites:
