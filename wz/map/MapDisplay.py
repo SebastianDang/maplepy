@@ -10,15 +10,15 @@ from wz.sound.Bgm import Sound_Bgm
 class MapDisplay():
     def __init__(self, screen):
 
-        # Main screen to draw onto
+        # Primary surface
         self.screen = screen
 
-        # Background to draw onto
+        # Background surface
         self.background = None
 
-        # Camera movement
-        self.cam = None
-        self.bounds = None
+        # User view
+        self.view = None
+        self.view_limit = None
 
         # Music
         self.bgm = None
@@ -27,9 +27,14 @@ class MapDisplay():
         self.path = '.'
         self.map_xml = None
         self.back_sprites = None
-        self.map_sprites = []
+        self.map_sprite_layers = []
 
     def load_map(self, map_id):
+
+        # Check input path
+        if not os.path.exists(self.path):
+            print('{} does not exist'.format(self.path))
+            return
 
         # Check map_id input
         if not map_id or not map_id.isdigit():
@@ -37,38 +42,36 @@ class MapDisplay():
             return
 
         # Build filename
-        file = "{}/map.wz/Map/Map{}/{}.img.xml".format(
+        map_file = "{}/map.wz/map/map{}/{}.img.xml".format(
             self.path,  map_id[0:1], map_id)
 
         # Load xml
         self.map_xml = MapXml()
-        self.map_xml.open(file)
+        self.map_xml.open(map_file)
         self.map_xml.parse_root()
 
-        # Setup map
-        self.setup()
-
-        # Load sprites
+        # Setup and load
+        self.setup_map()
         self.load_back_sprites()
         self.load_map_sprites()
 
-    def setup(self):
+    def setup_map(self):
 
-        # Get screen boundaries
+        # Set up view
+        w, h = self.screen.get_size()
+        self.view = pygame.Rect(0, 0, w, h)
+
+        # Get view boundaries
         top = int(self.map_xml.info['VRTop'])
         left = int(self.map_xml.info['VRLeft'])
         bottom = int(self.map_xml.info['VRBottom'])
         right = int(self.map_xml.info['VRRight'])
-        self.bounds = pygame.Rect(left, top, right - left, bottom - top)
+        self.view_limit = pygame.Rect(left, top, right - left, bottom - top)
 
-        # Set up camera
-        w, h = self.screen.get_size()
-        self.cam = pygame.Rect(0, 0, w, h)
-
-        # Get bgm
+        # Start bgm
         if 'bgm' in self.map_xml.info:
             self.bgm = Sound_Bgm()
-            self.bgm.play_bgm("{}/Sound.wz".format(self.path),
+            self.bgm.play_bgm("{}/sound.wz".format(self.path),
                               self.map_xml.info['bgm'])
 
     def load_back_sprites(self):
@@ -79,7 +82,7 @@ class MapDisplay():
 
         # Create background
         if not self.background:
-            self.background = pygame.Surface((800, 600))
+            self.background = pygame.Surface((800, 600))  # Native resolution
 
         # If variable is not yet initialized
         if not self.back_sprites:
@@ -129,21 +132,21 @@ class MapDisplay():
             sprites.load_objects(self.path, 'Obj',
                                  oS, map_items['objects'])
 
-            # Add to lost
-            self.map_sprites.append(sprites)
+            # Add to list
+            self.map_sprite_layers.append(sprites)
 
     def update(self):
 
         # Camera
-        if self.cam and self.bounds:
-            self.cam = self.cam.clamp(self.bounds)
+        if self.view and self.view_limit:
+            self.view = self.view.clamp(self.view_limit)
 
         # Background
         if self.back_sprites:
             self.back_sprites.update()
 
         # Tiles / Objs
-        for sprites in self.map_sprites:
+        for sprites in self.map_sprite_layers:
             sprites.update()
 
     def blit(self):
@@ -151,11 +154,11 @@ class MapDisplay():
         # Background
         if self.back_sprites:
             self.background.fill((0, 0, 0))
-            self.back_sprites.blit(self.background, self.cam)
+            self.back_sprites.blit(self.background, self.view)
             background = pygame.transform.scale(
                 self.background, self.screen.get_size())
             self.screen.blit(background, self.screen.get_rect())
 
         # Tiles / Objs
-        for sprites in self.map_sprites:
-            sprites.blit(self.screen, self.cam)
+        for sprites in self.map_sprite_layers:
+            sprites.blit(self.screen, self.view)
