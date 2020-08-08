@@ -16,8 +16,8 @@ print('Loading.')
 # Load
 m = MapDisplay(screen)
 m.path = 'P:\Downloads\MapleStory'
-m.load_map('000010000')  # Maple Tree Hill
-# m.load_map('100000000')  # Henesys
+# m.load_map('000010000')  # Maple Tree Hill
+m.load_map('100000000')  # Henesys
 
 # Timer stop
 t1 = time.time()

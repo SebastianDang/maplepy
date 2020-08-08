@@ -92,8 +92,10 @@ class MapSprites():
                         canvas.add_foothold(Foothold(fx, fy))
 
                 # Explicit special case
-                if not inst.zM:
-                    inst.update_layer(canvas.z)
+                if 'z' in val:
+                    inst.update_layer(int(val['z']))
+                else:
+                    inst.update_layer(inst.zM)
 
                 # Add to object
                 inst.add_canvas(canvas)
@@ -146,6 +148,7 @@ class MapSprites():
                 # Required properties
                 inst.x = int(val['x'])
                 inst.y = int(val['y'])
+                inst.z = int(val['z']) if 'z' in val else None
                 inst.oS = val['oS']
                 inst.l0 = val['l0']
                 inst.l1 = val['l1']
@@ -216,9 +219,11 @@ class MapSprites():
                     # Add to object
                     inst.add_canvas(canvas)
 
-                    # Explicit special case
-                    if 'z' in val:
-                        inst.update_layer(int(val['z']))
+                # Explicit special case
+                if 'z' in val:
+                    inst.update_layer(int(val['z']))
+                else:
+                    inst.update_layer(inst.zM)
 
                 # Add to list
                 self.sprites.add(inst)
