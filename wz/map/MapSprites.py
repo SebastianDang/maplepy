@@ -204,12 +204,17 @@ class MapSprites():
                     y = int(item['y'])
                     z = int(item['z']) if 'z' in item else 0
                     delay = int(item['delay']) if 'delay' in item else 120
+                    a0 = int(item['a0']) if 'a0' in item else 255
+                    a1 = int(item['a1']) if 'a1' in item else 255
 
                     # Create a canvas object
                     canvas = Canvas(sprite, w, h, x, y, z)
 
                     # Set delay
                     canvas.set_delay(delay)
+
+                    # Set alphas
+                    canvas.set_alpha(a0, a1)
 
                     # Add footholds
                     if 'extended' in item:

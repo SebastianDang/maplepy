@@ -80,10 +80,16 @@ class Instance(pygame.sprite.Sprite):
             # Convert to correct rate
             factor = 15  # TODO: Verify conversion rate
             count = self.frame_count * factor
-            delay = self.canvas_list[self.canvas_list_index].delay
+            canvas = self.canvas_list[self.canvas_list_index]
+
+            # Update alpha
+            if canvas.delay > 0:
+                alpha = canvas.a0 + (count / canvas.delay) * \
+                    (canvas.a1 - canvas.a0)
+                self.image.set_alpha(alpha)
 
             # Check individual canvas delay, update if reached
-            if count > delay:
+            if count > canvas.delay:
 
                 # Update canvas index
                 self.canvas_list_index = (self.canvas_list_index + 1) % n

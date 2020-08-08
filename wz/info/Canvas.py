@@ -28,6 +28,8 @@ class Canvas(pygame.sprite.Sprite):
         self.y = y
         self.z = z
         self.delay = 0
+        self.a0 = 255
+        self.a1 = 255
         self.footholds = []
 
         # Update center
@@ -35,6 +37,10 @@ class Canvas(pygame.sprite.Sprite):
 
     def set_delay(self, delay):
         self.delay = delay
+
+    def set_alpha(self, a0, a1):
+        self.a0 = a0
+        self.a1 = a1
 
     def add_foothold(self, foothold):
         self.footholds.append(foothold)
