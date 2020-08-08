@@ -1,9 +1,9 @@
 import os
 import pygame
 
-from wz.xml.BaseXml import Layer, BaseXml
-from wz.info.Instance import Instance
-from wz.info.Canvas import Canvas
+from maplepy.xml.basexml import Layer, BaseXml
+from maplepy.info.instance import Instance
+from maplepy.info.canvas import Canvas
 
 
 class BackSprites():
@@ -28,7 +28,7 @@ class BackSprites():
     def load_sprites(self, name, path):
 
         # Check if xml has finished loading
-        if name not in self.xml or not self.xml[name].objects:
+        if name not in self.xml or not self.xml[name].items:
             print('{} was not loaded yet.'.format(name))
             return
 
@@ -36,57 +36,57 @@ class BackSprites():
         xml = self.xml[name]
 
         # Load sprites for a given xml file
-        sprites = []
+        images = []
         for index in range(0, 100):  # Num images
             file = "{}/map.wz/Back/{}/back.{}.png".format(
                 path, xml.name, str(index))
             if os.path.isfile(file):
                 image = pygame.image.load(file).convert_alpha()
-                sprites.append(image)
+                images.append(image)
             else:
                 break
 
         # Set images
-        self.images[name] = sprites
+        self.images[name] = images
 
-    def load_objects(self, name, object_instances):
+    def load_objects(self, name, values):
 
         # Check if xml has finished loading
-        if name not in self.xml or not self.xml[name].objects:
+        if name not in self.xml or not self.xml[name].items:
             print('{} was not loaded yet.'.format(name))
             return
 
         # Go through instances list and add
-        for instance in object_instances:
+        for val in values:
             try:
 
                 # Build object
-                obj = Instance()
+                inst = Instance()
 
                 # Required properties
-                obj.x = int(instance['x'])
-                obj.y = int(instance['y'])
-                obj.cx = int(instance['cx'])
-                obj.cy = int(instance['cy'])
-                obj.rx = int(instance['rx'])
-                obj.ry = int(instance['ry'])
-                obj.f = int(instance['f'])
-                obj.a = int(instance['a'])
-                obj.type = int(instance['type'])
-                obj.front = int(instance['front'])
-                obj.ani = int(instance['ani'])
-                obj.bS = instance['bS']
-                obj.no = int(instance['no'])
+                inst.x = int(val['x'])
+                inst.y = int(val['y'])
+                inst.cx = int(val['cx'])
+                inst.cy = int(val['cy'])
+                inst.rx = int(val['rx'])
+                inst.ry = int(val['ry'])
+                inst.f = int(val['f'])
+                inst.a = int(val['a'])
+                inst.type = int(val['type'])
+                inst.front = int(val['front'])
+                inst.ani = int(val['ani'])
+                inst.bS = val['bS']
+                inst.no = int(val['no'])
 
                 # Get sprite by key and index
-                sprites = self.images[obj.bS]
-                sprite = sprites[obj.no]
+                images = self.images[inst.bS]
+                sprite = images[inst.no]
                 w, h = sprite.get_size()
 
                 # Get additional properties
-                object_data = self.xml[name].objects
+                object_data = self.xml[name].items
                 back_data = object_data['back']
-                data = back_data[obj.no]
+                data = back_data[inst.no]
                 x = int(data['x'])
                 y = int(data['y'])
                 z = int(data['z'])
@@ -95,17 +95,17 @@ class BackSprites():
                 canvas = Canvas(sprite, w, h, x, y, z)
 
                 # Flip
-                if obj.f > 0:
+                if inst.f > 0:
                     canvas.flip()
 
                 # Add to object
-                obj.add_canvas(canvas)
+                inst.add_canvas(canvas)
 
                 # Add to list
-                self.sprites.add(obj)
+                self.sprites.add(inst)
 
             except:
-                print('Error while loading backs')
+                print('Error while loading background')
                 continue
 
     def calculate_x(self, rx, dx, z):
@@ -116,16 +116,16 @@ class BackSprites():
 
     def update(self):
         pass
-        # horizontal = [4, 6]
-        # vertical = [5, 7]
-        # frame_ticks = 1
-        # for obj in self.objects:
-        #     if obj.type in horizontal and obj.width > 0:
-        #         obj.frame_offset += obj.rx / frame_ticks
-        #         obj.frame_offset %= obj.width
-        #     if obj.type in vertical and obj.height > 0:
-        #         obj.frame_offset += obj.ry / frame_ticks
-        #         obj.frame_offset %= obj.height
+        horizontal = [4, 6]
+        vertical = [5, 7]
+        frame_ticks = 1
+        for sprite in self.sprites:
+            if sprite.type in horizontal and sprite.rect.width > 0:
+                sprite.frame_offset += sprite.rx / frame_ticks
+                sprite.frame_offset %= sprite.rect.width
+            if sprite.type in vertical and sprite.rect.height > 0:
+                sprite.frame_offset += sprite.ry / frame_ticks
+                sprite.frame_offset %= sprite.rect.height
 
     def blit(self, surface, offset=None):
         if not self.sprites:
@@ -135,15 +135,15 @@ class BackSprites():
         w, h = surface.get_size()
 
         # For all objects
-        for obj in self.sprites:
+        for sprite in self.sprites:
             try:
 
                 # Camera offset
                 dx = offset.x if offset else 0
                 dy = offset.y if offset else 0
-                x = self.calculate_x(obj.rx, dx, 0.5 * w)
-                y = self.calculate_y(obj.ry, dy, 0.5 * h)
-                rect = obj.rect.move(x, y)
+                x = self.calculate_x(sprite.rx, dx, 0.5 * w)
+                y = self.calculate_y(sprite.ry, dy, 0.5 * h)
+                rect = sprite.rect.move(x, y)
 
                 # 0 - Simple image (eg. the hill with the tree in the background of Henesys)
                 # 1 - Image is copied horizontally (eg. the sea in Lith Harbor)
@@ -154,30 +154,30 @@ class BackSprites():
                 # 6 - Image scrolls horizontally, and is copied in both directions (eg. the train in Kerning City subway JQ)
                 # 7 - Image scrolls vertically, and is copied in both directions (eg. rain drops in Ellin PQ maps)
 
-                if obj.type == 0:
-                    surface.blit(obj.image, rect)
-                elif obj.type == 1:
-                    delta = obj.cx if obj.cx > 0 else obj.rect.width
+                if sprite.type == 0:
+                    surface.blit(sprite.image, rect)
+                elif sprite.type == 1:
+                    delta = sprite.cx if sprite.cx > 0 else sprite.rect.width
                     if delta > 0:
                         tile = rect.copy()
                         while tile.x < w:
-                            surface.blit(obj.image, tile)
+                            surface.blit(sprite.image, tile)
                             tile = tile.move(delta, 0)
                         tile = rect.copy()
-                        while tile.x > -obj.rect.width:
-                            surface.blit(obj.image, tile)
+                        while tile.x > -sprite.rect.width:
+                            surface.blit(sprite.image, tile)
                             tile = tile.move(-delta, 0)
-                elif obj.type == 2:
+                elif sprite.type == 2:
                     pass
-                elif obj.type == 3:
+                elif sprite.type == 3:
                     pass
-                elif obj.type == 4:
+                elif sprite.type == 4:
                     pass
-                elif obj.type == 5:
+                elif sprite.type == 5:
                     pass
-                elif obj.type == 6:
+                elif sprite.type == 6:
                     pass
-                elif obj.type == 7:
+                elif sprite.type == 7:
                     pass
 
             except:

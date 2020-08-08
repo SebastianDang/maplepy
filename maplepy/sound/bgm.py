@@ -2,7 +2,7 @@ import os
 import pygame
 
 
-class Sound_Bgm:
+class SoundBgm:
     def __init__(self):
         self.file = None
         self.volume = 1.0

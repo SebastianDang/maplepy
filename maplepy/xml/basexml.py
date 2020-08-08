@@ -11,7 +11,7 @@ class Layer(Enum):
 
 class BaseXml:
     """
-    Basic xml reader for elementary objects:
+    Basic xml reader for elementary items:
         Back
         Tile
         Obj
@@ -21,7 +21,7 @@ class BaseXml:
         self.root = None
         self.name = None
         self.info = None
-        self.objects = None
+        self.items = None
 
     def open(self, file):
         if self.root:
@@ -42,7 +42,7 @@ class BaseXml:
         try:
 
             info = {}
-            objects = {}
+            items = {}
 
             # Parse xml
             for child in self.root:
@@ -56,17 +56,17 @@ class BaseXml:
 
                     # Start at tags
                     if layer == Layer.TAGS:
-                        objects[child.get('name')] = self.parse_tags(child)
+                        items[child.get('name')] = self.parse_tags(child)
 
                     # Start at canvases
                     elif layer == Layer.CANVAS_ARRAY:
-                        objects[child.attrib.get(
+                        items[child.attrib.get(
                             'name')] = self.parse_canvas_array(child)
 
             # Set variables
             self.name = self.root.get('name')
             self.info = info
-            self.objects = objects
+            self.items = items
 
         except:
             print('Error while parsing.')

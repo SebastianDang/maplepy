@@ -2,10 +2,10 @@ import os
 import sys
 import pygame
 
-from wz.xml.BaseXml import Layer, BaseXml
-from wz.info.Instance import Instance
-from wz.info.Canvas import Canvas
-from wz.info.Foothold import Foothold
+from maplepy.xml.basexml import Layer, BaseXml
+from maplepy.info.instance import Instance
+from maplepy.info.canvas import Canvas
+from maplepy.info.foothold import Foothold
 
 
 class MapSprites():
@@ -79,7 +79,7 @@ class MapSprites():
                 w, h = image.get_size()
 
                 # Get additional properties
-                item = xml.objects[inst.u][inst.no]
+                item = xml.items[inst.u][inst.no]
                 x = int(item['x'])
                 y = int(item['y'])
                 z = int(item['z'])
@@ -124,7 +124,7 @@ class MapSprites():
 
         # Load sprites
         image_group = {}
-        for obj in self.xmls[key].objects:
+        for obj in self.xmls[key].items:
             images = []
             for index in range(0, 20):  # Max num of frames
                 file = "{}/map.wz/{}/{}.img/{}.{}.png".format(
@@ -180,13 +180,13 @@ class MapSprites():
                 key = "{}/{}".format(subtype, inst.oS)
 
                 # Get xml
-                if key not in self.xmls or not self.xmls[key].objects:
+                if key not in self.xmls or not self.xmls[key].items:
                     print('{} was not loaded yet.'.format(key))
                     continue
                 xml = self.xmls[key]
 
                 # Get additional properties
-                objects = xml.objects
+                objects = xml.items
                 l0 = objects[inst.l0]
                 l1 = l0[inst.l1]
                 l2 = l1[int(inst.l2)]

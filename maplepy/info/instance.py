@@ -11,7 +11,7 @@ class Instance(pygame.sprite.Sprite):
 
     def __init__(self):
 
-        # Sprite
+        # pygame.sprite.Sprite
         super().__init__()
         self.image = None
         self.rect = None
@@ -72,7 +72,7 @@ class Instance(pygame.sprite.Sprite):
 
         # Check if this instance can animate
         n = len(self.canvas_list)
-        if n > 0:
+        if n > 1:
 
             # Update frame count
             self.frame_count += 1
@@ -101,7 +101,7 @@ class Instance(pygame.sprite.Sprite):
                 self.rect = canvas.rect.copy().move(self.x, self.y)
 
     def update(self):
-        if len(self.canvas_list) > 0:
+        if len(self.canvas_list) > 1:
             self.step_frame()
 
     def draw_footholds(self, screen, offset=None):

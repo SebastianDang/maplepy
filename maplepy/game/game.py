@@ -1,8 +1,8 @@
 import pygame
 
-from wz.Config import Config
-from wz.ui.LoadDisplay import LoadDisplay
-from wz.map.MapDisplay import MapDisplay
+from maplepy.config import Config
+from maplepy.ui.loaddisplay import LoadDisplay
+from maplepy.map.mapdisplay import MapDisplay
 
 DISPLAY_LOADING = 0
 DISPLAY_MAP = 1

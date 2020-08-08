@@ -1,10 +1,10 @@
 import os
 import sys
 import pygame
-from wz.xml.MapXml import MapXml
-from wz.map.MapSprites import MapSprites
-from wz.map.BackSprites import BackSprites
-from wz.sound.Bgm import Sound_Bgm
+from maplepy.xml.mapxml import MapXml
+from maplepy.map.mapsprites import MapSprites
+from maplepy.map.backsprites import BackSprites
+from maplepy.sound.bgm import SoundBgm
 
 
 class MapDisplay():
@@ -75,7 +75,7 @@ class MapDisplay():
 
         # Start bgm
         if 'bgm' in self.map_xml.info:
-            self.bgm = Sound_Bgm()
+            self.bgm = SoundBgm()
             self.bgm.play_bgm("{}/sound.wz".format(self.path),
                               self.map_xml.info['bgm'])
 
@@ -95,7 +95,7 @@ class MapDisplay():
 
         # Get back name (should be unique)
         bS_set = []
-        for back in self.map_xml.all_backs:
+        for back in self.map_xml.back_items:
             bS_set.append(back['bS'])
         bS_set = set(bS_set)
 
@@ -105,7 +105,7 @@ class MapDisplay():
             self.back_sprites.load_sprites(bS, self.path)
 
         # Load objects after
-        self.back_sprites.load_objects(bS, self.map_xml.all_backs)
+        self.back_sprites.load_objects(bS, self.map_xml.back_items)
 
     def load_map_sprites(self):
 

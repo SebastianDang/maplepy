@@ -1,3 +1,4 @@
+import os
 import xml.etree.ElementTree as ET
 
 
@@ -7,7 +8,7 @@ class MapXml:
         self.root = None
         self.name = None
         self.info = None
-        self.all_backs = None
+        self.back_items = None
         self.map_items = []
 
     def open(self, file):
@@ -18,7 +19,10 @@ class MapXml:
             file (xml): MapleStory xml file
         """
         if self.root:
-            print('Xml file already opened.')
+            print('{} already opened.'.format(file))
+            return
+        if not os.path.isfile(file):
+            print('{} does not exist.'.format(file))
             return
         self.root = ET.parse(file).getroot()
 
@@ -112,7 +116,7 @@ class MapXml:
                     if value.tag in value_tags:
                         back_value[value.get('name')] = value.get('value')
                 back.append(back_value)
-            self.all_backs = back
+            self.back_items = back
         except Exception:
             print('Error while parsing back.')
 
