@@ -129,19 +129,12 @@ class Instance(pygame.sprite.Sprite):
         canvas = self.canvas_list[self.canvas_list_index]
         return canvas.footholds
 
-    def draw_footholds(self, screen, offset=None):
-
-        # TODO: Set line thickness
-        width = 5
-
-        # If canvas does not exist, return
-        if not self.canvas_list:
-            return
+    def get_foothold_points(self, offset=None):
 
         # Get current canvas
         canvas = self.canvas_list[self.canvas_list_index]
 
-        # Keep track of points
+        # Create a list of points
         points = []
 
         # Iterate over footholds
@@ -158,6 +151,20 @@ class Instance(pygame.sprite.Sprite):
 
             # Add to points
             points.append((fx, fy))
+
+        return points
+
+    def draw_footholds(self, screen, offset=None):
+
+        # TODO: Set line thickness
+        width = 5
+
+        # If canvas does not exist, return
+        if not self.canvas_list:
+            return
+
+        # Get all foothold points
+        points = self.get_foothold_points(offset)
 
         # Draw lines
         if points:

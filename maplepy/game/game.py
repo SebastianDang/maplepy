@@ -124,18 +124,33 @@ class Game():
 
     def handle_player_collisions(self):
 
+        # Get a list of all collisions
         collisions = []
-
         sprite_layers = self.displays[DISPLAY_MAP].map_sprite_layers
         for sprite_layer in sprite_layers:
             collisions += pygame.sprite.spritecollide(
                 self.player, sprite_layer.sprites, False)
 
-        view = self.displays[DISPLAY_MAP].view
-
+        # If there are any collisions, check
         if collisions:
+
+            # Get player info
+            rect = self.player.rect
+
+            # Check collision
             for sprite in collisions:
-                if sprite.get_footholds():
+
+                points = sprite.get_foothold_points()
+                p1 = None
+                for p0 in points:
+                    if p0 and p1:
+                        clipped_line = rect.clipline(p0, p1)
+                        print(rect, (p0, p1), clipped_line)
+                    p1 = p0
+
+                # Debug
+                if points:
+                    view = self.displays[DISPLAY_MAP].view
                     sprite.draw_footholds(self.screen, view)
 
     def run(self):
