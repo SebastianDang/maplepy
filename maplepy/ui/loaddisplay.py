@@ -18,8 +18,15 @@ class LoadDisplay():
         self.timer = 0
         self.delay = 10
 
+        # Status
+        self.loaded = False
+
     def load_images(self):
 
+        # Status
+        self.loaded = False
+
+        # Load images
         for i in range(0, 9):
             file = '{}/ui.wz/logo.img/loading.repeat.1.{}.png'.format(
                 self.path, str(i))
@@ -29,6 +36,7 @@ class LoadDisplay():
             else:
                 break
 
+        # Set image
         if self.images:
             image = self.images[0]
             self.image = pygame.transform.scale(
@@ -36,20 +44,34 @@ class LoadDisplay():
             self.rect = self.image.get_rect(
                 center=(0.5 * self.width, 0.5 * self.height))
 
+        # Status
+        self.loaded = True
+
     def update(self):
+
         n = len(self.images)
         if n > 0:
+
             self.timer += 1
             if self.timer > self.delay:
+
+                # Reset timer
                 self.timer = 0
+
+                # Get the next image
                 self.images_index = (self.images_index + 1) % n
                 image = self.images[self.images_index]
+
+                # Scale the image to the screen
                 self.image = pygame.transform.scale(
                     image, self.screen.get_size())
+
+                # Center the image
                 self.rect = self.image.get_rect(
                     center=(0.5 * self.width, 0.5 * self.height))
 
     def blit(self):
+
         if self.screen:
             if self.image:
                 self.screen.blit(self.image, self.rect)

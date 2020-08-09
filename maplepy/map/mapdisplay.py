@@ -29,7 +29,13 @@ class MapDisplay():
         self.back_sprites = None
         self.map_sprite_layers = []
 
+        # Status
+        self.loaded = False
+
     def load_map(self, map_id):
+
+        # Status
+        self.loaded = False
 
         # Clear
         self.map_xml = None
@@ -57,8 +63,11 @@ class MapDisplay():
 
         # Setup and load
         self.setup_map()
-        self.load_back_sprites()
-        self.load_map_sprites()
+        self.setup_back_sprites()
+        self.setup_map_sprites()
+
+        # Status
+        self.loaded = True
 
     def setup_map(self):
 
@@ -79,7 +88,7 @@ class MapDisplay():
             self.bgm.play_bgm("{}/sound.wz".format(self.path),
                               self.map_xml.info['bgm'])
 
-    def load_back_sprites(self):
+    def setup_back_sprites(self):
 
         # Check if map xml is loaded
         if not self.map_xml:
@@ -107,7 +116,7 @@ class MapDisplay():
         # Load objects after
         self.back_sprites.load_objects(bS, self.map_xml.back_items)
 
-    def load_map_sprites(self):
+    def setup_map_sprites(self):
 
         # Check if map xml is loaded
         if not self.map_xml:

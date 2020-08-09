@@ -14,6 +14,7 @@ class Instance(pygame.sprite.Sprite):
         # pygame.sprite.Sprite
         super().__init__()
         self.image = None
+        self.mask = None
         self.rect = None
         self._layer = 0
 
@@ -69,6 +70,7 @@ class Instance(pygame.sprite.Sprite):
         # Update current image and rect
         if not self.image:
             self.image = canvas.image
+            self.mask = pygame.mask.from_surface(self.image)
         if not self.rect:
             self.rect = canvas.rect.copy()
             self.rect = canvas.rect.copy().move(self.x, self.y)
@@ -103,6 +105,7 @@ class Instance(pygame.sprite.Sprite):
                 # Update current image and rect
                 canvas = self.canvas_list[self.canvas_list_index]
                 self.image = canvas.image
+                self.mask = pygame.mask.from_surface(self.image)
                 self.rect = canvas.rect.copy().move(self.x, self.y)
 
     def step_scroll(self):
@@ -121,6 +124,10 @@ class Instance(pygame.sprite.Sprite):
             self.step_frame()
         elif n > 0:
             self.step_scroll()
+
+    def get_footholds(self):
+        canvas = self.canvas_list[self.canvas_list_index]
+        return canvas.footholds
 
     def draw_footholds(self, screen, offset=None):
 
@@ -144,12 +151,12 @@ class Instance(pygame.sprite.Sprite):
             fx = foothold.x + self.x
             fy = foothold.y + self.y
 
-            # Adjust usin offset
+            # Adjust using offset
             if offset:
                 fx -= offset.x
                 fy -= offset.y
 
-            # Create a point and draw
+            # Add to points
             points.append((fx, fy))
 
         # Draw lines
