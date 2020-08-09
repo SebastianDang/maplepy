@@ -9,7 +9,11 @@ class MapXml:
         self.name = None
         self.info = None
         self.back_items = None
+        self.life_items = None
         self.map_items = []
+        self.tooltip_items = None
+        self.ladder_items = None
+        self.portal_items = None
 
     def open(self, file):
         """
@@ -44,22 +48,22 @@ class MapXml:
                 imgdir_name = child.get('name')
                 # Info
                 if imgdir_name == 'info':
-                    self.parse_info(child)
+                    self.info = self.parse_values(child)
                 # Background images
                 if imgdir_name == 'back':
-                    self.parse_back(child)
+                    self.back_items = self.parse_array(child)
                 # Life
                 if imgdir_name == 'life':
-                    pass
+                    self.life_items = self.parse_array(child)
                 # Digit
-                if imgdir_name.isdigit():
+                if imgdir_name.isdigit():  # Tiles / Objects
                     self.parse_digit_arrays(child)
                 # Reactor
                 if imgdir_name == 'reactor':
                     pass
                 # ToolTip
                 if imgdir_name == 'ToolTip':
-                    pass
+                    self.tooltip_items = self.parse_array(child)
                 # RectInfo
                 if imgdir_name == 'rectInfo':
                     pass
@@ -68,7 +72,7 @@ class MapXml:
                     pass
                 # Ladder/Ropes
                 if imgdir_name == 'ladderRope':
-                    pass
+                    self.ladder_items = self.parse_array(child)
                 # Seat
                 if imgdir_name == 'seat':
                     pass
@@ -77,48 +81,45 @@ class MapXml:
                     pass
                 # Portal
                 if imgdir_name == 'portal':
+                    self.portal_items = self.parse_array(child)
                     pass
 
         except:
             print('Error while parsing root.')
 
-    def parse_info(self, parent):
+    def parse_array(self, parent):
         """
-        Parse info node and store in class variable
+        Parse array nodes and return list
 
         Args:
-            parent (xml node): Xml node at 'info'
+            parent (xml node): Xml parent node of array
         """
         try:
-            info = {}
+            items = []
+            for child in parent:
+                data = self.parse_values(child)
+                data['name'] = child.attrib.get('name')
+                items.append(data)
+            return items
+        except Exception:
+            print('Error while parsing array.')
+
+    def parse_values(self, parent):
+        """
+        Parse value node and return values
+
+        Args:
+            parent (xml node): Xml parent node of values
+        """
+        try:
+            items = {}
             value_tags = ['int', 'string', 'float']
             for child in parent:
                 if child.tag in value_tags:
-                    info[child.get('name')] = child.get('value')
-            self.info = info
+                    items[child.get('name')] = child.get('value')
+            return items
         except Exception:
-            print('Error while parsing info.')
-
-    def parse_back(self, parent):
-        """
-        Parse background image nodes and store in class variable
-
-        Args:
-            parent (xml node): Xml node at 'back'
-        """
-        try:
-            back = []
-            value_tags = ['int', 'string']
-            for child in parent:
-                back_value = {}
-                back_value['name'] = child.attrib.get('name')
-                for value in child:
-                    if value.tag in value_tags:
-                        back_value[value.get('name')] = value.get('value')
-                back.append(back_value)
-            self.back_items = back
-        except Exception:
-            print('Error while parsing back.')
+            print('Error while parsing value.')
 
     def parse_digit_arrays(self, parent):
         """
