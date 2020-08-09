@@ -8,10 +8,12 @@ from maplepy.sound.bgm import SoundBgm
 
 
 class MapDisplay():
-    def __init__(self, screen, path):
+
+    def __init__(self, w, h, path):
 
         # Required properties
-        self.screen = screen
+        self.width = w
+        self.height = h
         self.path = path
 
         # Background surface
@@ -72,8 +74,7 @@ class MapDisplay():
     def setup_map(self):
 
         # Set up view
-        w, h = self.screen.get_size()
-        self.view = pygame.Rect(0, 0, w, h)
+        self.view = pygame.Rect(0, 0, self.width, self.height)
 
         # Get view boundaries
         top = int(self.map_xml.info['VRTop'])
@@ -163,16 +164,16 @@ class MapDisplay():
         for sprites in self.map_sprite_layers:
             sprites.update()
 
-    def blit(self):
+    def blit(self, surface):
 
         # Background
         if self.back_sprites:
             self.background.fill((0, 0, 0))
             self.back_sprites.blit(self.background, self.view)
             background = pygame.transform.scale(
-                self.background, self.screen.get_size())
-            self.screen.blit(background, self.screen.get_rect())
+                self.background, surface.get_size())
+            surface.blit(background, surface.get_rect())
 
         # Tiles / Objs
         for sprites in self.map_sprite_layers:
-            sprites.blit(self.screen, self.view)
+            sprites.blit(surface, self.view)

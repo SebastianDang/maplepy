@@ -4,17 +4,17 @@ import pygame
 
 class LoadDisplay():
 
-    def __init__(self, screen, path):
+    def __init__(self, w, h, path):
 
-        self.screen = screen
+        # Required properties
+        self.width = w
+        self.height = h
         self.path = path
 
-        self.width = screen.get_width()
-        self.height = screen.get_height()
         self.images = []
         self.images_index = 0
         self.image = None
-        self.rect = None
+        self.rect = pygame.Rect(0, 0, self.width, self.height)
         self.timer = 0
         self.delay = 10
 
@@ -39,10 +39,7 @@ class LoadDisplay():
         # Set image
         if self.images:
             image = self.images[0]
-            self.image = pygame.transform.scale(
-                image, self.screen.get_size())
-            self.rect = self.image.get_rect(
-                center=(0.5 * self.width, 0.5 * self.height))
+            self.image = pygame.transform.scale(image, self.rect.size)
 
         # Status
         self.loaded = True
@@ -63,17 +60,12 @@ class LoadDisplay():
                 image = self.images[self.images_index]
 
                 # Scale the image to the screen
-                self.image = pygame.transform.scale(
-                    image, self.screen.get_size())
+                self.image = pygame.transform.scale(image, self.rect.size)
 
-                # Center the image
-                self.rect = self.image.get_rect(
-                    center=(0.5 * self.width, 0.5 * self.height))
+    def blit(self, surface):
 
-    def blit(self):
-
-        if self.screen:
+        if surface:
             if self.image:
-                self.screen.blit(self.image, self.rect)
+                surface.blit(self.image, self.rect)
             else:
-                self.screen.fill((255, 255, 255, 0))
+                surface.fill((255, 255, 255, 0))
