@@ -9,6 +9,9 @@ from maplepy.info.foothold import Foothold
 
 
 class MapSprites():
+    """
+    Class containing tile and object images for the map
+    """
 
     def __init__(self):
         self.xmls = {}
@@ -101,9 +104,7 @@ class MapSprites():
 
                 # !!!For tiles, use the tag name!!!
                 # Explicit special case
-                # if canvas.z:
-                #     inst.update_layer(canvas.z)
-                # elif 'z' in val:
+                # if 'z' in val:
                 #     inst.update_layer(int(val['z']))
                 # else:
                 #     inst.update_layer(inst.zM)
@@ -153,6 +154,7 @@ class MapSprites():
         return image_group
 
     def fix_overlapping_sprites(self):
+        """ Fix z issues with overlapping tiles and objects """
         for sprite in self.sprites:
             collisions = pygame.sprite.spritecollide(
                 sprite, self.sprites, False)
@@ -303,9 +305,6 @@ class MapSprites():
             sprite.update()
 
     def blit(self, surface, offset=None):
-
-        if not self.sprites:
-            return
 
         for sprite in self.sprites:
             try:

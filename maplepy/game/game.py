@@ -4,6 +4,7 @@ from maplepy.config import Config
 from maplepy.ui.loaddisplay import LoadDisplay
 from maplepy.map.mapdisplay import MapDisplay
 from maplepy.game.square import Square
+from maplepy.game.player import Player
 
 CAMERA_SPEED = 4
 DISPLAY_LOADING = 0
@@ -48,7 +49,7 @@ class Game():
         self.map_index = 0
 
         # Player
-        self.player = Square()
+        self.player = Player()
 
     def handle_events(self):
 
@@ -80,16 +81,16 @@ class Game():
         inputs = pygame.key.get_pressed()
         if inputs[pygame.K_w]:
             if self.displays_state == DISPLAY_MAP:
-                self.displays[DISPLAY_MAP].view = view.move(0, -CAMERA_SPEED)
+                self.displays[DISPLAY_MAP].move_view(0, -CAMERA_SPEED)
         if inputs[pygame.K_s]:
             if self.displays_state == DISPLAY_MAP:
-                self.displays[DISPLAY_MAP].view = view.move(0, CAMERA_SPEED)
+                self.displays[DISPLAY_MAP].move_view(0, CAMERA_SPEED)
         if inputs[pygame.K_a]:
             if self.displays_state == DISPLAY_MAP:
-                self.displays[DISPLAY_MAP].view = view.move(-CAMERA_SPEED, 0)
+                self.displays[DISPLAY_MAP].move_view(-CAMERA_SPEED, 0)
         if inputs[pygame.K_d]:
             if self.displays_state == DISPLAY_MAP:
-                self.displays[DISPLAY_MAP].view = view.move(CAMERA_SPEED, 0)
+                self.displays[DISPLAY_MAP].move_view(CAMERA_SPEED, 0)
 
         # Debug: cycle through maps
         if inputs[pygame.K_TAB]:
@@ -108,8 +109,12 @@ class Game():
             self.player.on_right()
         if inputs[pygame.K_UP]:
             self.player.on_up()
-        if inputs[pygame.K_DOWN]:
-            self.player.on_down()
+        # if inputs[pygame.K_DOWN]:
+        #     self.player.on_down()
+
+        # Player movement
+        if inputs[pygame.K_LALT]:
+            self.player.on_jump()
 
         # Input key handling to prevent repeated keys
         input_blocker_removal = []
@@ -131,11 +136,13 @@ class Game():
             collisions += pygame.sprite.spritecollide(
                 self.player, sprite_layer.sprites, False)
 
+        # Get player info
+        self.player.on_fall()
+        rect = self.player.rect
+        # rect = pygame.Rect(rect.center[0], rect.center[1], 1, 0.5* rect.height)
+
         # If there are any collisions, check
         if collisions:
-
-            # Get player info
-            rect = self.player.rect
 
             # Check collision
             for sprite in collisions:
@@ -144,14 +151,19 @@ class Game():
                 p1 = None
                 for p0 in points:
                     if p0 and p1:
+                        if p0[0] == p1[0]:
+                            p1 = p0
+                            continue
                         clipped_line = rect.clipline(p0, p1)
-                        print(rect, (p0, p1), clipped_line)
+                        # print(rect, (p0, p1), clipped_line)
+                        if clipped_line:
+                            self.player.off_jump()
                     p1 = p0
 
-                # Debug
-                if points:
-                    view = self.displays[DISPLAY_MAP].view
-                    sprite.draw_footholds(self.screen, view)
+                # # Debug
+                # if points:
+                #     view = self.displays[DISPLAY_MAP].view
+                #     sprite.draw_footholds(self.screen, view)
 
     def run(self):
 

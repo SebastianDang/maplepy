@@ -56,16 +56,16 @@ class Config:
         return self.__args[key]
 
     def init(self, filename):
-        print('Config:', 'Initialized', '.')
+        print('Config:', filename)
         self.__filename = filename
         self.load()
 
     def load(self):
-        print('Config:', 'Loading', self.__filename, '...')
+        print('Config:', 'Loading', self.__filename)
         with open(self.__filename) as json_file:
             self.__args = json.load(json_file)
 
     def save(self):
-        print('Config:', 'Saving', self.__filename, '...')
+        print('Config:', 'Saving', self.__filename)
         with open(self.__filename, 'w') as json_file:
             json.dump(self.__args, json_file, indent=2)

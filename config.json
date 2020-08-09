@@ -8,5 +8,18 @@
   "maps": [
     "000010000",
     "100000000"
-  ]
+  ],
+  "player": {
+    "fall_max_speed": 4.0,
+    "jump_max_speed": 100.0,
+    "jump_force": 2.80,
+    "jump_gravity": 0.35,
+    "move_speed": 1.00,
+    "move_max_speed": 10.00,
+    "move_ground_friction": 0.20,
+    "debug": {
+      "enable": 0,
+      "rect": 1
+    }
+  }
 }

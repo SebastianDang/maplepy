@@ -7,6 +7,8 @@ from maplepy.info.canvas import Canvas
 
 
 class BackSprites():
+    """ Class containing background images for the map """
+
     def __init__(self):
         self.xml = {}
         self.images = {}
@@ -49,7 +51,7 @@ class BackSprites():
         # Set images
         self.images[name] = images
 
-    def load_objects(self, name, values):
+    def load_backgrounds(self, name, values):
 
         # Check if xml has finished loading
         if name not in self.xml or not self.xml[name].items:
@@ -115,9 +117,11 @@ class BackSprites():
                 continue
 
     def calculate_x(self, rx, dx, z):
+        """ Calculate the camera x offset """
         return float(rx * (dx + z) / 100) + z
 
     def calculate_y(self, ry, dy, z):
+        """ Calculate the camera y offset """
         return float(ry * (dy + z) / 100) + z
 
     def update(self):
@@ -125,8 +129,6 @@ class BackSprites():
             sprite.update()
 
     def blit(self, surface, offset=None):
-        if not self.sprites:
-            return
 
         # Get surface properties
         w, h = surface.get_size()
