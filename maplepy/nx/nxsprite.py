@@ -57,11 +57,12 @@ class NXSprite(pygame.sprite.Sprite):
             image.unlock()
 
             # Update current sprite
-            self.width = w
-            self.height = h
             self.image = image.convert_alpha()
             self.rect = image.get_rect()
             self.mask = pygame.mask.from_surface(image)
+            self.width = w
+            self.height = h
+            self.data = data
 
         except:
             print('Unable to load image')
