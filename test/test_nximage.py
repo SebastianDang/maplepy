@@ -1,6 +1,5 @@
 import os
 from nx.nxfile import NXFile
-from maplepy.nx.nxsprite import NXSprite
 
 path = 'P:/Downloads/Resources'  # TODO: Change this to use your nx path
 
