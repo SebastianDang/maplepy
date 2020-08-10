@@ -93,3 +93,11 @@ class NXFile():
 
     def getRoot(self):
         return self.getNode(0)
+
+    def resolve(self, path):
+        paths = path.split("/")
+        node = self.getRoot()
+        for path in paths:
+            node = node.getChild(path)
+
+        return node
