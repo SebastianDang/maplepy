@@ -5,4 +5,4 @@ class Sound:
 
     def getData(self, length):
         self.nxfile.file.seek(self.offset)
-        return int.from_bytes(self.nxfile.file.read(length), "little")
+        return self.nxfile.file.read(length)
