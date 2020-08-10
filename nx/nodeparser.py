@@ -1,6 +1,6 @@
 import struct
 
-from nxnode import NXNode
+from nx.nxnode import NXNode
 
 
 def parseNode(nxfile):

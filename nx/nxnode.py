@@ -1,8 +1,9 @@
-from image import Image
-from sound import Sound
+from nx.nximage import NXImage
+from nx.nxsound import NXSound
 
 
 class NXNode():
+
     def __init__(self, name, nxfile, childIndex, childCount, type):
         self.name = name
         self.nxfile = nxfile
@@ -39,7 +40,7 @@ class NXNode():
         currentPos = nxfile.file.tell()
         nxfile.file.seek(nxfile.imageOffset + imageIndex * 8)
         offset = int.from_bytes(nxfile.file.read(8), "little")
-        image = Image(nxfile, offset)
+        image = NXImage(nxfile, offset)
         nxfile.images[imageIndex] = image
         nxfile.file.seek(currentPos)
         return image
@@ -56,7 +57,7 @@ class NXNode():
         currentPos = nxfile.file.tell()
         nxfile.file.seek(nxfile.soundOffset + soundIndex * 8)
         offset = int.from_bytes(nxfile.file.read(8), "little")
-        sound = Sound(nxfile, offset)
+        sound = NXSound(nxfile, offset)
         nxfile.sounds[soundIndex] = sound
         nxfile.file.seek(currentPos)
         return sound

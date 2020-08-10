@@ -1,7 +1,8 @@
 import lz4.block
 
 
-class Image:
+class NXImage:
+
     def __init__(self, nxfile, offset):
         self.nxfile = nxfile
         self.offset = offset

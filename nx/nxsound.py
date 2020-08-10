@@ -1,4 +1,5 @@
-class Sound:
+class NXSound:
+
     def __init__(self, nxfile, offset):
         self.nxfile = nxfile
         self.offset = offset

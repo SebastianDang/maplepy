@@ -1,12 +1,12 @@
-from nxfile import NXFile
+import os
 import pygame
-from nxsprite import nxsprite
-
+from nx.nxfile import NXFile
+from maplepy.nx.nxsprite import NXSprite
 
 # tile = NXFile("map.nx").getRoot().getChild("Tile").getChild(
 #     'grassySoil.img').getChild('bsc').getChild('0')
-
-tile = NXFile("map.nx").resolve("Tile/grassySoil.img/bsc/0")
+path = '.'
+tile = NXFile(os.path.join(path, 'map.nx')).resolve("Tile/grassySoil.img/bsc/0")
 print(tile)
 print(tile.name)
 print('height', tile.height)
@@ -20,7 +20,7 @@ byte = tile.getImage()
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
 
-sprite = nxsprite()
+sprite = NXSprite()
 sprite.load(tile.width, tile.height, byte)
 sprite.image = pygame.transform.scale(sprite.image, screen.get_size())
 

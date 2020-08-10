@@ -1,8 +1,8 @@
 import struct
 
-import nodeparser
-from image import Image
-from sound import Sound
+from nx.nximage import NXImage
+from nx.nxsound import NXSound
+import nx.nodeparser as nodeparser
 
 
 class NXFile():
