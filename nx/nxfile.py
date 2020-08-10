@@ -7,7 +7,6 @@ from sound import Sound
 
 class NXFile():
     def __init__(self, filePath):
-
         self.filePath = filePath
         self.file = open(filePath, "rb")
         print(self.file)
@@ -34,24 +33,27 @@ class NXFile():
         print('soundOffset', self.soundOffset)
 
         self.nodes = [None] * self.nodeCount
+        self.strings = {}
+        self.images = {}
+        self.sounds = {}
 
         # setup tables
         # setup string table
         self.populateStringsTable()
 
         # setup images
-        self.images = {}
-        self.file.seek(self.imageOffset)
-        for i in range(self.imageCount):
-            offset = int.from_bytes(self.file.read(8), "little")
-            self.images[i] = Image(self, offset)
 
-        # setup sounds
-        self.sounds = {}
-        self.file.seek(self.soundOffset)
-        for i in range(self.imageCount):
-            offset = int.from_bytes(self.file.read(8), "little")
-            self.sounds[i] = Sound(self, offset)
+        # self.file.seek(self.imageOffset)
+        # for i in range(self.imageCount):
+        #     offset = int.from_bytes(self.file.read(8), "little")
+        #     self.images[i] = Image(self, offset)
+
+        # # setup sounds
+
+        # self.file.seek(self.soundOffset)
+        # for i in range(self.soundCount):
+        #     offset = int.from_bytes(self.file.read(8), "little")
+        #     self.sounds[i] = Sound(self, offset)
 
         # populate nodes
         # self.populateNodesTable()
