@@ -127,11 +127,11 @@ class MapDisplay():
 
         # Load sets of sprites only once
         for bS in bS_set:
-            self.back_sprites.load_xml(bS, self.path)
-            self.back_sprites.load_sprites(bS, self.path)
+            self.back_sprites.load_xml(self.path, bS)
+            self.back_sprites.load_images(self.path, bS)
 
         # Load objects after
-        self.back_sprites.load_backgrounds(bS, self.map_xml.back_items)
+        self.back_sprites.load_backgrounds(self.path, bS, self.map_xml.back_items)
 
     def setup_map_sprites(self):
 

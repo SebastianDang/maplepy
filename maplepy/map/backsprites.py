@@ -14,7 +14,7 @@ class BackSprites():
         self.images = {}
         self.sprites = pygame.sprite.Group()
 
-    def load_xml(self, name, path):
+    def load_xml(self, path, name):
 
         # Check if xml has already been loaded before
         if name in self.xml:
@@ -27,7 +27,11 @@ class BackSprites():
         self.xml[name].open(file)
         self.xml[name].parse_root(Layer.CANVAS_ARRAY)
 
-    def load_sprites(self, name, path):
+    def load_images(self, path, name):
+
+        # Check if images have already been loaded before
+        if name in self.images:
+            return self.images[name]
 
         # Check if xml has finished loading
         if name not in self.xml or not self.xml[name].items:
@@ -37,7 +41,7 @@ class BackSprites():
         # Get current xml file
         xml = self.xml[name]
 
-        # Load sprites for a given xml file
+        # Load images for a given xml file
         images = []
         for index in range(0, 100):  # Num images
             file = "{}/map.wz/Back/{}/back.{}.png".format(
@@ -48,10 +52,13 @@ class BackSprites():
             else:
                 break
 
-        # Set images
+        # Store images
         self.images[name] = images
 
-    def load_backgrounds(self, name, values):
+        # Return
+        return images
+
+    def load_backgrounds(self, path, name, values):
 
         # Check if xml has finished loading
         if name not in self.xml or not self.xml[name].items:
