@@ -16,24 +16,24 @@ class Instance(pygame.sprite.Sprite):
         self.image = None
         self.mask = None
         self.rect = None
-        self._layer = 0
+        self._layer = 0  # Used for layered sprite groups (z-buffer)
 
         # Common
         self.x = None
         self.y = None
         self.zM = None
-        self.f = None
+        self.f = None  # Flip image
 
-        # Back
-        self.cx = None
+        # Background
+        self.cx = None  # Repeat in x,y
         self.cy = None
-        self.rx = None
+        self.rx = None  # Scroll in x,y
         self.ry = None
-        self.type = None
+        self.type = None  # Background type
         self.a = None
         self.front = None
         self.ani = None
-        self.dx = 0
+        self.dx = 0  # Track scroll in x,y
         self.dy = 0
 
         # Object
@@ -42,7 +42,7 @@ class Instance(pygame.sprite.Sprite):
         self.dynamic = None
         self.piece = None
 
-        # Asset
+        # Asset tags
         self.bS = None
         self.oS = None
         self.l0 = None
@@ -54,7 +54,7 @@ class Instance(pygame.sprite.Sprite):
         # Collision
         self.forbidFallDown = None
 
-        # Canvas
+        # Canvases
         self.canvas_list = []
         self.canvas_list_index = 0
         self.frame_count = 0
@@ -127,13 +127,19 @@ class Instance(pygame.sprite.Sprite):
             self.dy %= (2 * self.cy)
 
     def update(self):
+
         n = len(self.canvas_list)
+
+        # Animate
         if n > 1:
             self.step_frame()
+
+        # Scroll
         elif n > 0:
             self.step_scroll()
 
     def get_footholds(self):
+
         canvas = self.canvas_list[self.canvas_list_index]
         return canvas.footholds
 
