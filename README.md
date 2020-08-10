@@ -1,4 +1,4 @@
-# MaplePie
+# MaplePy
 
 A basic emulator for the popular game [MapleStory](https://maplestory.com/)!
 
