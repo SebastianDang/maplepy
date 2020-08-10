@@ -38,6 +38,7 @@ class NXSprite(pygame.sprite.Sprite):
 
             # Create a new image
             image = pygame.Surface((w, h))
+            image.set_colorkey((0, 0, 0, 0))  # Transparent
 
             # Create pixel array to access x,y coordinates
             pxarray = pygame.PixelArray(image)
@@ -58,7 +59,7 @@ class NXSprite(pygame.sprite.Sprite):
             # Update current sprite
             self.width = w
             self.height = h
-            self.image = image
+            self.image = image.convert_alpha()
             self.rect = image.get_rect()
             self.mask = pygame.mask.from_surface(image)
 
