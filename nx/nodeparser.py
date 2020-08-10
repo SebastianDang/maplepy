@@ -28,8 +28,8 @@ def parseNode(nxfile):
         node.value = nxfile.strings[node.stringIndex]
         file.seek(4, 1)
     elif type == 4:  # point
-        node.x = int.from_bytes(file.read(4), "little")
-        node.y = int.from_bytes(file.read(4), "little")
+        node.x = int.from_bytes(file.read(4), "little", signed=True)
+        node.y = int.from_bytes(file.read(4), "little", signed=True)
     elif type == 5:  # image
         node.imageIndex = int.from_bytes(file.read(4), "little")
         node.width = int.from_bytes(file.read(2), "little")
