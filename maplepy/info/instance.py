@@ -109,11 +109,19 @@ class Instance(pygame.sprite.Sprite):
                 self.rect = canvas.rect.copy().move(self.x, self.y)
 
     def step_scroll(self):
+
+        # Check if this instance can scroll
+        if not self.type:
+            return
+
+        # Horizontal delta
         horizontal = [4, 6]
-        vertical = [5, 7]
         if self.type in horizontal and self.cx > 0:
             self.dx += self.rx
             self.dx %= (2 * self.cx)
+
+        # Vertical delta
+        vertical = [5, 7]
         if self.type in vertical and self.cy > 0:
             self.dy += self.ry
             self.dy %= (2 * self.cy)
@@ -152,6 +160,7 @@ class Instance(pygame.sprite.Sprite):
             # Add to points
             points.append((fx, fy))
 
+        # Return footholds as tuples
         return points
 
     def draw_footholds(self, screen, offset=None):

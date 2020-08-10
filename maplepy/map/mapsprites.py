@@ -40,10 +40,10 @@ class MapSprites():
         elif subtype == 'obj':
             self.xmls[key].parse_root(Layer.TAGS)
 
-    def load_tiles(self, path, subtype, tag_name, values):
+    def load_tiles(self, path, subtype, name, values):
 
         # Create key
-        key = "{}/{}".format(subtype, tag_name)
+        key = "{}/{}".format(subtype, name)
 
         # Check if file has finished loading
         if key not in self.xmls:
@@ -54,7 +54,7 @@ class MapSprites():
         if key in self.images:
             tile_images = self.images[key]
         else:
-            tile_images = self.load_tile_images(path, subtype, tag_name)
+            tile_images = self.load_tile_images(path, subtype, name)
 
         # Get xml
         xml = self.xmls[key]
