@@ -1,6 +1,7 @@
 import os
-import sys
 import pygame
+
+import maplepy.display.displayitems as displayitems
 
 from maplepy.xml.basexml import Layer, BaseXml
 from maplepy.info.instance import Instance
@@ -8,15 +9,141 @@ from maplepy.info.canvas import Canvas
 from maplepy.info.foothold import Foothold
 
 
-class MapSprites():
+class BackgroundSpritesXml(displayitems.BackgroundSprites):
+    """ Class containing background images for the map """
+
+    def __init__(self):
+
+        # Create sprites
+        super().__init__()
+
+        # Other properties
+        self.xml = {}
+        self.images = {}
+
+    def load_xml(self, path, name):
+
+        # Check if xml has already been loaded before
+        if name in self.xml:
+            print('{} was already loaded.'.format(name))
+            return
+
+        # Load and parse the xml
+        file = "{}/map.wz/Back/{}.img.xml".format(path, name)
+        self.xml[name] = BaseXml()
+        self.xml[name].open(file)
+        self.xml[name].parse_root(Layer.CANVAS_ARRAY)
+
+    def load_images(self, path, name):
+
+        # Check if images have already been loaded before
+        if name in self.images:
+            return self.images[name]
+
+        # Check if xml has finished loading
+        if name not in self.xml or not self.xml[name].items:
+            print('{} was not loaded yet.'.format(name))
+            return
+
+        # Get current xml file
+        xml = self.xml[name]
+
+        # Load images for a given xml file
+        images = []
+        for index in range(0, 100):  # Num images
+            file = "{}/map.wz/Back/{}/back.{}.png".format(
+                path, xml.name, str(index))
+            if os.path.isfile(file):
+                image = pygame.image.load(file).convert_alpha()
+                images.append(image)
+            else:
+                break
+
+        # Store images
+        self.images[name] = images
+
+        # Return
+        return images
+
+    def load_backgrounds(self, path, name, values):
+
+        # Check if xml has finished loading
+        if name not in self.xml or not self.xml[name].items:
+            print('{} was not loaded yet.'.format(name))
+            return
+
+        # Go through instances list and add
+        for val in values:
+            try:
+
+                # Build object
+                inst = Instance()
+
+                # Required properties
+                inst.x = int(val['x'])
+                inst.y = int(val['y'])
+                inst.cx = int(val['cx'])
+                inst.cy = int(val['cy'])
+                inst.rx = int(val['rx'])
+                inst.ry = int(val['ry'])
+                inst.f = int(val['f'])
+                inst.a = int(val['a'])
+                inst.type = int(val['type'])
+                inst.front = int(val['front'])
+                inst.ani = int(val['ani'])
+                inst.bS = val['bS']
+                inst.no = int(val['no'])
+
+                # Get sprite by key and index
+                images = self.images[inst.bS]
+                sprite = images[inst.no]
+                w, h = sprite.get_size()
+
+                # Get additional properties
+                object_data = self.xml[name].items
+                back_data = object_data['back']
+                data = back_data[inst.no]
+                x = int(data['x'])
+                y = int(data['y'])
+                z = int(data['z'])
+
+                # Create a canvas object
+                canvas = Canvas(sprite, w, h, x, y, z)
+
+                # Flip
+                if inst.f > 0:
+                    canvas.flip()
+
+                # Check cx, cy
+                if not inst.cx:
+                    inst.cx = w
+                if not inst.cy:
+                    inst.cy = h
+
+                # Add to object
+                inst.add_canvas(canvas)
+
+                # Add to list
+                self.sprites.add(inst)
+
+            except:
+                print('Error while loading background')
+                continue
+
+
+class LayeredSpritesXml(displayitems.LayeredSprites):
     """
     Class containing tile and object images for the map
     """
 
     def __init__(self):
+
+        # Create sprites
+        super().__init__()
+
+        # Other properties
         self.xmls = {}
         self.images = {}
-        self.sprites = pygame.sprite.LayeredUpdates()
 
     def load_xml(self, path, subtype, name):
 
@@ -295,34 +422,3 @@ class MapSprites():
 
         # Return list of images
         return images
-
-    def update(self):
-
-        if not self.sprites:
-            return
-
-        for sprite in self.sprites:
-            sprite.update()
-
-    def blit(self, surface, offset=None):
-
-        for sprite in self.sprites:
-            try:
-
-                # Get rect
-                rect = sprite.rect
-
-                # Camera offset
-                if offset:
-
-                    # If the sprite is outside the surface
-                    if not sprite.rect.colliderect(offset):
-                        continue
-
-                    rect = sprite.rect.move(-offset.x, -offset.y)
-
-                # Draw
-                surface.blit(sprite.image, rect)
-
-            except:
-                continue

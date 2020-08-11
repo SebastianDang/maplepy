@@ -31,7 +31,7 @@ class NXResourceManager():
             data[name] = node.getChild(name).value
 
         # Store and return
-        self.data = data
+        self.data[name] = data
         return data
 
     def get_sprite(self, file, category, folder, subtype, name):

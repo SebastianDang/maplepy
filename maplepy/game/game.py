@@ -2,7 +2,7 @@ import pygame
 
 from maplepy.config import Config
 from maplepy.ui.loaddisplay import LoadDisplay
-from maplepy.map.mapdisplay import MapDisplay
+from maplepy.xml.displayxml import DisplayXml
 from maplepy.game.square import Square
 from maplepy.game.player import Player
 
@@ -38,7 +38,7 @@ class Game():
         self.displays = {}
         self.displays[DISPLAY_LOADING] = LoadDisplay(
             self.width, self.height, self.path)
-        self.displays[DISPLAY_MAP] = MapDisplay(
+        self.displays[DISPLAY_MAP] = DisplayXml(
             self.width, self.height, self.path)
 
         # Game state
@@ -129,41 +129,43 @@ class Game():
 
     def handle_player_collisions(self):
 
-        # Get a list of all collisions
-        collisions = []
-        sprite_layers = self.displays[DISPLAY_MAP].map_sprite_layers
-        for sprite_layer in sprite_layers:
-            collisions += pygame.sprite.spritecollide(
-                self.player, sprite_layer.sprites, False)
+        pass
 
-        # Get player info
-        self.player.on_fall()
-        rect = self.player.rect
-        # rect = pygame.Rect(rect.center[0], rect.center[1], 1, 0.5* rect.height)
+        # # Get a list of all collisions
+        # collisions = []
+        # sprite_layers = self.displays[DISPLAY_MAP].map_sprite_layers
+        # for sprite_layer in sprite_layers:
+        #     collisions += pygame.sprite.spritecollide(
+        #         self.player, sprite_layer.sprites, False)
 
-        # If there are any collisions, check
-        if collisions:
+        # # Get player info
+        # self.player.on_fall()
+        # rect = self.player.rect
+        # # rect = pygame.Rect(rect.center[0], rect.center[1], 1, 0.5* rect.height)
 
-            # Check collision
-            for sprite in collisions:
+        # # If there are any collisions, check
+        # if collisions:
 
-                points = sprite.get_foothold_points()
-                p1 = None
-                for p0 in points:
-                    if p0 and p1:
-                        if p0[0] == p1[0]:
-                            p1 = p0
-                            continue
-                        clipped_line = rect.clipline(p0, p1)
-                        # print(rect, (p0, p1), clipped_line)
-                        if clipped_line:
-                            self.player.off_jump()
-                    p1 = p0
+        #     # Check collision
+        #     for sprite in collisions:
 
-                # # Debug
-                # if points:
-                #     view = self.displays[DISPLAY_MAP].view
-                #     sprite.draw_footholds(self.screen, view)
+        #         points = sprite.get_foothold_points()
+        #         p1 = None
+        #         for p0 in points:
+        #             if p0 and p1:
+        #                 if p0[0] == p1[0]:
+        #                     p1 = p0
+        #                     continue
+        #                 clipped_line = rect.clipline(p0, p1)
+        #                 # print(rect, (p0, p1), clipped_line)
+        #                 if clipped_line:
+        #                     self.player.off_jump()
+        #             p1 = p0
+
+        #         # # Debug
+        #         # if points:
+        #         #     view = self.displays[DISPLAY_MAP].view
+        #         #     sprite.draw_footholds(self.screen, view)
 
     def run(self):
 

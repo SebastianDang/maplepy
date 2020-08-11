@@ -1,35 +1,28 @@
 import os
-import sys
 import pygame
+
+import maplepy.display.display as display
+from maplepy.xml.displayitemsxml import BackgroundSpritesXml, LayeredSpritesXml
+
 from maplepy.xml.mapxml import MapXml
-from maplepy.map.mapsprites import MapSprites
-from maplepy.map.backsprites import BackSprites
 from maplepy.sound.bgm import SoundBgm
 
 
-class MapDisplay():
+class DisplayXml(display.Display):
 
     def __init__(self, w, h, path):
 
-        # Required properties
-        self.width = w
-        self.height = h
+        # Create display
+        super().__init__(w, h)
+
+        # Other properties
         self.path = path
-
-        # Background surface
-        self.background = None
-
-        # User view
-        self.view = None
-        self.view_limit = None
 
         # Music
         self.bgm = None
 
         # Objects in the map
         self.map_xml = None
-        self.back_sprites = None
-        self.map_sprite_layers = []
 
         # Status
         self.loaded = False
@@ -38,11 +31,6 @@ class MapDisplay():
 
         # Status
         self.loaded = False
-
-        # Clear
-        self.map_xml = None
-        self.back_sprites = None
-        self.map_sprite_layers.clear()
 
         # Check input path
         if not os.path.exists(self.path):
@@ -81,9 +69,6 @@ class MapDisplay():
         if not self.map_xml.info:
             return
 
-        # Set up view
-        self.view = pygame.Rect(0, 0, self.width, self.height)
-
         # Get view boundaries
         view_keys = ['VRTop', 'VRLeft', 'VRBottom', 'VRRight']
         if all(key in self.map_xml.info for key in view_keys):
@@ -91,8 +76,7 @@ class MapDisplay():
             left = int(self.map_xml.info['VRLeft'])
             bottom = int(self.map_xml.info['VRBottom'])
             right = int(self.map_xml.info['VRRight'])
-            self.view_limit = pygame.Rect(
-                left, top, right - left, bottom - top)
+            self.set_view_limit(left, top, right - left, bottom - top)
 
         # Start bgm
         if 'bgm' in self.map_xml.info:
@@ -116,8 +100,8 @@ class MapDisplay():
             self.background = pygame.Surface((800, 600))  # Native resolution
 
         # If variable is not yet initialized
-        if not self.back_sprites:
-            self.back_sprites = BackSprites()
+        if not self.background_sprites:
+            self.background_sprites = BackgroundSpritesXml()
 
         # Get back name (should be unique)
         bS_set = []
@@ -127,11 +111,12 @@ class MapDisplay():
 
         # Load sets of sprites only once
         for bS in bS_set:
-            self.back_sprites.load_xml(self.path, bS)
-            self.back_sprites.load_images(self.path, bS)
+            self.background_sprites.load_xml(self.path, bS)
+            self.background_sprites.load_images(self.path, bS)
 
         # Load objects after
-        self.back_sprites.load_backgrounds(self.path, bS, self.map_xml.back_items)
+        self.background_sprites.load_backgrounds(
+            self.path, bS, self.map_xml.back_items)
 
     def setup_map_sprites(self):
 
@@ -143,7 +128,7 @@ class MapDisplay():
         for map_items in self.map_xml.map_items:
 
             # Create sprites
-            sprites = MapSprites()
+            sprites = LayeredSpritesXml()
 
             # Tiles
             info = map_items['info']
@@ -164,39 +149,5 @@ class MapDisplay():
                                  oS, map_items['objects'])
 
             # Add to list
-            self.map_sprite_layers.append(sprites)
+            self.layered_sprites.append(sprites)
 
-    def move_view(self, x, y):
-        self.view = self.view.move(x, y)
-
-    def update(self):
-
-        # Camera
-        if self.view and self.view_limit:
-            self.view = self.view.clamp(self.view_limit)
-
-        # Background
-        if self.back_sprites:
-            self.back_sprites.update()
-
-        # Tiles / Objs
-        for sprites in self.map_sprite_layers:
-            sprites.update()
-
-    def blit(self, surface):
-
-        # Background
-        if self.back_sprites:
-
-            # Blit onto background surface
-            self.background.fill((0, 0, 0))
-            self.back_sprites.blit(self.background, self.view)
-
-            # Scale background surface and blit to target surface
-            background = pygame.transform.scale(
-                self.background, surface.get_size())
-            surface.blit(background, surface.get_rect())
-
-        # Tiles / Objs
-        for sprites in self.map_sprite_layers:
-            sprites.blit(surface, self.view)
