@@ -98,6 +98,7 @@ class BackgroundSpritesXml(displayitems.BackgroundSprites):
                 images = self.images[inst.bS]
                 sprite = images[inst.no]
                 w, h = sprite.get_size()
+                sprite.set_alpha(inst.a)
 
                 # Get additional properties
                 object_data = self.xml[name].items

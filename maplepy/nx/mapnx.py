@@ -2,7 +2,7 @@ import os
 import nx.nxfile as nxfile
 
 
-class NXMap:
+class MapNx:
 
     """ Helper class to get values from a map nx file. """
 
@@ -59,7 +59,11 @@ class NXMap:
         img = '{}.img'.format(map_id)
         if self.maps and img in self.maps:
             map_node = self.maps[img]
+            # Get the current back node
             back_node = map_node.getChild('back')
+            if not back_node:
+                return None
+            # Get values
             for index in back_node.listChildren():
                 array_node = back_node.getChild(index)
                 data = {'name': index}
@@ -67,6 +71,42 @@ class NXMap:
                     data[name] = array_node.getChild(name).value
                 back.append(data)
         return back
+
+    def get_layer_data(self, map_id, index):
+        layer = {}
+        img = '{}.img'.format(map_id)
+        if self.maps and img in self.maps:
+            map_node = self.maps[img]
+            # Get the current layer
+            layer_node = map_node.getChild(str(index))
+            if not layer_node:
+                return None
+            # Get info for this layer
+            info = {}
+            info_node = layer_node.getChild('info')
+            for name in info_node.listChildren():
+                info[name] = info_node.getChild(name).value
+            # Get tiles for this layer
+            tiles = []
+            tile_node = layer_node.getChild('tile')
+            for index in tile_node.listChildren():
+                array_node = tile_node.getChild(index)
+                data = {'name': index}
+                for name in array_node.listChildren():
+                    data[name] = array_node.getChild(name).value
+                tiles.append(data)
+            # Get objects for this layer
+            objects = []
+            object_node = layer_node.getChild('obj')
+            for index in object_node.listChildren():
+                array_node = object_node.getChild(index)
+                data = {'name': index}
+                for name in array_node.listChildren():
+                    data[name] = array_node.getChild(name).value
+                objects.append(data)
+            # Add layer
+            layer = {'info': info, 'tile': tiles, 'obj': objects}
+        return layer
 
     def get_tile_object_data(self, map_id):
         tile_object_layers = []

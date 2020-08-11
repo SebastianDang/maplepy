@@ -32,6 +32,11 @@ class DisplayXml(display.Display):
         # Status
         self.loaded = False
 
+        # Unload all old data
+        self.background_sprites = None
+        self.layered_sprites.clear()
+        self.view_limit = None
+
         # Check input path
         if not os.path.exists(self.path):
             print('{} does not exist'.format(self.path))
@@ -150,4 +155,3 @@ class DisplayXml(display.Display):
 
             # Add to list
             self.layered_sprites.append(sprites)
-

@@ -28,7 +28,8 @@ class NXResourceManager():
 
         # Parse into dictionary
         for name in node.listChildren():
-            data[name] = node.getChild(name).value
+            if hasattr(node.getChild(name), 'value'):
+                data[name] = node.getChild(name).value
 
         # Store and return
         self.data[name] = data

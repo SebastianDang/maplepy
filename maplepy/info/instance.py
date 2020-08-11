@@ -44,6 +44,7 @@ class Instance(pygame.sprite.Sprite):
 
         # Asset tags
         self.bS = None
+        self.tS = None
         self.oS = None
         self.l0 = None
         self.l1 = None
