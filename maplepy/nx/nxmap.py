@@ -105,3 +105,10 @@ class NXMap:
                 tile_object_layers.append(
                     {'info': info, 'tile': tiles, 'obj': objects})
         return tile_object_layers
+
+    def get_data(self, path):
+        data = {}
+        node = self.file.resolve(path)
+        for name in node.listChildren():
+            data[name] = node.getChild(name).value
+        return data
