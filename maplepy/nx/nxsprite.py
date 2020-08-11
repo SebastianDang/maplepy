@@ -57,7 +57,7 @@ class NXSprite(pygame.sprite.Sprite):
             image.unlock()
 
             # Update current sprite
-            self.image = image.convert_alpha()
+            self.image = image  # .convert_alpha()
             self.rect = image.get_rect()
             self.mask = pygame.mask.from_surface(image)
             self.width = w
