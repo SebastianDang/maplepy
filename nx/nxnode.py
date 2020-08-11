@@ -13,6 +13,9 @@ class NXNode():
         self.childMap = {}
         self.didPopulateChildren = False
 
+    def __getitem__(self, key):
+        return self.getChild(key)
+
     def populateChildren(self):
         """Populates immediate child nodes. No-ops if ran more than once.
         """
@@ -48,8 +51,11 @@ class NXNode():
         try:
             splitIndex = path.index("/")
             return self.getChild(path[:splitIndex]).resolve(path[splitIndex+1:])
-        except:
+        except ValueError:
             return self.getChild(path)
+        except:
+            print("Unable to resolve path", path)
+            raise
 
     def getImage(self):
         image = self.nxfile.images.get(self.imageIndex)
