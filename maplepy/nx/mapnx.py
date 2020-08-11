@@ -108,44 +108,6 @@ class MapNx:
             layer = {'info': info, 'tile': tiles, 'obj': objects}
         return layer
 
-    def get_tile_object_data(self, map_id):
-        tile_object_layers = []
-        img = '{}.img'.format(map_id)
-        if self.maps and img in self.maps:
-            map_node = self.maps[img]
-            for i in range(0, 8):
-                # Get the current layer
-                layer_node = map_node.getChild('{}'.format(i))
-                if not layer_node:
-                    continue
-                # Get info for this layer
-                info = {}
-                info_node = layer_node.getChild('info')
-                for name in info_node.listChildren():
-                    info[name] = info_node.getChild(name).value
-                # Get tiles for this layer
-                tiles = []
-                tile_node = layer_node.getChild('tile')
-                for index in tile_node.listChildren():
-                    array_node = tile_node.getChild(index)
-                    data = {'name': index}
-                    for name in array_node.listChildren():
-                        data[name] = array_node.getChild(name).value
-                    tiles.append(data)
-                # Get objects for this layer
-                objects = []
-                object_node = layer_node.getChild('obj')
-                for index in object_node.listChildren():
-                    array_node = object_node.getChild(index)
-                    data = {'name': index}
-                    for name in array_node.listChildren():
-                        data[name] = array_node.getChild(name).value
-                    objects.append(data)
-                # Add layer
-                tile_object_layers.append(
-                    {'info': info, 'tile': tiles, 'obj': objects})
-        return tile_object_layers
-
     def get_data(self, path):
         data = {}
         node = self.file.resolve(path)
