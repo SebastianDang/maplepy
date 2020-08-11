@@ -3,7 +3,7 @@ from maplepy.nx.nxsprite import NXSprite
 
 class NXSpriteManager():
     def __init__(self):
-        self.nx = None
+        self.file = None
         self.sprites = {}
 
     def get_sprite(self, category, folder, subtype, name):
@@ -19,12 +19,12 @@ class NXSpriteManager():
             return self.sprites[key]
 
         # Check if nx is loaded yet
-        if not self.nx:
+        if not self.file:
             print('Nx file not loaded')
             return None
 
         # Load from nx
-        node = self.nx.resolve(key)
+        node = self.file.resolve(key)
         if not node:
             print('Unable to load {}'.format(key))
         byte = node.getImage()

@@ -14,9 +14,9 @@ def test_nxsprite():
     byte = node.getImage()
 
     assert node.name == '0'
-    assert node.width == 90
-    assert node.height == 60
-    assert len(byte) == 90 * 60 * 4
+    assert node.width == 256
+    assert node.height == 256
+    assert len(byte) == 256 * 256 * 4
 
     pygame.init()
     screen = pygame.display.set_mode((800, 600))

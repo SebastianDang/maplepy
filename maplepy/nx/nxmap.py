@@ -22,6 +22,7 @@ class NXMap:
             root = file.getRoot()
             # Get all map nodes
             map_nodes = self.get_map_nodes(root.getChild('Map'))
+            self.file = file
             self.maps = map_nodes  # If reading fails, None
         except:
             print('Unable to open {}'.format(file))
