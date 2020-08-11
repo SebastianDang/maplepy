@@ -2,7 +2,7 @@ import pygame
 import os
 from nx.nxfile import NXFile
 from maplepy.nx.nxsprite import NXSprite
-from maplepy.nx.nxspritemanager import NXSpriteManager
+from maplepy.nx.nxresourcemanager import NXResourceManager
 
 path = 'P:/Downloads/Resources'  # TODO: Change this to use your nx path
 
@@ -25,7 +25,8 @@ def test_nxsprite():
     sprite.load(node.width, node.height, byte)
     sprite.image = pygame.transform.scale(sprite.image, screen.get_size())
 
-    while(True):
+    timer = 0
+    while(timer < 180):
 
         # Test event handling
         for event in pygame.event.get():
@@ -40,6 +41,8 @@ def test_nxsprite():
 
         # Update display
         pygame.display.update()
+        pygame.time.Clock().tick(60)
+        timer += 1
 
 
 def test_nxsprite2():
@@ -60,7 +63,8 @@ def test_nxsprite2():
     sprite.load(node.width, node.height, byte)
     sprite.image = pygame.transform.scale(sprite.image, screen.get_size())
 
-    while(True):
+    timer = 0
+    while(timer < 180):
 
         # Test event handling
         for event in pygame.event.get():
@@ -75,6 +79,8 @@ def test_nxsprite2():
 
         # Update display
         pygame.display.update()
+        pygame.time.Clock().tick(60)
+        timer += 1
 
 
 def test_nxspritemanager():
@@ -83,16 +89,18 @@ def test_nxspritemanager():
     screen = pygame.display.set_mode((800, 600))
 
     file = NXFile(os.path.join(path, 'map.nx'))
-    manager = NXSpriteManager()
+    manager = NXResourceManager()
     manager.file = file
-    sprite = manager.get_sprite('Back', 'grassySoil', None, 'back/0')
-    sprite2 = manager.get_sprite('Tile', 'grassySoil', None, 'bsc/0',)
-    sprite3 = manager.get_sprite('Obj', 'acc1', 'grassySoil', 'nature/0/0')
+    sprite = manager.get_sprite(file, 'Back', 'grassySoil', None, 'back/0')
+    sprite2 = manager.get_sprite(file, 'Tile', 'grassySoil', None, 'bsc/0',)
+    sprite3 = manager.get_sprite(
+        file, 'Obj', 'acc1', 'grassySoil', 'nature/0/0')
     sprite.image = pygame.transform.scale(sprite.image, screen.get_size())
     sprite2.image = pygame.transform.scale(sprite2.image, screen.get_size())
     sprite3.image = pygame.transform.scale(sprite3.image, screen.get_size())
 
-    while(True):
+    timer = 0
+    while(timer < 180):
 
         # Test event handling
         for event in pygame.event.get():
@@ -109,3 +117,5 @@ def test_nxspritemanager():
 
         # Update display
         pygame.display.update()
+        pygame.time.Clock().tick(60)
+        timer += 1
