@@ -6,6 +6,15 @@ path = 'P:/Downloads/Resources'  # TODO: Change this to use your nx path
 
 def test_nximage():
     node = NXFile(os.path.join(path, 'map.nx')).resolve(
+        "Back/grassySoil.img/back/0")
+    byte = node.getImage()
+    assert node.name == '0'
+    assert node.width == 22
+    assert node.height == 738
+    assert len(byte) == 22 * 738 * 4
+
+def test_nximage2():
+    node = NXFile(os.path.join(path, 'map.nx')).resolve(
         "Tile/grassySoil.img/bsc/0")
     byte = node.getImage()
     assert node.name == '0'
@@ -14,7 +23,7 @@ def test_nximage():
     assert len(byte) == 90 * 60 * 4
 
 
-def test_nximage2():
+def test_nximage3():
     node = NXFile(os.path.join(path, 'map.nx')).resolve(
         "Obj/acc1.img/grassySoil/nature/0/0")
     byte = node.getImage()
