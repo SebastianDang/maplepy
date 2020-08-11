@@ -11,21 +11,37 @@ class NXNode():
         self.childCount = childCount
         self.type = type
         self.childMap = {}
+        self.didPopulateChildren = False
 
     def populateChildren(self):
-        if (self.childCount == 0):
+        """Populates immediate child nodes. No-ops if ran more than once.
+        """
+        if self.didPopulateChildren:
+            pass
+
+        if self.childCount == 0:
             pass
 
         for i in range(self.childIndex, self.childIndex + self.childCount):
             childNode = self.nxfile.getNode(i)
             self.childMap[childNode.name] = childNode
 
-    def getChild(self, name):
-        if self.childCount == 0:
-            pass
-        elif len(self.childMap) == 0:
-            self.populateChildren()
+        self.didPopulateChildren = True
 
+    def listChildren(self):
+        """Lists names of children nodes.
+        """
+        self.populateChildren()
+        return list(self.childMap.keys())
+
+    def getChildren(self):
+        """Get children nodes as a list.
+        """
+        self.populateChildren()
+        return list(self.childMap.values())
+
+    def getChild(self, name):
+        self.populateChildren()
         return self.childMap.get(name)
 
     def getImage(self):
