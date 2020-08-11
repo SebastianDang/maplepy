@@ -20,7 +20,7 @@ def parseNode(nxfile):
     if type == 0:  # null
         file.seek(8, 1)  # skip 8 bytes
     elif type == 1:  # long
-        node.value = int.from_bytes(file.read(8), "little")
+        node.value = int.from_bytes(file.read(8), "little", signed=True)
     elif type == 2:  # double
         node.value = struct.unpack('<d', file.read(8))
     elif type == 3:  # string
