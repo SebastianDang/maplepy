@@ -3,8 +3,6 @@ import pygame
 from maplepy.config import Config
 from maplepy.ui.loaddisplay import LoadDisplay
 from maplepy.xml.displayxml import DisplayXml
-from maplepy.game.square import Square
-from maplepy.game.player import Player
 
 CAMERA_SPEED = 4
 DISPLAY_LOADING = 0
@@ -48,9 +46,6 @@ class Game():
         self.input_blocker = {}
         self.map_index = 0
 
-        # Player
-        self.player = Player()
-
     def handle_events(self):
 
         # Handle pygame events
@@ -70,25 +65,19 @@ class Game():
         # Mouse input
         mouse_x, mouse_y = pygame.mouse.get_pos()
         mouse_click = pygame.mouse.get_pressed()
-        if mouse_click[0]:
-
-            if view:
-                self.player.place(mouse_x + view.x, mouse_y + view.y)
-            else:
-                self.player.place(mouse_x, mouse_y)
 
         # Check input keys
         inputs = pygame.key.get_pressed()
-        if inputs[pygame.K_w]:
+        if inputs[pygame.K_UP]:
             if self.displays_state == DISPLAY_MAP:
                 self.displays[DISPLAY_MAP].move_view(0, -CAMERA_SPEED)
-        if inputs[pygame.K_s]:
+        if inputs[pygame.K_DOWN]:
             if self.displays_state == DISPLAY_MAP:
                 self.displays[DISPLAY_MAP].move_view(0, CAMERA_SPEED)
-        if inputs[pygame.K_a]:
+        if inputs[pygame.K_LEFT]:
             if self.displays_state == DISPLAY_MAP:
                 self.displays[DISPLAY_MAP].move_view(-CAMERA_SPEED, 0)
-        if inputs[pygame.K_d]:
+        if inputs[pygame.K_RIGHT]:
             if self.displays_state == DISPLAY_MAP:
                 self.displays[DISPLAY_MAP].move_view(CAMERA_SPEED, 0)
 
@@ -102,20 +91,6 @@ class Game():
                         self.maps[self.map_index])
                     self.displays_state = DISPLAY_MAP
 
-        # Player movement
-        if inputs[pygame.K_LEFT]:
-            self.player.on_left()
-        if inputs[pygame.K_RIGHT]:
-            self.player.on_right()
-        if inputs[pygame.K_UP]:
-            self.player.on_up()
-        # if inputs[pygame.K_DOWN]:
-        #     self.player.on_down()
-
-        # Player movement
-        if inputs[pygame.K_LALT]:
-            self.player.on_jump()
-
         # Input key handling to prevent repeated keys
         input_blocker_removal = []
         for key, delay in self.input_blocker.items():
@@ -126,46 +101,6 @@ class Game():
         # Remove from list
         for key in input_blocker_removal:
             self.input_blocker.pop(key, None)
-
-    def handle_player_collisions(self):
-
-        pass
-
-        # # Get a list of all collisions
-        # collisions = []
-        # sprite_layers = self.displays[DISPLAY_MAP].map_sprite_layers
-        # for sprite_layer in sprite_layers:
-        #     collisions += pygame.sprite.spritecollide(
-        #         self.player, sprite_layer.sprites, False)
-
-        # # Get player info
-        # self.player.on_fall()
-        # rect = self.player.rect
-        # # rect = pygame.Rect(rect.center[0], rect.center[1], 1, 0.5* rect.height)
-
-        # # If there are any collisions, check
-        # if collisions:
-
-        #     # Check collision
-        #     for sprite in collisions:
-
-        #         points = sprite.get_foothold_points()
-        #         p1 = None
-        #         for p0 in points:
-        #             if p0 and p1:
-        #                 if p0[0] == p1[0]:
-        #                     p1 = p0
-        #                     continue
-        #                 clipped_line = rect.clipline(p0, p1)
-        #                 # print(rect, (p0, p1), clipped_line)
-        #                 if clipped_line:
-        #                     self.player.off_jump()
-        #             p1 = p0
-
-        #         # # Debug
-        #         # if points:
-        #         #     view = self.displays[DISPLAY_MAP].view
-        #         #     sprite.draw_footholds(self.screen, view)
 
     def run(self):
 
@@ -189,7 +124,6 @@ class Game():
 
             # Handle inputs
             self.handle_inputs()
-            self.player.update()
 
             # Clear screen
             self.screen.fill((0, 0, 0))
@@ -200,15 +134,6 @@ class Game():
                 # Displays
                 self.displays[self.displays_state].update()
                 self.displays[self.displays_state].blit(self.screen)
-
-            # Player
-            self.handle_player_collisions()
-
-            # Render player
-            if self.displays[self.displays_state].loaded and self.displays_state == DISPLAY_MAP:
-
-                # Player
-                self.player.blit(self.screen, self.displays[DISPLAY_MAP].view)
 
             # Update
             pygame.display.update()
