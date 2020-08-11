@@ -24,6 +24,8 @@ class BackgroundSpritesNx(displayitems.BackgroundSprites):
 
         # Load back sprites
         values = map_nx.get_background_data(map_id)
+        if not values:
+            return
 
         # Go through instances list and add
         for val in values:
@@ -97,6 +99,8 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
     def load_layer(self, map_nx, map_id, index):
 
         values = map_nx.get_layer_data(map_id, index)
+        if not values:
+            return
 
         # Go through instances list and add
         for val in values['tile']:

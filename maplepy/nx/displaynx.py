@@ -51,13 +51,6 @@ class DisplayNx(display.Display):
         self.map_nx = MapNx()
         self.map_nx.open(map_file)
 
-        # Check if map is found
-        map_list = self.map_nx.get_map_list()
-        map_img = '{}.img'.format(map_id)
-        if map_img not in map_list:
-            print('map id {} cannot be found'.format(map_id))
-            return
-
         # Setup and load
         self.setup_map(map_id)
         self.setup_back_sprites(map_id)
@@ -74,6 +67,8 @@ class DisplayNx(display.Display):
 
         # Get info
         info = self.map_nx.get_info_data(map_id)
+        if not info:
+            return
 
         # Get view boundaries
         view_keys = ['VRTop', 'VRLeft', 'VRBottom', 'VRRight']
