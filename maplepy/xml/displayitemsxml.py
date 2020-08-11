@@ -8,6 +8,10 @@ from maplepy.info.instance import Instance
 from maplepy.info.canvas import Canvas
 from maplepy.info.foothold import Foothold
 
+# Cache individual xmls and images here
+xml_cache = {}
+image_cache = {}
+
 
 class BackgroundSpritesXml(displayitems.BackgroundSprites):
     """ Class containing background images for the map """
@@ -17,36 +21,32 @@ class BackgroundSpritesXml(displayitems.BackgroundSprites):
         # Create sprites
         super().__init__()
 
-        # Other properties
-        self.xml = {}
-        self.images = {}
-
     def load_xml(self, path, name):
 
         # Check if xml has already been loaded before
-        if name in self.xml:
+        if name in xml_cache:
             print('{} was already loaded.'.format(name))
             return
 
         # Load and parse the xml
         file = "{}/map.wz/Back/{}.img.xml".format(path, name)
-        self.xml[name] = BaseXml()
-        self.xml[name].open(file)
-        self.xml[name].parse_root(Layer.CANVAS_ARRAY)
+        xml_cache[name] = BaseXml()
+        xml_cache[name].open(file)
+        xml_cache[name].parse_root(Layer.CANVAS_ARRAY)
 
     def load_images(self, path, name):
 
         # Check if images have already been loaded before
-        if name in self.images:
-            return self.images[name]
+        if name in image_cache:
+            return image_cache[name]
 
         # Check if xml has finished loading
-        if name not in self.xml or not self.xml[name].items:
+        if name not in xml_cache or not xml_cache[name].items:
             print('{} was not loaded yet.'.format(name))
             return
 
         # Get current xml file
-        xml = self.xml[name]
+        xml = xml_cache[name]
 
         # Load images for a given xml file
         images = []
@@ -60,7 +60,7 @@ class BackgroundSpritesXml(displayitems.BackgroundSprites):
                 break
 
         # Store images
-        self.images[name] = images
+        image_cache[name] = images
 
         # Return
         return images
@@ -68,7 +68,7 @@ class BackgroundSpritesXml(displayitems.BackgroundSprites):
     def load_backgrounds(self, path, name, values):
 
         # Check if xml has finished loading
-        if name not in self.xml or not self.xml[name].items:
+        if name not in xml_cache or not xml_cache[name].items:
             print('{} was not loaded yet.'.format(name))
             return
 
@@ -95,13 +95,13 @@ class BackgroundSpritesXml(displayitems.BackgroundSprites):
                 inst.no = int(val['no'])
 
                 # Get sprite by key and index
-                images = self.images[inst.bS]
+                images = image_cache[inst.bS]
                 sprite = images[inst.no]
                 w, h = sprite.get_size()
                 sprite.set_alpha(inst.a)
 
                 # Get additional properties
-                object_data = self.xml[name].items
+                object_data = xml_cache[name].items
                 back_data = object_data['back']
                 data = back_data[inst.no]
                 x = int(data['x'])
@@ -142,31 +142,27 @@ class LayeredSpritesXml(displayitems.LayeredSprites):
         # Create sprites
         super().__init__()
 
-        # Other properties
-        self.xmls = {}
-        self.images = {}
-
     def load_xml(self, path, subtype, name):
 
         # Create key
         key = "{}/{}".format(subtype, name)
 
         # Check if file has already been loaded before
-        if key in self.xmls:
+        if key in xml_cache:
             print('{} was already loaded.'.format(key))
             return
 
         # Open file
         file = "{}/map.wz/{}/{}.img.xml".format(
             path, subtype, name)
-        self.xmls[key] = BaseXml()
-        self.xmls[key].open(file)
+        xml_cache[key] = BaseXml()
+        xml_cache[key].open(file)
 
         # Parse by type
         if subtype == 'tile':
-            self.xmls[key].parse_root(Layer.CANVAS_ARRAY)
+            xml_cache[key].parse_root(Layer.CANVAS_ARRAY)
         elif subtype == 'obj':
-            self.xmls[key].parse_root(Layer.TAGS)
+            xml_cache[key].parse_root(Layer.TAGS)
 
     def load_tiles(self, path, subtype, name, values):
 
@@ -174,18 +170,18 @@ class LayeredSpritesXml(displayitems.LayeredSprites):
         key = "{}/{}".format(subtype, name)
 
         # Check if file has finished loading
-        if key not in self.xmls:
+        if key not in xml_cache:
             print('{} was was not loaded yet.'.format(key))
             return
 
         # Get images
-        if key in self.images:
-            tile_images = self.images[key]
+        if key in image_cache:
+            tile_images = image_cache[key]
         else:
             tile_images = self.load_tile_images(path, subtype, name)
 
         # Get xml
-        xml = self.xmls[key]
+        xml = xml_cache[key]
 
         # Go through instances list and add
         for val in values:
@@ -258,12 +254,12 @@ class LayeredSpritesXml(displayitems.LayeredSprites):
         key = "{}/{}".format(subtype, name)
 
         # Check if sprites are already loaded
-        if key in self.images:
-            return self.images[key]
+        if key in image_cache:
+            return image_cache[key]
 
         # Load sprites
         image_group = {}
-        for obj in self.xmls[key].items:
+        for obj in xml_cache[key].items:
             images = []
             for index in range(0, 20):  # Max num of frames
                 file = "{}/map.wz/{}/{}.img/{}.{}.png".format(
@@ -276,7 +272,7 @@ class LayeredSpritesXml(displayitems.LayeredSprites):
             image_group[obj] = images
 
         # Store images
-        self.images[key] = image_group
+        image_cache[key] = image_group
 
         # Return
         return image_group
@@ -333,10 +329,10 @@ class LayeredSpritesXml(displayitems.LayeredSprites):
                 key = "{}/{}".format(subtype, inst.oS)
 
                 # Get xml
-                if key not in self.xmls or not self.xmls[key].items:
+                if key not in xml_cache or not xml_cache[key].items:
                     print('{} was not loaded yet.'.format(key))
                     continue
-                xml = self.xmls[key]
+                xml = xml_cache[key]
 
                 # Get additional properties
                 objects = xml.items
@@ -404,8 +400,8 @@ class LayeredSpritesXml(displayitems.LayeredSprites):
             subtype, name, l0, l1, l2)
 
         # Check if sprites are already loaded
-        if key in self.images:
-            return self.images[key]
+        if key in image_cache:
+            return image_cache[key]
 
         # Get a list of images for the key
         images = []
@@ -419,7 +415,7 @@ class LayeredSpritesXml(displayitems.LayeredSprites):
                 break
 
         # Store images
-        self.images[key] = images
+        image_cache[key] = images
 
         # Return list of images
         return images
