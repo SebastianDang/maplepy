@@ -97,9 +97,10 @@ class NXFile():
         return self.getNode(0)
 
     def resolve(self, path):
-        paths = path.split("/")
-        node = self.getRoot()
-        for path in paths:
-            node = node.getChild(path)
+        # paths = path.split("/")
+        # node = self.getRoot()
+        # for path in paths:
+        #     node = node.getChild(path)
 
-        return node
+        # return node
+        return self.getRoot().resolve(path)

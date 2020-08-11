@@ -44,6 +44,13 @@ class NXNode():
         self.populateChildren()
         return self.childMap.get(name)
 
+    def resolve(self, path):
+        try:
+            splitIndex = path.index("/")
+            return self.getChild(path[:splitIndex]).resolve(path[splitIndex+1:])
+        except:
+            return self.getChild(path)
+
     def getImage(self):
         image = self.nxfile.images.get(self.imageIndex)
 
