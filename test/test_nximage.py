@@ -9,9 +9,9 @@ def test_nximage():
         "Back/grassySoil.img/back/0")
     byte = node.getImage()
     assert node.name == '0'
-    assert node.width == 22
-    assert node.height == 738
-    assert len(byte) == 22 * 738 * 4
+    assert node.width == 256
+    assert node.height == 256
+    assert len(byte) == 256 * 256 * 4
 
 def test_nximage2():
     node = NXFile(os.path.join(path, 'map.nx')).resolve(
