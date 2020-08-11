@@ -2,8 +2,10 @@ import pytest
 import os
 from nx.nxfile import NXFile
 
-
-path = 'P:/Downloads/Resources'  # TODO: Change this to use your nx path
+from maplepy.config import Config
+config = Config.instance()
+config.init('config.json')
+path = config['asset_path']
 
 
 def test_nxnode_resolve():

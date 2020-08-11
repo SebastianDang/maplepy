@@ -1,7 +1,10 @@
 import os
 from nx.nxfile import NXFile
 
-path = 'P:/Downloads/Resources'  # TODO: Change this to use your nx path
+from maplepy.config import Config
+config = Config.instance()
+config.init('config.json')
+path = config['asset_path']
 
 
 def test_nximage():
@@ -12,6 +15,7 @@ def test_nximage():
     assert node.width == 256
     assert node.height == 256
     assert len(byte) == 256 * 256 * 4
+
 
 def test_nximage2():
     node = NXFile(os.path.join(path, 'map.nx')).resolve(

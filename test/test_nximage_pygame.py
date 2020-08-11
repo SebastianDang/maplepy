@@ -4,7 +4,10 @@ from nx.nxfile import NXFile
 from maplepy.nx.nxsprite import NXSprite
 from maplepy.nx.nxresourcemanager import NXResourceManager
 
-path = 'P:/Downloads/Resources'  # TODO: Change this to use your nx path
+from maplepy.config import Config
+config = Config.instance()
+config.init('config.json')
+path = config['asset_path']
 
 
 def test_nxsprite():
@@ -92,7 +95,7 @@ def test_nxspritemanager():
     manager = NXResourceManager()
     manager.file = file
     sprite = manager.get_sprite(file, 'Back', 'grassySoil', None, 'back/0')
-    sprite2 = manager.get_sprite(file, 'Tile', 'grassySoil', None, 'bsc/0',)
+    sprite2 = manager.get_sprite(file, 'Tile', 'grassySoil', None, 'enV0/1',)
     sprite3 = manager.get_sprite(
         file, 'Obj', 'acc1', 'grassySoil', 'nature/0/0')
     sprite.image = pygame.transform.scale(sprite.image, screen.get_size())
