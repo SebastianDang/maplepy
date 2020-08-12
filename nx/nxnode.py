@@ -67,7 +67,7 @@ class NXNode():
 
     def getChild(self, name):
         self.populateChildren()
-        return self.childMap[name]
+        return self.childMap.get(name)
 
     def resolve(self, path):
         paths = path.split("/")
