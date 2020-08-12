@@ -102,6 +102,9 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
         if not values:
             return
 
+        # Get info
+        info = values['info']
+
         # Go through instances list and add
         for val in values['tile']:
             try:
@@ -109,14 +112,13 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                 # Build object
                 inst = Instance()
 
-                # Get info
-                info = values['info']
-                if 'forbidFallDown' in info:
-                    inst.forbidFallDown = int(info['forbidFallDown'])
-
                 # Make sure there's tile information
                 if 'tS' not in info:
                     continue
+
+                # Get info
+                if 'forbidFallDown' in info:
+                    inst.forbidFallDown = int(info['forbidFallDown'])
 
                 # Get name
                 tag_name = val['name'] if 'name' in val else None
@@ -135,22 +137,28 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                 w, h = sprite.image.get_size()
 
                 # Get additional properties
-                object_data = resource_manager.get_data(
+                data = resource_manager.get_data(
                     map_nx.file, 'Tile', inst.tS, inst.u, inst.no)
-                x = object_data['origin'][0]
-                y = object_data['origin'][1]
-                z = int(object_data['z'])
+                x = data['origin'][0]
+                y = data['origin'][1]
+                z = int(data['z'])
 
                 # Create a canvas object
                 canvas = Canvas(sprite.image, w, h, x, y, z)
 
                 # Add footholds
-                if 'extended' in object_data:
-                    for foothold in object_data['extended']:
+                if 'extended' in data:
+                    for foothold in data['extended']:
                         fx = int(foothold['x'])
                         fy = int(foothold['y'])
                         canvas.add_foothold(Foothold(fx, fy))
 
+                # !!!For tiles, use the tag name!!!
+                # Explicit special case
+                # if 'z' in val:
+                #     inst.update_layer(int(val['z']))
+                # else:
+                #     inst.update_layer(inst.zM)
                 if tag_name and tag_name.isdigit():
                     inst.update_layer(int(tag_name))
 
@@ -164,121 +172,103 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                 print(e.args)
                 continue
 
-        # Fix tiles that are overlapping
-        self.fix_overlapping_sprites()
+        # Go through instances list and add
+        for val in values['obj']:
+            try:
 
-    def fix_overlapping_sprites(self):
-        """ Fix z issues with overlapping tiles and objects """
-        for sprite in self.sprites:
-            collisions = pygame.sprite.spritecollide(
-                sprite, self.sprites, False)
-            for collision in collisions:
-                if sprite.canvas_list[0].z > collision.canvas_list[0].z:
-                    self.sprites.change_layer(sprite, collision._layer+1)
+                # Build object
+                inst = Instance()
 
-    # def load_objects(self, path, subtype, name, values):
+                # Get info
+                if 'forbidFallDown' in info:
+                    inst.forbidFallDown = int(info['forbidFallDown'])
 
-    #     # Go through instances list and add
-    #     for val in values:
-    #         try:
+                # Get name
+                tag_name = val['name'] if 'name' in val else None
 
-    #             # Build object
-    #             inst = Instance()
+                # Required properties
+                inst.x = int(val['x'])
+                inst.y = int(val['y'])
+                inst.z = int(val['z']) if 'z' in val else None
+                inst.oS = val['oS']
+                inst.l0 = val['l0']
+                inst.l1 = val['l1']
+                inst.l2 = val['l2']
+                inst.zM = int(val['zM'])
+                inst.f = int(val['f'])
 
-    #             # Get info
-    #             info = val['info']
-    #             if 'forbidFallDown' in info:
-    #                 inst.forbidFallDown = int(info['forbidFallDown'])
+                # Optional properties
+                if 'r' in val:
+                    inst.r = int(val['r'])
+                if 'move' in val:
+                    inst.move = int(val['move'])
+                if 'dynamic' in val:
+                    inst.dynamic = int(val['dynamic'])
+                if 'piece' in val:
+                    inst.piece = int(val['piece'])
 
-    #             # Required properties
-    #             inst.x = int(val['x'])
-    #             inst.y = int(val['y'])
-    #             inst.z = int(val['z']) if 'z' in val else None
-    #             inst.oS = val['oS']
-    #             inst.l0 = val['l0']
-    #             inst.l1 = val['l1']
-    #             inst.l2 = val['l2']
-    #             inst.zM = int(val['zM'])
-    #             inst.f = int(val['f'])
+                # Load sprites
+                sprites = []
+                for index in range(0, 20):  # Num frames
+                    name = '{}/{}/{}'.format(inst.l1, inst.l2, index)
+                    sprite = resource_manager.get_sprite(
+                        map_nx.file, 'Obj', inst.oS, inst.l0, name)
+                    if sprite:
+                        sprites.append(sprite)
+                    else:
+                        break
 
-    #             # Optional properties
-    #             if 'r' in val:
-    #                 inst.r = int(val['r'])
-    #             if 'move' in val:
-    #                 inst.move = int(val['move'])
-    #             if 'dynamic' in val:
-    #                 inst.dynamic = int(val['dynamic'])
-    #             if 'piece' in val:
-    #                 inst.piece = int(val['piece'])
+                # Create canvases
+                for index in range(0, len(sprites)):
 
-    #             # Load sprites
-    #             images = self.load_object_images(
-    #                 path, subtype, inst.oS, inst.l0, inst.l1, inst.l2)
+                    # Get sprite info
+                    sprite = sprites[index]
+                    w, h = sprite.image.get_size()
 
-    #             # Create key
-    #             key = "{}/{}".format(subtype, inst.oS)
+                    # # Get nx info
+                    name = '{}/{}/{}'.format(inst.l1, inst.l2, index)
+                    data = resource_manager.get_data(
+                        map_nx.file, 'Obj', inst.oS, inst.l0, name)
+                    x = data['origin'][0]
+                    y = data['origin'][1]
+                    z = int(data['z'])
+                    delay = int(data['delay']) if 'delay' in data else 120
+                    a0 = int(data['a0']) if 'a0' in data else 255
+                    a1 = int(data['a1']) if 'a1' in data else 255
 
-    #             # Get nx
-    #             if key not in self.nxs or not self.nxs[key].items:
-    #                 print('{} was not loaded yet.'.format(key))
-    #                 continue
-    #             nx = self.nxs[key]
+                    # # Create a canvas object
+                    canvas = Canvas(sprite.image, w, h, x, y, z)
 
-    #             # Get additional properties
-    #             objects = nx.items
-    #             l0 = objects[inst.l0]
-    #             l1 = l0[inst.l1]
-    #             l2 = l1[int(inst.l2)]
+                    # Set delay
+                    canvas.set_delay(delay)
 
-    #             # Create canvases
-    #             for i in range(0, len(images)):
+                    # Set alphas
+                    canvas.set_alpha(a0, a1)
 
-    #                 # Get sprite info
-    #                 sprite = images[i]
-    #                 w, h = sprite.get_size()
+                    # Add footholds
+                    if 'extended' in data:
+                        for foothold in data['extended']:
+                            fx = int(foothold['x'])
+                            fy = int(foothold['y'])
+                            canvas.add_foothold(Foothold(fx, fy))
 
-    #                 # Get nx info
-    #                 item = l2[i]
-    #                 x = int(item['x'])
-    #                 y = int(item['y'])
-    #                 z = int(item['z']) if 'z' in item else 0
-    #                 delay = int(item['delay']) if 'delay' in item else 120
-    #                 a0 = int(item['a0']) if 'a0' in item else 255
-    #                 a1 = int(item['a1']) if 'a1' in item else 255
+                    # Flip
+                    if inst.f > 0:
+                        canvas.flip()
 
-    #                 # Create a canvas object
-    #                 canvas = Canvas(sprite, w, h, x, y, z)
+                    # Add to object
+                    inst.add_canvas(canvas)
 
-    #                 # Set delay
-    #                 canvas.set_delay(delay)
+                # !!!For objects, use the z value!!!
+                # # Explicit special case
+                if 'z' in val:
+                    inst.update_layer(int(val['z']))
+                else:
+                    inst.update_layer(inst.zM)
 
-    #                 # Set alphas
-    #                 canvas.set_alpha(a0, a1)
+                # Add to list
+                self.sprites.add(inst)
 
-    #                 # Add footholds
-    #                 if 'extended' in item:
-    #                     for foothold in item['extended']:
-    #                         fx = int(foothold['x'])
-    #                         fy = int(foothold['y'])
-    #                         canvas.add_foothold(Foothold(fx, fy))
-
-    #                 # Flip
-    #                 if inst.f > 0:
-    #                     canvas.flip()
-
-    #                 # Add to object
-    #                 inst.add_canvas(canvas)
-
-    #             # !!!For objects, use the z value!!!
-    #             # # Explicit special case
-    #             if 'z' in val:
-    #                 inst.update_layer(int(val['z']))
-    #             else:
-    #                 inst.update_layer(inst.zM)
-
-    #             # Add to list
-    #             self.sprites.add(inst)
-
-    #         except:
-    #             print('Error while loading objects')
-    #             continue
+            except Exception as e:
+                print(e.args)
+                continue

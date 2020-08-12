@@ -18,12 +18,17 @@ class NXResourceManager():
         if key in self.data:
             return self.data[key]
 
+        # Check if nx is loaded yet
+        if not file:
+            # print('Nx file is invalid')
+            return None
+
         data = {}
 
         # Load from nx
         node = file.resolve(key)
         if not node:
-            print('Unable to load {}'.format(key))
+            # print('Unable to load {}'.format(key))
             return None
 
         # Parse into dictionary
@@ -38,10 +43,7 @@ class NXResourceManager():
     def get_sprite(self, file, category, folder, subtype, name):
 
         # Create key
-        if not subtype:
-            key = '{}/{}.img/{}'.format(category, folder, name)
-        else:
-            key = '{}/{}.img/{}/{}'.format(category, folder, subtype, name)
+        key = '{}/{}.img/{}/{}'.format(category, folder, subtype, name)
 
         # Check if sprite is already loaded
         if key in self.sprites:
@@ -49,13 +51,13 @@ class NXResourceManager():
 
         # Check if nx is loaded yet
         if not file:
-            print('Nx file is invalid')
+            # print('Nx file is invalid')
             return None
 
         # Load from nx
         node = file.resolve(key)
         if not node:
-            print('Unable to load {}'.format(key))
+            # print('Unable to load {}'.format(key))
             return None
 
         # Load as nx sprite

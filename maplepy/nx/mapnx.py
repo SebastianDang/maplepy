@@ -42,8 +42,8 @@ class MapNx:
         if not map_node:
             return None
         info_node = map_node.getChild('info')
-        for name in info_node.listChildren():
-            info[name] = info_node.getChild(name).value
+        for child in info_node.getChildren():
+            info[child.name] = child.value
         return info
 
     def get_background_data(self, map_id):
@@ -61,8 +61,8 @@ class MapNx:
         for index in back_node.listChildren():
             array_node = back_node.getChild(index)
             data = {'name': index}
-            for name in array_node.listChildren():
-                data[name] = array_node.getChild(name).value
+            for child in array_node.getChildren():
+                data[child.name] = child.value
             back.append(data)
         return back
 
@@ -85,20 +85,18 @@ class MapNx:
         # Get tiles for this layer
         tiles = []
         tile_node = layer_node.getChild('tile')
-        for index in tile_node.listChildren():
-            array_node = tile_node.getChild(index)
-            data = {'name': index}
-            for name in array_node.listChildren():
-                data[name] = array_node.getChild(name).value
+        for array_node in tile_node.getChildren():
+            data = {'name': array_node.name}
+            for child in array_node.getChildren():
+                data[child.name] = child.value
             tiles.append(data)
         # Get objects for this layer
         objects = []
         object_node = layer_node.getChild('obj')
-        for index in object_node.listChildren():
-            array_node = object_node.getChild(index)
-            data = {'name': index}
-            for name in array_node.listChildren():
-                data[name] = array_node.getChild(name).value
+        for array_node in object_node.getChildren():
+            data = {'name': array_node.name}
+            for child in array_node.getChildren():
+                data[child.name] = child.value
             objects.append(data)
         # Add layer
         layer = {'info': info, 'tile': tiles, 'obj': objects}
@@ -107,6 +105,6 @@ class MapNx:
     def get_data(self, path):
         data = {}
         node = self.file.resolve(path)
-        for name in node.listChildren():
-            data[name] = node.getChild(name).value
+        for child in node.getChildren():
+            data[child.name] = child.value
         return data
