@@ -12,6 +12,11 @@ class NXNode():
         self.type = type
         self.childMap = {}
         self.didPopulateChildren = False
+        self.imageIndex = None
+        self.width = None
+        self.height = None
+        self.soundIndex = None
+        self.length = None
 
     def __getitem__(self, key):
         return self.getChild(key)
@@ -48,14 +53,12 @@ class NXNode():
         return self.childMap.get(name)
 
     def resolve(self, path):
-        try:
-            splitIndex = path.index("/")
-            return self.getChild(path[:splitIndex]).resolve(path[splitIndex+1:])
-        except ValueError:
-            return self.getChild(path)
-        except:
-            print("Unable to resolve path", path)
-            raise
+        paths = path.split("/")
+        node = self
+        for path in paths:
+            node = node.getChild(path)
+
+        return node
 
     def getImage(self):
         image = self.nxfile.images.get(self.imageIndex)
