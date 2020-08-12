@@ -27,9 +27,9 @@ class NXResourceManager():
             return None
 
         # Parse into dictionary
-        for name in node.listChildren():
-            if hasattr(node.getChild(name), 'value'):
-                data[name] = node.getChild(name).value
+        for child in node.getChildren():
+            if hasattr(child, 'value'):
+                data[child.name] = child.value
 
         # Store and return
         self.data[name] = data
