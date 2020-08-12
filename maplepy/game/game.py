@@ -3,6 +3,7 @@ import pygame
 from maplepy.config import Config
 from maplepy.ui.loaddisplay import LoadDisplay
 from maplepy.xml.displayxml import DisplayXml
+from maplepy.nx.displaynx import DisplayNx
 
 CAMERA_SPEED = 4
 DISPLAY_LOADING = 0
@@ -36,7 +37,7 @@ class Game():
         self.displays = {}
         self.displays[DISPLAY_LOADING] = LoadDisplay(
             self.width, self.height, self.path)
-        self.displays[DISPLAY_MAP] = DisplayXml(
+        self.displays[DISPLAY_MAP] = DisplayNx(
             self.width, self.height, self.path)
 
         # Game state
@@ -46,6 +47,12 @@ class Game():
         self.input_blocker = {}
         self.map_index = 0
 
+        # Debugging tools TODO: Remove #
+        self.typing = False
+        self.text = ''
+        self.font = pygame.font.Font(None, 32)
+        # Debugging tools TODO: Remove #
+
     def handle_events(self):
 
         # Handle pygame events
@@ -53,6 +60,23 @@ class Game():
             if event.type == pygame.QUIT:
                 pygame.event.clear()
                 self.running = False
+
+            # Debugging tools TODO: Remove #
+            if event.type == pygame.KEYDOWN:
+                if self.typing:
+                    if event.key == pygame.K_BACKSPACE:
+                        self.text = self.text[:-1]
+                    elif event.key == pygame.K_RETURN:
+                        # Pass text to map loader
+                        self.displays[DISPLAY_MAP].load_map(self.text)
+                        self.typing = False
+                        self.text = ''
+                    else:
+                        self.text += event.unicode
+                if event.key == pygame.K_BACKQUOTE:
+                    self.typing = not self.typing
+                    self.text = ''
+            # Debugging tools TODO: Remove #
 
         # Empty
         pygame.event.pump()
@@ -81,7 +105,7 @@ class Game():
             if self.displays_state == DISPLAY_MAP:
                 self.displays[DISPLAY_MAP].move_view(CAMERA_SPEED, 0)
 
-        # Debug: cycle through maps
+        # Cycle through maps
         if inputs[pygame.K_TAB]:
             if pygame.K_TAB not in self.input_blocker:
                 self.input_blocker[pygame.K_TAB] = 60
@@ -134,6 +158,13 @@ class Game():
                 # Displays
                 self.displays[self.displays_state].update()
                 self.displays[self.displays_state].blit(self.screen)
+
+            # Debugging tools TODO: Remove #
+            if self.typing:
+                text = self.font.render('console:{}'.format(
+                    self.text), True, (255, 255, 255))
+                self.screen.blit(text, (0, 0))
+            # Debugging tools TODO: Remove #
 
             # Update
             pygame.display.update()
