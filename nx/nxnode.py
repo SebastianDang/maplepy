@@ -42,7 +42,7 @@ class NXNode():
         """Populates immediate child nodes. No-ops if ran more than once.
         """
         if self.didPopulateChildren:
-            pass
+            return
 
         if self.childCount == 0:
             return
