@@ -9,11 +9,11 @@ class NXFile():
     def __init__(self, filePath):
         self.filePath = filePath
         self.file = open(filePath, "rb")
-        print(self.file)
 
         magic = self.file.read(4).decode("ascii")
         if (magic != "PKG4"):
             raise Exception("Cannot read file. Invalid format")
+
         self.nodeCount = int.from_bytes(self.file.read(4), "little")
         self.nodeOffset = int.from_bytes(self.file.read(8), "little")
         self.stringCount = int.from_bytes(self.file.read(4), "little")
@@ -39,7 +39,7 @@ class NXFile():
 
         # setup tables
         # setup string table
-        self.populateStringsTable()
+        # self.populateStringsTable()
 
         # setup images
 
@@ -55,34 +55,39 @@ class NXFile():
         #     offset = int.from_bytes(self.file.read(8), "little")
         #     self.sounds[i] = Sound(self, offset)
 
-        # populate nodes
-        # self.populateNodesTable()
+    # def populateNodesTable(self):
+    #     self.file.seek(self.nodeOffset)
+    #     for i in range(self.nodeCount):
+    #         self.nodes.append(nodeparser.parseNode(self))
 
-        # self.populateNodeChildren()
+    # def populateStringsTable(self):
+    #     self.file.seek(self.stringOffset)
+    #     for i in range(self.stringCount):
+    #         offset = int.from_bytes(self.file.read(8), "little")
+    #         currentPosition = self.file.tell()
+    #         self.file.seek(offset)
+    #         stringLength = int.from_bytes(self.file.read(2), "little")
+    #         self.strings[i] = self.file.read(stringLength).decode('utf-8')
+    #         self.file.seek(currentPosition)
 
-        print("done")
+    # def populateNodeChildren(self):
+    #     for node in self.nodes:
+    #         node.populateChildren()
 
-    def populateNodesTable(self):
-        self.file.seek(self.nodeOffset)
-        for i in range(self.nodeCount):
-            self.nodes.append(nodeparser.parseNode(self))
+    def getString(self, stringIndex):
+        string = self.strings.get(stringIndex)
+        if string:
+            return string
 
-    def populateStringsTable(self):
-        self.strings = [None] * self.stringCount
-        self.file.seek(self.stringOffset)
-        for i in range(self.stringCount):
-            offset = int.from_bytes(self.file.read(8), "little")
-            currentPosition = self.file.tell()
-            self.file.seek(offset)
-            stringLength = int.from_bytes(self.file.read(2), "little")
-            self.strings[i] = self.file.read(stringLength).decode('utf-8')
-            self.file.seek(currentPosition)
+        # move to string index
+        self.file.seek(self.stringOffset + stringIndex * 8)
+        # move to location string is stored
+        self.file.seek(int.from_bytes(self.file.read(8), "little"))
+        stringLength = int.from_bytes(self.file.read(2), "little")
+        self.strings[stringIndex] = self.file.read(
+            stringLength).decode('utf-8')  # read and save string
+        return self.strings[stringIndex]
 
-    def populateNodeChildren(self):
-        for node in self.nodes:
-            node.populateChildren()
-
-    # lazily get node
     def getNode(self, i):
         node = self.nodes[i]
         if node:
@@ -97,10 +102,4 @@ class NXFile():
         return self.getNode(0)
 
     def resolve(self, path):
-        # paths = path.split("/")
-        # node = self.getRoot()
-        # for path in paths:
-        #     node = node.getChild(path)
-
-        # return node
         return self.getRoot().resolve(path)
