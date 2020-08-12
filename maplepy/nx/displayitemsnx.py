@@ -56,11 +56,11 @@ class BackgroundSpritesNx(displayitems.BackgroundSprites):
                 sprite.image.set_alpha(inst.a)
 
                 # Get additional properties
-                object_data = resource_manager.get_data(
+                data = resource_manager.get_data(
                     map_nx.file, 'Back', inst.bS, 'back', inst.no)
-                x = object_data['origin'][0]
-                y = object_data['origin'][1]
-                z = int(object_data['z'])
+                x = data['origin'][0]
+                y = data['origin'][1]
+                z = int(data['z']) if 'z' in data else None
 
                 # Create a canvas object
                 canvas = Canvas(sprite.image, w, h, x, y, z)
