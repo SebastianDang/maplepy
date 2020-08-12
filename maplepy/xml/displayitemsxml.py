@@ -419,3 +419,69 @@ class LayeredSpritesXml(displayitems.LayeredSprites):
 
         # Return list of images
         return images
+
+    def load_portals(self, path, values):
+
+        # TODO: Remove magic numbers
+        portals = {2: 'portal.game.pv.default', 8: 'portal.game.pv.5'}
+        magic = {2: [(49, 134), (48, 130), (50, 123), (50, 125),
+                     (50, 130), (51, 130), (49, 126), (49, 130)],
+                 8: [(58, 149), (57, 154), (58, 147), (58, 147),
+                     (58, 152), (58, 150), (58, 149), (58, 148),
+                     (58, 151), (57, 148), (58, 154), (58, 147),
+                     (59, 154), (58, 147), (58, 147), (58, 148)]}
+
+        # Go through instances list and add
+        for val in values:
+            try:
+
+                # Build object
+                inst = Instance()
+
+                # Required properties
+                inst.x = int(val['x'])
+                inst.y = int(val['y'])
+
+                # Portal type
+                pt = int(val['pt'])
+                if pt not in portals:
+                    continue
+
+                # Check if sprites are already loaded
+                key = portals[pt]
+                if key not in image_cache:
+                    images = []
+                    for index in range(0, 20):  # Num frames
+                        file = '{}/img/portals/{}.{}.png'.format(
+                            '.', key, str(index))
+                        if os.path.isfile(file):
+                            image = pygame.image.load(file).convert_alpha()
+                            images.append(image)
+                        else:
+                            break
+                    image_cache[key] = images
+
+                # Get sprite by key
+                images = image_cache[key]
+
+                # Create canvases
+                for i in range(0, len(images)):
+
+                    # Get sprite info
+                    sprite = images[i]
+                    w, h = sprite.get_size()
+
+                    # Create a canvas object
+                    data = magic[pt]
+                    canvas = Canvas(sprite, w, h, data[i][0], data[i][1])
+                    canvas.set_delay(100)
+
+                    # Add to object
+                    inst.add_canvas(canvas)
+
+                # Add to list
+                self.sprites.add(inst)
+
+            except:
+                print('Error while loading portals')
+                continue

@@ -155,3 +155,8 @@ class DisplayXml(display.Display):
 
             # Add to list
             self.layered_sprites.append(sprites)
+
+        # Load portals
+        sprites = LayeredSpritesXml()
+        sprites.load_portals(self.path, self.map_xml.portal_items)
+        self.layered_sprites.append(sprites)
