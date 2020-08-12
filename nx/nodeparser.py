@@ -6,11 +6,10 @@ from nx.nxnode import NXNode
 def parseNode(nxfile):
     file = nxfile.file
 
-    nameIndex = int.from_bytes(file.read(4), "little")
-    childIndex = int.from_bytes(file.read(4), "little")
-    childCount = int.from_bytes(file.read(2), "little")
-    type = int.from_bytes(file.read(2), "little")
-    node = NXNode(nxfile, nameIndex, childIndex, childCount, type)
+    data = struct.unpack('<IIHH', file.read(12))
+    node = NXNode(
+        nxfile, nameIndex=data[0], childIndex=data[1], childCount=data[2], type=data[3])
+    type = node.type
 
     if type == 0:  # null
         file.seek(8, 1)  # skip 8 bytes
