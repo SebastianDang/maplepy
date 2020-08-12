@@ -45,7 +45,7 @@ class NXNode():
             pass
 
         if self.childCount == 0:
-            pass
+            return
 
         for i in range(self.childIndex, self.childIndex + self.childCount):
             childNode = self.nxfile.getNode(i)
