@@ -23,14 +23,14 @@ class NXFile():
         self.soundCount = int.from_bytes(self.file.read(4), "little")
         self.soundOffset = int.from_bytes(self.file.read(8), "little")
 
-        print('nodecount', self.nodeCount)
-        print('nodeoffset', self.nodeOffset)
-        print('stringCount', self.stringCount)
-        print('stringOffset', self.stringOffset)
-        print('imageCount', self.imageCount)
-        print('imageOffset', self.imageOffset)
-        print('soundCount', self.soundCount)
-        print('soundOffset', self.soundOffset)
+        # print('nodecount', self.nodeCount)
+        # print('nodeoffset', self.nodeOffset)
+        # print('stringCount', self.stringCount)
+        # print('stringOffset', self.stringOffset)
+        # print('imageCount', self.imageCount)
+        # print('imageOffset', self.imageOffset)
+        # print('soundCount', self.soundCount)
+        # print('soundOffset', self.soundOffset)
 
         self.nodes = [None] * self.nodeCount
         self.strings = {}
