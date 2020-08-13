@@ -1,5 +1,6 @@
 import os
 import nx.nxfile as nxfile
+from nx.nxfileset import NXFileSet
 
 
 class MapNx:
@@ -7,7 +8,7 @@ class MapNx:
     """ Helper class to get values from a map nx file. """
 
     def __init__(self):
-        self.file = None
+        self.file = NXFileSet()
 
     def open(self, file):
         # Check if file exists
@@ -16,8 +17,7 @@ class MapNx:
             return
         try:
             # Open nx file
-            file = nxfile.NXFile(file)
-            self.file = file
+            self.file.load(file)
         except:
             print('Unable to open {}'.format(file))
 

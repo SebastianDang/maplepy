@@ -7,6 +7,8 @@ from maplepy.nx.displayitemsnx import BackgroundSpritesNx, LayeredSpritesNx
 from maplepy.nx.mapnx import MapNx
 from maplepy.sound.bgm import SoundBgm
 
+map_file_names = ["map.nx", "map001.nx", "map002.nx", "map2.nx"]
+
 
 class DisplayNx(display.Display):
 
@@ -20,7 +22,8 @@ class DisplayNx(display.Display):
 
         # Objects in the map
         self.map_nx = MapNx()
-        self.map_nx.open('{}/map.nx'.format(self.path))
+        for map_file in map_file_names:
+            self.map_nx.open('{}/{}'.format(self.path, map_file))
 
         # Status
         self.loaded = False
