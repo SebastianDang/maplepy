@@ -1,24 +1,19 @@
 import os
 from nx.nxfile import NXFile
 
-from maplepy.config import Config
-config = Config.instance()
-config.init('config.json')
-path = config['asset_path']
-
 
 def test_nximage():
-    node = NXFile(os.path.join(path, 'map.nx')).resolve(
-        "Back/grassySoil.img/back/0")
+    node = NXFile(os.path.join(__file__,  '../map.nx')).resolve(
+        "Back/grassySoil_new.img/back/0")
     byte = node.getImage()
     assert node.name == '0'
-    assert node.width == 256
-    assert node.height == 256
-    assert len(byte) == 256 * 256 * 4
+    assert node.width == 22
+    assert node.height == 738
+    assert len(byte) == 22 * 738 * 4
 
 
 def test_nximage2():
-    node = NXFile(os.path.join(path, 'map.nx')).resolve(
+    node = NXFile(os.path.join(__file__,  '../map.nx')).resolve(
         "Tile/grassySoil.img/bsc/0")
     byte = node.getImage()
     assert node.name == '0'
@@ -28,7 +23,7 @@ def test_nximage2():
 
 
 def test_nximage3():
-    node = NXFile(os.path.join(path, 'map.nx')).resolve(
+    node = NXFile(os.path.join(__file__,  '../map.nx')).resolve(
         "Obj/acc1.img/grassySoil/nature/0/0")
     byte = node.getImage()
     assert node.name == '0'

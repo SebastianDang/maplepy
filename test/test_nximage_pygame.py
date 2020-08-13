@@ -4,22 +4,16 @@ from nx.nxfile import NXFile
 from maplepy.nx.nxsprite import NXSprite
 from maplepy.nx.nxresourcemanager import NXResourceManager
 
-from maplepy.config import Config
-config = Config.instance()
-config.init('config.json')
-path = config['asset_path']
-
 
 def test_nxsprite():
-
-    node = NXFile(os.path.join(path, 'map.nx')).resolve(
-        "Back/grassySoil.img/back/0")
+    node = NXFile(os.path.join(__file__,  '../map.nx')).resolve(
+        "Back/grassySoil_new.img/back/0")
     byte = node.getImage()
 
     assert node.name == '0'
-    assert node.width == 256
-    assert node.height == 256
-    assert len(byte) == 256 * 256 * 4
+    assert node.width == 22
+    assert node.height == 738
+    assert len(byte) == 22 * 738 * 4
 
     pygame.init()
     screen = pygame.display.set_mode((800, 600))
@@ -50,7 +44,7 @@ def test_nxsprite():
 
 def test_nxsprite2():
 
-    node = NXFile(os.path.join(path, 'map.nx')).resolve(
+    node = NXFile(os.path.join(__file__,  '../map.nx')).resolve(
         "Tile/grassySoil.img/bsc/0")
     byte = node.getImage()
 
@@ -91,10 +85,10 @@ def test_nxspritemanager():
     pygame.init()
     screen = pygame.display.set_mode((800, 600))
 
-    file = NXFile(os.path.join(path, 'map.nx'))
+    file = NXFile(os.path.join(__file__,  '../map.nx'))
     manager = NXResourceManager()
     manager.file = file
-    sprite = manager.get_sprite(file, 'Back', 'grassySoil', None, 'back/0')
+    sprite = manager.get_sprite(file, 'Back', 'grassySoil_new', None, 'back/0')
     sprite2 = manager.get_sprite(file, 'Tile', 'grassySoil', None, 'enV0/1',)
     sprite3 = manager.get_sprite(
         file, 'Obj', 'acc1', 'grassySoil', 'nature/0/0')
