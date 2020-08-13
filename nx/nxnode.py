@@ -83,17 +83,17 @@ class NXNode():
         image = self.nxfile.images.get(self.imageIndex)
 
         if not image:
-            image = self.loadImage(self.nxfile, self.imageIndex)
+            if self['_outlink']:
+                outlinkNode = self.nxfile.resolve(self['_outlink'].value)
+                return outlinkNode.getImage()
 
-        return image.getData(self.width, self.height)
+            # load image if not found
+            self.nxfile.file.seek(
+                self.nxfile.imageOffset + self.imageIndex * 8)
+            offset = int.from_bytes(self.nxfile.file.read(8), "little")
+            image = NXImage(self.nxfile, offset, self.width, self.height)
+            self.nxfile.images[self.imageIndex] = image
 
-    def loadImage(self, nxfile, imageIndex):
-        # currentPos = nxfile.file.tell()
-        nxfile.file.seek(nxfile.imageOffset + imageIndex * 8)
-        offset = int.from_bytes(nxfile.file.read(8), "little")
-        image = NXImage(nxfile, offset)
-        nxfile.images[imageIndex] = image
-        # nxfile.file.seek(currentPos)
         return image
 
     def getSound(self):

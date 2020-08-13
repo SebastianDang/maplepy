@@ -8,11 +8,12 @@ from maplepy.nx.nxresourcemanager import NXResourceManager
 def test_nxsprite():
     node = NXFile(os.path.join(__file__,  '../map.nx')).resolve(
         "Back/grassySoil_new.img/back/0")
-    byte = node.getImage()
+    image = node.getImage()
+    byte = image.getData()
 
     assert node.name == '0'
-    assert node.width == 22
-    assert node.height == 738
+    assert image.width == 22
+    assert image.height == 738
     assert len(byte) == 22 * 738 * 4
 
     pygame.init()
@@ -46,7 +47,8 @@ def test_nxsprite2():
 
     node = NXFile(os.path.join(__file__,  '../map.nx')).resolve(
         "Tile/grassySoil.img/bsc/0")
-    byte = node.getImage()
+    image = node.getImage()
+    byte = image.getData()
 
     assert node.name == '0'
     assert node.width == 90

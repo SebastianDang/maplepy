@@ -61,9 +61,9 @@ class NXResourceManager():
             return None
 
         # Load as nx sprite
-        byte = node.getImage()
+        image = node.getImage()
         sprite = NXSprite()
-        sprite.load(node.width, node.height, byte)
+        sprite.load(image.width, image.height, image.getData())
 
         # Store and return
         self.sprites[key] = sprite
