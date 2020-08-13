@@ -74,6 +74,8 @@ class NXNode():
         node = self
         for path in paths:
             node = node.getChild(path)
+            if not node:
+                return None
 
         return node
 
