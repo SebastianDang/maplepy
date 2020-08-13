@@ -84,8 +84,11 @@ class NXNode():
 
         if not image:
             if self['_outlink']:
-                outlinkNode = self.nxfile.resolve(self['_outlink'].value)
-                return outlinkNode.getImage()
+                value = self['_outlink'].value
+                outlinkNode = self.nxfile.resolve(value[value.index('/')+1:])
+                image = outlinkNode.getImage()
+                self.nxfile.images[self.imageIndex] = image
+                return image
 
             # load image if not found
             self.nxfile.file.seek(
