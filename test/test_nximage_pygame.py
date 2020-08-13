@@ -88,8 +88,8 @@ def test_nxspritemanager():
     file = NXFile(os.path.join(__file__,  '../map.nx'))
     manager = NXResourceManager()
     manager.file = file
-    sprite = manager.get_sprite(file, 'Back', 'grassySoil_new', None, 'back/0')
-    sprite2 = manager.get_sprite(file, 'Tile', 'grassySoil', None, 'enV0/1',)
+    sprite = manager.get_sprite(file, 'Back', 'grassySoil_new', 'back', '0')
+    sprite2 = manager.get_sprite(file, 'Tile', 'grassySoil', 'enV0', '1',)
     sprite3 = manager.get_sprite(
         file, 'Obj', 'acc1', 'grassySoil', 'nature/0/0')
     sprite.image = pygame.transform.scale(sprite.image, screen.get_size())
