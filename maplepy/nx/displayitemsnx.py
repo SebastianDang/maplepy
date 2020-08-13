@@ -1,4 +1,3 @@
-import os
 import pygame
 
 import maplepy.display.displayitems as displayitems
@@ -9,6 +8,7 @@ from maplepy.info.foothold import Foothold
 
 from maplepy.nx.nxresourcemanager import NXResourceManager
 
+# Create a single resource manager
 resource_manager = NXResourceManager()
 
 
@@ -81,8 +81,7 @@ class BackgroundSpritesNx(displayitems.BackgroundSprites):
                 # Add to list
                 self.sprites.add(inst)
 
-            except Exception as e:
-                print(e.args)
+            except:
                 continue
 
 
@@ -109,14 +108,14 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
         for val in values['tile']:
             try:
 
+                # Make sure there's tile information
+                if 'tS' not in info:
+                    break
+
                 # Build object
                 inst = Instance()
 
-                # Make sure there's tile information
-                if 'tS' not in info:
-                    continue
-
-                # Get info
+                # Get any extra info
                 if 'forbidFallDown' in info:
                     inst.forbidFallDown = int(info['forbidFallDown'])
 
@@ -141,17 +140,10 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                     map_nx.file, 'Tile', inst.tS, inst.u, inst.no)
                 x = data['origin'][0]
                 y = data['origin'][1]
-                z = int(data['z'])
+                z = int(data['z']) if 'z' in data else None
 
                 # Create a canvas object
                 canvas = Canvas(sprite.image, w, h, x, y, z)
-
-                # Add footholds
-                if 'extended' in data:
-                    for foothold in data['extended']:
-                        fx = int(foothold['x'])
-                        fy = int(foothold['y'])
-                        canvas.add_foothold(Foothold(fx, fy))
 
                 # !!!For tiles, use the tag name!!!
                 # Explicit special case
@@ -168,9 +160,11 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                 # Add to list
                 self.sprites.add(inst)
 
-            except Exception as e:
-                print(e.args)
+            except:
                 continue
+
+        # Fix overlapping tiles
+        self.fix_overlapping_sprites()
 
         # Go through instances list and add
         for val in values['obj']:
@@ -179,7 +173,7 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                 # Build object
                 inst = Instance()
 
-                # Get info
+                # Get any extra info
                 if 'forbidFallDown' in info:
                     inst.forbidFallDown = int(info['forbidFallDown'])
 
@@ -231,7 +225,7 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                         map_nx.file, 'Obj', inst.oS, inst.l0, name)
                     x = data['origin'][0]
                     y = data['origin'][1]
-                    z = int(data['z'])
+                    z = int(data['z']) if 'z' in data else None
                     delay = int(data['delay']) if 'delay' in data else 120
                     a0 = int(data['a0']) if 'a0' in data else 255
                     a1 = int(data['a1']) if 'a1' in data else 255
@@ -244,13 +238,6 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
 
                     # Set alphas
                     canvas.set_alpha(a0, a1)
-
-                    # Add footholds
-                    if 'extended' in data:
-                        for foothold in data['extended']:
-                            fx = int(foothold['x'])
-                            fy = int(foothold['y'])
-                            canvas.add_foothold(Foothold(fx, fy))
 
                     # Flip
                     if inst.f > 0:
@@ -269,6 +256,14 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                 # Add to list
                 self.sprites.add(inst)
 
-            except Exception as e:
-                print(e.args)
+            except:
                 continue
+
+    def fix_overlapping_sprites(self):
+        """ Fix z issues with overlapping tiles and objects """
+        for sprite in self.sprites:
+            collisions = pygame.sprite.spritecollide(
+                sprite, self.sprites, False)
+            for collision in collisions:
+                if sprite.canvas_list[0].z > collision.canvas_list[0].z:
+                    self.sprites.change_layer(sprite, collision._layer+1)
