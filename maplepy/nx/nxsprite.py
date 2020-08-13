@@ -37,7 +37,7 @@ class NXSprite(pygame.sprite.Sprite):
         try:
 
             # Create a new image
-            image = pygame.Surface((w, h))
+            image = pygame.Surface((w, h), pygame.SRCALPHA)
             image.set_colorkey((0, 0, 0, 0))  # Transparent
 
             # Create pixel array to access x,y coordinates
