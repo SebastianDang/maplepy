@@ -5,9 +5,10 @@ import maplepy.display.display as display
 from maplepy.nx.displayitemsnx import BackgroundSpritesNx, LayeredSpritesNx
 
 from maplepy.nx.mapnx import MapNx
-from maplepy.sound.bgm import SoundBgm
+from maplepy.nx.soundnx import SoundNx
 
 map_file_names = ["map.nx", "map001.nx", "map002.nx", "map2.nx"]
+sound_file_names = ["sound.nx", "sound001.nx", "sound2.nx"]
 
 
 class DisplayNx(display.Display):
@@ -19,11 +20,17 @@ class DisplayNx(display.Display):
 
         # Other properties
         self.path = path
+        self.bgmPath = None
+        self.bgm = None
 
         # Objects in the map
         self.map_nx = MapNx()
         for map_file in map_file_names:
             self.map_nx.open('{}/{}'.format(self.path, map_file))
+
+        self.sound_nx = SoundNx()
+        for sound_file in sound_file_names:
+            self.sound_nx.open('{}/{}'.format(self.path, sound_file))
 
         # Status
         self.loaded = False
@@ -70,6 +77,18 @@ class DisplayNx(display.Display):
             bottom = int(info['VRBottom'])
             right = int(info['VRRight'])
             self.set_view_limit(left, top, right - left, bottom - top)
+
+        # Bgm
+        if 'bgm' in info:
+            # Only play bgm if next map's bgm is diff
+            if self.bgmPath != info['bgm']:
+                if self.bgm:
+                    self.bgm.stop()
+
+                # Play bgm
+                self.bgmPath = info['bgm']
+                self.bgm = self.sound_nx.get_sound(self.bgmPath)
+                self.bgm.play(-1)
 
     def setup_background_sprites(self, map_id):
 

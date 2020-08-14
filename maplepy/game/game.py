@@ -15,6 +15,7 @@ class Game():
     def __init__(self, config_file):
 
         # Start pygame
+        pygame.mixer.pre_init(22050, -16, 2)
         pygame.init()
 
         # Config
