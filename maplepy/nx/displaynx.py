@@ -88,7 +88,10 @@ class DisplayNx(display.Display):
                 # Play bgm
                 self.bgmPath = info['bgm']
                 self.bgm = self.sound_nx.get_sound(self.bgmPath)
-                self.bgm.play(-1)
+                # fade_ms is added because there is a popping sound
+                # in the beginning. fade helps to reduce the pop
+                # TODO: find better solution to the pop sound
+                self.bgm.play(loops=-1, maxtime=0, fade_ms=1000)
 
     def setup_background_sprites(self, map_id):
 

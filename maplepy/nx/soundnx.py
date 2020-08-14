@@ -28,6 +28,8 @@ class SoundNx:
         if not sound_node:
             return None
 
+        # offset by 82 bytes
+        # they're leftover bytes from the original wz files
         soundbytes = sound_node.getSound()[82:]
         wavBytes = io.BytesIO()
         song = AudioSegment.from_file(io.BytesIO(soundbytes), format="mp3")
