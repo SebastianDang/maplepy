@@ -1,9 +1,8 @@
 import os
 from nx.nxfile import NXFile
 
-
 def test_nximage():
-    node = NXFile(os.path.join(__file__,  '../map.nx')).resolve(
+    node = NXFile(os.path.join(os.path.dirname(__file__),  'map.nx')).resolve(
         "Back/grassySoil_new.img/back/0")
     image = node.getImage()
     byte = image.getData()
@@ -14,7 +13,7 @@ def test_nximage():
 
 
 def test_nximage2():
-    node = NXFile(os.path.join(__file__,  '../map.nx')).resolve(
+    node = NXFile(os.path.join(os.path.dirname(__file__),  'map.nx')).resolve(
         "Tile/grassySoil.img/bsc/0")
     image = node.getImage()
     byte = image.getData()
@@ -25,7 +24,7 @@ def test_nximage2():
 
 
 def test_nximage3():
-    node = NXFile(os.path.join(__file__,  '../map.nx')).resolve(
+    node = NXFile(os.path.join(os.path.dirname(__file__),  'map.nx')).resolve(
         "Obj/acc1.img/grassySoil/nature/0/0")
     image = node.getImage()
     byte = image.getData()

@@ -6,7 +6,7 @@ from maplepy.nx.nxresourcemanager import NXResourceManager
 
 
 def test_nxsprite():
-    node = NXFile(os.path.join(__file__,  '../map.nx')).resolve(
+    node = NXFile(os.path.join(os.path.dirname(__file__),  'map.nx')).resolve(
         "Back/grassySoil_new.img/back/0")
     image = node.getImage()
     byte = image.getData()
@@ -45,7 +45,7 @@ def test_nxsprite():
 
 def test_nxsprite2():
 
-    node = NXFile(os.path.join(__file__,  '../map.nx')).resolve(
+    node = NXFile(os.path.join(os.path.dirname(__file__),  'map.nx')).resolve(
         "Tile/grassySoil.img/bsc/0")
     image = node.getImage()
     byte = image.getData()
@@ -87,7 +87,7 @@ def test_nxspritemanager():
     pygame.init()
     screen = pygame.display.set_mode((800, 600))
 
-    file = NXFile(os.path.join(__file__,  '../map.nx'))
+    file = NXFile(os.path.join(os.path.dirname(__file__),  'map.nx'))
     manager = NXResourceManager()
     manager.file = file
     sprite = manager.get_sprite(file, 'Back', 'grassySoil_new', 'back', '0')
