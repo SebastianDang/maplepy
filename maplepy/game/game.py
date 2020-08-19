@@ -4,6 +4,7 @@ from maplepy.config import Config
 from maplepy.ui.loaddisplay import LoadDisplay
 from maplepy.xml.displayxml import DisplayXml
 from maplepy.nx.displaynx import DisplayNx
+from maplepy.display.console import Console
 
 CAMERA_SPEED = 4
 DISPLAY_LOADING = 0
@@ -51,7 +52,7 @@ class Game():
         # Debugging tools TODO: Remove #
         self.typing = False
         self.text = ''
-        self.font = pygame.font.Font(None, 32)
+        self.console = Console(200, 400)
         # Debugging tools TODO: Remove #
 
     def handle_events(self):
@@ -162,9 +163,7 @@ class Game():
 
             # Debugging tools TODO: Remove #
             if self.typing:
-                text = self.font.render('console:{}'.format(
-                    self.text), True, (255, 255, 255))
-                self.screen.blit(text, (0, 0))
+                self.console.blit(self.screen, self.text)
             # Debugging tools TODO: Remove #
 
             # Update
