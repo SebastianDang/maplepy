@@ -6,10 +6,10 @@ from maplepy.info.instance import Instance
 from maplepy.info.canvas import Canvas
 from maplepy.info.foothold import Foothold
 
-from maplepy.nx.nxresourcemanager import NXResourceManager
+from maplepy.nx.resourcemanagernx import ResourceManagerNx
 
 # Create a single resource manager
-resource_manager = NXResourceManager()
+resource_manager = ResourceManagerNx()
 
 
 class BackgroundSpritesNx(displayitems.BackgroundSprites):
@@ -33,6 +33,9 @@ class BackgroundSpritesNx(displayitems.BackgroundSprites):
 
                 # Build object
                 inst = Instance()
+
+                # Get name
+                tag_name = val['name'] if 'name' in val else None
 
                 # Required properties
                 inst.x = int(val['x'])
@@ -75,6 +78,10 @@ class BackgroundSpritesNx(displayitems.BackgroundSprites):
                 if not inst.cy:
                     inst.cy = h
 
+                # Explicit special case
+                if tag_name and tag_name.isdigit():
+                    inst.update_layer(int(tag_name))
+
                 # Add to object
                 inst.add_canvas(canvas)
 
@@ -97,6 +104,7 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
 
     def load_layer(self, map_nx, map_id, index):
 
+        # Load current layer
         values = map_nx.get_layer_data(map_id, index)
         if not values:
             return
@@ -145,12 +153,7 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                 # Create a canvas object
                 canvas = Canvas(sprite.image, w, h, x, y, z)
 
-                # !!!For tiles, use the tag name!!!
                 # Explicit special case
-                # if 'z' in val:
-                #     inst.update_layer(int(val['z']))
-                # else:
-                #     inst.update_layer(inst.zM)
                 if tag_name and tag_name.isdigit():
                     inst.update_layer(int(tag_name))
 
@@ -246,7 +249,6 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                     # Add to object
                     inst.add_canvas(canvas)
 
-                # !!!For objects, use the z value!!!
                 # # Explicit special case
                 if 'z' in val:
                     inst.update_layer(int(val['z']))

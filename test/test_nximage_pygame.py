@@ -1,8 +1,8 @@
 import pygame
 import os
 from nx.nxfile import NXFile
-from maplepy.nx.nxsprite import NXSprite
-from maplepy.nx.nxresourcemanager import NXResourceManager
+from maplepy.nx.spritenx import SpriteNx
+from maplepy.nx.resourcemanagernx import ResourceManagerNx
 
 
 def test_nxsprite():
@@ -19,7 +19,7 @@ def test_nxsprite():
     pygame.init()
     screen = pygame.display.set_mode((800, 600))
 
-    sprite = NXSprite()
+    sprite = SpriteNx()
     sprite.load(node.width, node.height, byte)
     sprite.image = pygame.transform.scale(sprite.image, screen.get_size())
 
@@ -58,7 +58,7 @@ def test_nxsprite2():
     pygame.init()
     screen = pygame.display.set_mode((800, 600))
 
-    sprite = NXSprite()
+    sprite = SpriteNx()
     sprite.load(node.width, node.height, byte)
     sprite.image = pygame.transform.scale(sprite.image, screen.get_size())
 
@@ -88,7 +88,7 @@ def test_nxspritemanager():
     screen = pygame.display.set_mode((800, 600))
 
     file = NXFile(os.path.join(os.path.dirname(__file__),  'map.nx'))
-    manager = NXResourceManager()
+    manager = ResourceManagerNx()
     manager.file = file
     sprite = manager.get_sprite(file, 'Back', 'grassySoil_new', 'back', '0')
     sprite2 = manager.get_sprite(file, 'Tile', 'grassySoil', 'enV0', '1',)

@@ -1,7 +1,7 @@
 import pygame
 
 
-class NXSprite(pygame.sprite.Sprite):
+class SpriteNx(pygame.sprite.Sprite):
     """ Helper class to load byte array images as pygame sprites """
 
     def __init__(self):

@@ -6,7 +6,7 @@ class BackgroundSprites():
 
     def __init__(self):
         """ Contains a sprite group. This has to be loaded with some data """
-        self.sprites = pygame.sprite.Group()
+        self.sprites = pygame.sprite.LayeredUpdates()
 
     def calculate_x(self, rx, dx, z):
         """ Calculate the camera x offset """

@@ -1,7 +1,7 @@
-from maplepy.nx.nxsprite import NXSprite
+from maplepy.nx.spritenx import SpriteNx
 
 
-class NXResourceManager():
+class ResourceManagerNx():
     """ Helper class to manage nx data. Load once, then store as cache """
 
     def __init__(self):
@@ -62,7 +62,7 @@ class NXResourceManager():
 
         # Load as nx sprite
         image = node.getImage()
-        sprite = NXSprite()
+        sprite = SpriteNx()
         sprite.load(image.width, image.height, image.getData())
 
         # Store and return
