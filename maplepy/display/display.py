@@ -1,8 +1,4 @@
-import os
-import sys
 import pygame
-
-from maplepy.display.displayitems import LayeredSprites
 
 
 class Display():
