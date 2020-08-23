@@ -2,6 +2,7 @@ import pygame
 
 
 class Console(pygame.sprite.Sprite):
+    """ Class that handles display for text that belongs within a 'console'. """
 
     def __init__(self, w, h):
 
@@ -11,6 +12,8 @@ class Console(pygame.sprite.Sprite):
         self.image.fill((0, 0, 0))  # black
         self.image.set_alpha(100)  # transparent
         self.rect = self.image.get_rect()
+
+        # pygame.font.Font
         self.font = pygame.font.Font(None, 24)
 
     def draw_wrapped(self, surface, text, color, rect, font, aa=True):
@@ -39,17 +42,20 @@ class Console(pygame.sprite.Sprite):
 
             # If we've wrapped the text, then adjust the wrap to the last word
             if i < len(text):
-                tmp = text.rfind(" ", 0, i) + 1
-                i = tmp if tmp > 0 else i
+                space = text.rfind(' ', 0, i) + 1
+                i = space if space > 0 else i
 
             # Render the line and blit it to the surface
             image = font.render(text[:i], aa, color)
             surface.blit(image, (rect.left, y))
+
+            # Move to the next line
             y += font_height + line_space
 
             # Remove the text we just blitted
             text = text[i:]
 
+        # Return any remaining text
         return text
 
     def blit(self, surface, text):

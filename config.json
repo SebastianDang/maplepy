@@ -6,7 +6,6 @@
   "fps": 60,
   "asset_path": "P:/Downloads/MapleStory",
   "maps": [
-    "000010000",
-    "100000000"
+    "000010000"
   ]
 }

@@ -66,7 +66,11 @@ class Game():
             # Debugging tools TODO: Remove #
             if event.type == pygame.KEYDOWN:
                 if self.typing:
-                    if event.key == pygame.K_BACKSPACE:
+                    if event.key == pygame.K_ESCAPE:
+                        self.typing = False
+                        self.text = ''
+                        pygame.key.set_repeat()
+                    elif event.key == pygame.K_BACKSPACE:
                         self.text = self.text[:-1]
                     elif event.key == pygame.K_RETURN:
                         # Pass text to map loader
@@ -75,9 +79,10 @@ class Game():
                         self.text = ''
                     else:
                         self.text += event.unicode
-                if event.key == pygame.K_BACKQUOTE:
-                    self.typing = not self.typing
+                elif event.key == pygame.K_BACKQUOTE:
+                    self.typing = True
                     self.text = ''
+                    pygame.key.set_repeat(300)
             # Debugging tools TODO: Remove #
 
         # Empty
@@ -85,37 +90,24 @@ class Game():
 
     def handle_inputs(self):
 
-        # Get view
-        view = self.displays[DISPLAY_MAP].view
-
         # Mouse input
         mouse_x, mouse_y = pygame.mouse.get_pos()
-        mouse_click = pygame.mouse.get_pressed()
+        mouse_input = pygame.mouse.get_pressed()
 
-        # Check input keys
-        inputs = pygame.key.get_pressed()
-        if inputs[pygame.K_UP]:
+        # Key input
+        key_input = pygame.key.get_pressed()
+        if key_input[pygame.K_UP]:
             if self.displays_state == DISPLAY_MAP:
                 self.displays[DISPLAY_MAP].move_view(0, -CAMERA_SPEED)
-        if inputs[pygame.K_DOWN]:
+        if key_input[pygame.K_DOWN]:
             if self.displays_state == DISPLAY_MAP:
                 self.displays[DISPLAY_MAP].move_view(0, CAMERA_SPEED)
-        if inputs[pygame.K_LEFT]:
+        if key_input[pygame.K_LEFT]:
             if self.displays_state == DISPLAY_MAP:
                 self.displays[DISPLAY_MAP].move_view(-CAMERA_SPEED, 0)
-        if inputs[pygame.K_RIGHT]:
+        if key_input[pygame.K_RIGHT]:
             if self.displays_state == DISPLAY_MAP:
                 self.displays[DISPLAY_MAP].move_view(CAMERA_SPEED, 0)
-
-        # Cycle through maps
-        if inputs[pygame.K_TAB]:
-            if pygame.K_TAB not in self.input_blocker:
-                self.input_blocker[pygame.K_TAB] = 60
-                if self.displays_state == DISPLAY_MAP:
-                    self.map_index = (self.map_index + 1) % len(self.maps)
-                    self.displays[DISPLAY_MAP].load_map(
-                        self.maps[self.map_index])
-                    self.displays_state = DISPLAY_MAP
 
         # Input key handling to prevent repeated keys
         input_blocker_removal = []
