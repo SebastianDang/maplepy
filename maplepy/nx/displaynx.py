@@ -32,13 +32,7 @@ class DisplayNx(display.Display):
         for sound_file in sound_file_names:
             self.sound_nx.open('{}/{}'.format(self.path, sound_file))
 
-        # Status
-        self.loaded = False
-
     def load_map(self, map_id):
-
-        # Status
-        self.loaded = False
 
         # Unload all old data
         self.background_sprites = None
@@ -54,9 +48,6 @@ class DisplayNx(display.Display):
         self.setup_map(map_id)
         self.setup_background_sprites(map_id)
         self.setup_layered_sprites(map_id)
-
-        # Status
-        self.loaded = True
 
     def setup_map(self, map_id):
 

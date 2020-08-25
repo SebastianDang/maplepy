@@ -18,13 +18,7 @@ class LoadDisplay():
         self.timer = 0
         self.delay = 10
 
-        # Status
-        self.loaded = False
-
     def load_images(self):
-
-        # Status
-        self.loaded = False
 
         # Load images
         for i in range(0, 9):
@@ -40,9 +34,6 @@ class LoadDisplay():
         if self.images:
             image = self.images[0]
             self.image = pygame.transform.scale(image, self.rect.size)
-
-        # Status
-        self.loaded = True
 
     def update(self):
 

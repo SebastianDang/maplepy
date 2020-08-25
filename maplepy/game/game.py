@@ -82,6 +82,9 @@ class Game():
 
     def handle_events(self):
 
+        # Get current state
+        state = self.get_state()
+
         # Handle pygame events
         for event in pygame.event.get():
 
@@ -91,7 +94,7 @@ class Game():
                 self.running = False
 
             # Console input
-            if event.type == pygame.KEYDOWN:
+            if state != DISPLAY_LOADING and event.type == pygame.KEYDOWN:
                 if self.typing:
                     if event.key == pygame.K_ESCAPE:
                         self.typing = False
@@ -108,7 +111,7 @@ class Game():
                 elif event.key == pygame.K_BACKQUOTE:
                     self.typing = True
                     self.text = ''
-                    pygame.key.set_repeat(300)
+                    pygame.key.set_repeat(200)
 
         # Empty
         pygame.event.pump()
@@ -118,33 +121,27 @@ class Game():
         # Get current state
         state = self.get_state()
 
-        # # Mouse input
+        # Get inputs
         # mouse_x, mouse_y = pygame.mouse.get_pos()
         # mouse_input = pygame.mouse.get_pressed()
-
-        # Key input
         key_input = pygame.key.get_pressed()
-        if key_input[pygame.K_UP]:
-            if state == DISPLAY_MAP:
-                self.displays[DISPLAY_MAP].move_view(0, -CAMERA_SPEED)
-        if key_input[pygame.K_DOWN]:
-            if state == DISPLAY_MAP:
-                self.displays[DISPLAY_MAP].move_view(0, CAMERA_SPEED)
-        if key_input[pygame.K_LEFT]:
-            if state == DISPLAY_MAP:
-                self.displays[DISPLAY_MAP].move_view(-CAMERA_SPEED, 0)
-        if key_input[pygame.K_RIGHT]:
-            if state == DISPLAY_MAP:
-                self.displays[DISPLAY_MAP].move_view(CAMERA_SPEED, 0)
 
-        # Input key handling to prevent repeated keys
+        # Camera movement
+        if state == DISPLAY_MAP and key_input[pygame.K_UP]:
+            self.displays[state].move_view(0, -CAMERA_SPEED)
+        if state == DISPLAY_MAP and key_input[pygame.K_DOWN]:
+            self.displays[state].move_view(0, CAMERA_SPEED)
+        if state == DISPLAY_MAP and key_input[pygame.K_LEFT]:
+            self.displays[state].move_view(-CAMERA_SPEED, 0)
+        if state == DISPLAY_MAP and key_input[pygame.K_RIGHT]:
+            self.displays[state].move_view(CAMERA_SPEED, 0)
+
+        # Prevent quickly repeated keys, remove if done
         input_blocker_removal = []
         for key, delay in self.input_blocker.items():
             self.input_blocker[key] = delay - 1
             if self.input_blocker[key] <= 0:
                 input_blocker_removal.append(key)
-
-        # Remove from list
         for key in input_blocker_removal:
             self.input_blocker.pop(key, None)
 
