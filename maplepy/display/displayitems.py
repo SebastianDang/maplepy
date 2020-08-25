@@ -5,7 +5,7 @@ class BackgroundSprites():
     """ Class that draws background sprites """
 
     def __init__(self):
-        """ Contains a sprite group. This has to be loaded with some data """
+        """ Contains a layered sprite group. This has to be loaded with some data """
         self.sprites = pygame.sprite.LayeredUpdates()
 
     def calculate_x(self, rx, dx, z):

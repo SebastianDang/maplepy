@@ -23,7 +23,7 @@ class SoundNx:
 
     def get_sound(self, path):
         paths = path.split('/')
-        soundPath = "{}.img/{}".format(paths[0], paths[1])
+        soundPath = '{}.img/{}'.format(paths[0], paths[1])
         sound_node = self.file.resolve(soundPath)
         if not sound_node:
             return None
@@ -32,7 +32,7 @@ class SoundNx:
         # they're leftover bytes from the original wz files
         soundbytes = sound_node.getSound()[82:]
         wavBytes = io.BytesIO()
-        song = AudioSegment.from_file(io.BytesIO(soundbytes), format="mp3")
-        song.export(wavBytes, format="wav")
+        song = AudioSegment.from_file(io.BytesIO(soundbytes), format='mp3')
+        song.export(wavBytes, format='wav')
 
         return pygame.mixer.Sound(buffer=wavBytes.getbuffer())
