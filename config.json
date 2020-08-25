@@ -5,7 +5,5 @@
   "height": 1080,
   "fps": 60,
   "asset_path": "P:/Downloads/MapleStory",
-  "maps": [
-    "000010000"
-  ]
+  "map": "000010000"
 }

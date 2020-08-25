@@ -1,3 +1,4 @@
+import threading
 import pygame
 
 from maplepy.config import Config
@@ -25,7 +26,7 @@ class Game():
         self.width = self.config['width']
         self.height = self.config['height']
         self.path = self.config['asset_path']
-        self.maps = self.config['maps']
+        self.map = self.config['map']
 
         # Create pygame objects
         icon = pygame.image.load(self.config['icon'])
@@ -43,27 +44,53 @@ class Game():
             self.width, self.height, self.path)
 
         # Game state
-        self.displays_state = DISPLAY_LOADING
+        self.thread = None
+        self.state = DISPLAY_MAP
         self.running = False
         self.fps = 60
         self.input_blocker = {}
-        self.map_index = 0
 
-        # Debugging tools TODO: Remove #
+        # Console
         self.typing = False
         self.text = ''
         self.console = Console(200, 400)
-        # Debugging tools TODO: Remove #
+
+    def get_state(self):
+
+        if self.thread.isAlive():
+            return DISPLAY_LOADING
+        else:
+            return self.state
+
+    def process_command(self, text):
+
+        # Parse text
+        command = text.split()
+        if len(command) < 1:
+            return
+
+        # Process command
+        try:
+            cmd = command[0].lower()
+            if cmd == 'map':
+                fn = self.displays[DISPLAY_MAP].load_map
+                args = (command[1],)
+                self.thread = threading.Thread(target=fn, args=args)
+                self.thread.start()
+        except:
+            pass
 
     def handle_events(self):
 
         # Handle pygame events
         for event in pygame.event.get():
+
+            # Quit application
             if event.type == pygame.QUIT:
                 pygame.event.clear()
                 self.running = False
 
-            # Debugging tools TODO: Remove #
+            # Console input
             if event.type == pygame.KEYDOWN:
                 if self.typing:
                     if event.key == pygame.K_ESCAPE:
@@ -73,8 +100,7 @@ class Game():
                     elif event.key == pygame.K_BACKSPACE:
                         self.text = self.text[:-1]
                     elif event.key == pygame.K_RETURN:
-                        # Pass text to map loader
-                        self.displays[DISPLAY_MAP].load_map(self.text)
+                        self.process_command(self.text)
                         self.typing = False
                         self.text = ''
                     else:
@@ -83,30 +109,32 @@ class Game():
                     self.typing = True
                     self.text = ''
                     pygame.key.set_repeat(300)
-            # Debugging tools TODO: Remove #
 
         # Empty
         pygame.event.pump()
 
     def handle_inputs(self):
 
-        # Mouse input
-        mouse_x, mouse_y = pygame.mouse.get_pos()
-        mouse_input = pygame.mouse.get_pressed()
+        # Get current state
+        state = self.get_state()
+
+        # # Mouse input
+        # mouse_x, mouse_y = pygame.mouse.get_pos()
+        # mouse_input = pygame.mouse.get_pressed()
 
         # Key input
         key_input = pygame.key.get_pressed()
         if key_input[pygame.K_UP]:
-            if self.displays_state == DISPLAY_MAP:
+            if state == DISPLAY_MAP:
                 self.displays[DISPLAY_MAP].move_view(0, -CAMERA_SPEED)
         if key_input[pygame.K_DOWN]:
-            if self.displays_state == DISPLAY_MAP:
+            if state == DISPLAY_MAP:
                 self.displays[DISPLAY_MAP].move_view(0, CAMERA_SPEED)
         if key_input[pygame.K_LEFT]:
-            if self.displays_state == DISPLAY_MAP:
+            if state == DISPLAY_MAP:
                 self.displays[DISPLAY_MAP].move_view(-CAMERA_SPEED, 0)
         if key_input[pygame.K_RIGHT]:
-            if self.displays_state == DISPLAY_MAP:
+            if state == DISPLAY_MAP:
                 self.displays[DISPLAY_MAP].move_view(CAMERA_SPEED, 0)
 
         # Input key handling to prevent repeated keys
@@ -122,20 +150,18 @@ class Game():
 
     def run(self):
 
-        # Set current display
+        # Setup loading display
         self.displays[DISPLAY_LOADING].load_images()
-        self.displays_state = DISPLAY_LOADING
-        loading = 60
+
+        # Setup initial map
+        self.process_command('map {}'.format(self.map))
 
         # Main loop
         self.running = True
         while self.running:
 
-            if loading:
-                loading -= 1
-            if self.displays_state == DISPLAY_LOADING and not loading:
-                self.displays[DISPLAY_MAP].load_map(self.maps[self.map_index])
-                self.displays_state = DISPLAY_MAP
+            # Get current state
+            state = self.get_state()
 
             # Handle pygame events
             self.handle_events()
@@ -147,16 +173,12 @@ class Game():
             self.screen.fill((0, 0, 0))
 
             # Render environment
-            if self.displays[self.displays_state].loaded:
+            self.displays[state].update()
+            self.displays[state].blit(self.screen)
 
-                # Displays
-                self.displays[self.displays_state].update()
-                self.displays[self.displays_state].blit(self.screen)
-
-            # Debugging tools TODO: Remove #
+            # Console
             if self.typing:
                 self.console.blit(self.screen, self.text)
-            # Debugging tools TODO: Remove #
 
             # Update
             pygame.display.update()
