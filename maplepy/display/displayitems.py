@@ -1,3 +1,4 @@
+import math
 import pygame
 
 
@@ -8,13 +9,13 @@ class BackgroundSprites():
         """ Contains a layered sprite group. This has to be loaded with some data """
         self.sprites = pygame.sprite.LayeredUpdates()
 
-    def calculate_x(self, rx, dx, z):
-        """ Calculate the camera x offset """
+    def calculate_cam_offset(self, rx, dx, z):
+        """ Calculate the camera x or y offset """
         return float(rx * (dx + z) / 100) + z
 
-    def calculate_y(self, ry, dy, z):
-        """ Calculate the camera y offset """
-        return float(ry * (dy + z) / 100) + z
+    def calculate_tile_offset(self, w, x, cx):
+        """ Calculate the tile starting x or y offset """
+        return math.ceil((-w - x) / cx) * cx
 
     def update(self):
         """ Update all sprites """
@@ -40,8 +41,8 @@ class BackgroundSprites():
                 # Camera offset
                 dx = offset.x if offset else 0
                 dy = offset.y if offset else 0
-                x = self.calculate_x(sprite.rx, dx, 0.5 * w)
-                y = self.calculate_y(sprite.ry, dy, 0.5 * h)
+                x = self.calculate_cam_offset(sprite.rx, dx, 0.5 * w)
+                y = self.calculate_cam_offset(sprite.ry, dy, 0.5 * h)
                 rect = rect.move(x, y)
 
                 # 0 - Simple image (eg. the hill with the tree in the background of Henesys)
@@ -55,28 +56,35 @@ class BackgroundSprites():
                 # 5 - Image scrolls and is copied vertically (eg. background in the Helios Tower elevator)
                 # 6 - Image scrolls horizontally, and is copied in both directions (eg. the train in Kerning City subway JQ)
                 # 7 - Image scrolls vertically, and is copied in both directions (eg. rain drops in Ellin PQ maps)
-                horizontal = [1, 3, 4, 6, 7]
-                if sprite.type in horizontal:
-                    if sprite.cx > 0:
-                        tile = rect.copy()
-                        while tile.x < w:
-                            surface.blit(sprite.image, tile)
-                            tile = tile.move(sprite.cx, 0)
-                        tile = rect.copy()
-                        while tile.x > -sprite.rect.width:
-                            surface.blit(sprite.image, tile)
-                            tile = tile.move(-sprite.cx, 0)
-                vertical = [2, 3, 5, 6, 7]
-                if sprite.type in vertical:
-                    if sprite.cy > 0:
-                        tile = rect.copy()
-                        while tile.y < h:
-                            surface.blit(sprite.image, tile)
-                            tile = tile.move(0, sprite.cy)
-                        tile = rect.copy()
-                        while tile.y > -sprite.rect.height:
-                            surface.blit(sprite.image, tile)
-                            tile = tile.move(0, -sprite.cy)
+                horizontal = [1, 4]
+                if sprite.type in horizontal and sprite.cx > 0:
+                    dx = self.calculate_tile_offset(
+                        sprite.rect.width, rect.x, sprite.cx)
+                    htile = rect.move(dx, 0)
+                    while htile.x < w:
+                        surface.blit(sprite.image, htile)
+                        htile = htile.move(sprite.cx, 0)
+                vertical = [2, 5]
+                if sprite.type in vertical and sprite.cy > 0:
+                    dy = self.calculate_tile_offset(
+                        sprite.rect.height, rect.y, sprite.cy)
+                    vtile = rect.move(0, dy)
+                    while vtile.y < h:
+                        surface.blit(sprite.image, vtile)
+                        vtile = vtile.move(0, sprite.cy)
+                both = [3, 6, 7]
+                if sprite.type in both and sprite.cx > 0 and sprite.cy > 0:
+                    dx = self.calculate_tile_offset(
+                        sprite.rect.width, rect.x, sprite.cx)
+                    dy = self.calculate_tile_offset(
+                        sprite.rect.height, rect.y, sprite.cy)
+                    vtile = rect.move(dx, dy)
+                    while vtile.y < h:
+                        htile = vtile.copy()
+                        while htile.x < w:
+                            surface.blit(sprite.image, htile)
+                            htile = htile.move(sprite.cx, 0)
+                        vtile = vtile.move(0, sprite.cy)
 
             except:
                 continue
