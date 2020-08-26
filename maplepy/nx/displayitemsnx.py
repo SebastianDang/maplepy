@@ -53,8 +53,9 @@ class BackgroundSpritesNx(displayitems.BackgroundSprites):
                 inst.no = int(val['no'])
 
                 # Get sprite by key and index
+                category = 'Animation' if int(val['ani']) else 'Back'
                 sprite = resource_manager.get_sprite(
-                    map_nx.file, 'Back', inst.bS, 'back', inst.no)
+                    map_nx.file, category, inst.bS, 'back', inst.no)
                 w, h = sprite.image.get_size()
                 sprite.image.set_alpha(inst.a)
 
