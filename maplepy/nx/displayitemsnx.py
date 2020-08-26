@@ -84,12 +84,17 @@ class BackgroundSpritesNx(displayitems.BackgroundSprites):
                     else:
                         data = resource_manager.get_data(
                             map_nx.file, 'Back', inst.bS, 'back', inst.no)
+
                     x = data['origin'][0]
                     y = data['origin'][1]
                     z = int(data['z']) if 'z' in data else None
+                    delay = int(data['delay']) if 'delay' in data else 120
 
                     # Create a canvas object
                     canvas = Canvas(sprite.image, w, h, x, y, z)
+
+                    # Set delay
+                    canvas.set_delay(delay)
 
                     # Flip
                     if inst.f > 0:
@@ -245,7 +250,7 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                     sprite = sprites[index]
                     w, h = sprite.image.get_size()
 
-                    # # Get nx info
+                    # Get additional properties
                     name = '{}/{}/{}'.format(inst.l1, inst.l2, index)
                     data = resource_manager.get_data(
                         map_nx.file, 'Obj', inst.oS, inst.l0, name)
@@ -256,7 +261,7 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                     a0 = int(data['a0']) if 'a0' in data else 255
                     a1 = int(data['a1']) if 'a1' in data else 255
 
-                    # # Create a canvas object
+                    # Create a canvas object
                     canvas = Canvas(sprite.image, w, h, x, y, z)
 
                     # Set delay
@@ -272,7 +277,7 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                     # Add to object
                     inst.add_canvas(canvas)
 
-                # # Explicit special case
+                # Explicit special case
                 if 'z' in val:
                     inst.update_layer(int(val['z']))
                 else:

@@ -57,8 +57,11 @@ class MapNx:
         map_node = self.file.resolve(img)
         if not map_node:
             return None
-        info_node = map_node.getChild('miniMap')
-        for child in info_node.getChildren():
+        # Get the current minimap node
+        minimap_node = map_node.getChild('miniMap')
+        if not minimap_node:
+            return None
+        for child in minimap_node.getChildren():
             minimap[child.name] = child.value
         return minimap
 
