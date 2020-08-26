@@ -86,7 +86,7 @@ class Instance(pygame.sprite.Sprite):
             self.frame_count += 1
 
             # Convert to correct rate
-            factor = 15  # TODO: Verify conversion rate
+            factor = 15
             count = self.frame_count * factor
             canvas = self.canvas_list[self.canvas_list_index]
 
@@ -115,29 +115,25 @@ class Instance(pygame.sprite.Sprite):
         if not self.type:
             return
 
+        # Convert to correct rate
+        factor = 0.5
+
         # Horizontal delta
         horizontal = [4, 6]
         if self.type in horizontal and self.cx > 0:
-            self.dx += self.rx
+            self.dx += self.rx * factor
             self.dx %= (2 * self.cx)
 
         # Vertical delta
         vertical = [5, 7]
         if self.type in vertical and self.cy > 0:
-            self.dy += self.ry
+            self.dy += self.ry * factor
             self.dy %= (2 * self.cy)
 
     def update(self):
 
-        n = len(self.canvas_list)
-
-        # Animate
-        if n > 1:
-            self.step_frame()
-
-        # Scroll
-        elif n > 0:
-            self.step_scroll()
+        self.step_frame()
+        self.step_scroll()
 
     def get_footholds(self):
 

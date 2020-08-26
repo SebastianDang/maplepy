@@ -52,39 +52,61 @@ class BackgroundSpritesNx(displayitems.BackgroundSprites):
                 inst.bS = val['bS']
                 inst.no = int(val['no'])
 
-                # Get sprite by key and index
-                category = 'Animation' if int(val['ani']) else 'Back'
-                sprite = resource_manager.get_sprite(
-                    map_nx.file, category, inst.bS, 'back', inst.no)
-                w, h = sprite.image.get_size()
-                sprite.image.set_alpha(inst.a)
+                # Get sprites by type
+                sprites = []
+                if inst.ani:  # Animated
+                    for index in range(0, 20):
+                        name = '{}/{}'.format(inst.no, index)
+                        sprite = resource_manager.get_sprite(
+                            map_nx.file, 'Back', inst.bS, 'ani', name)
+                        if sprite:
+                            sprites.append(sprite)
+                        else:
+                            break
+                else:  # Static
+                    sprite = resource_manager.get_sprite(
+                        map_nx.file, 'Back', inst.bS, 'back', inst.no)
+                    if sprite:
+                        sprites.append(sprite)
 
-                # Get additional properties
-                data = resource_manager.get_data(
-                    map_nx.file, 'Back', inst.bS, 'back', inst.no)
-                x = data['origin'][0]
-                y = data['origin'][1]
-                z = int(data['z']) if 'z' in data else None
+                # Create canvases
+                for index in range(0, len(sprites)):
 
-                # Create a canvas object
-                canvas = Canvas(sprite.image, w, h, x, y, z)
+                    # Get sprite info
+                    sprite = sprites[index]
+                    w, h = sprite.image.get_size()
 
-                # Flip
-                if inst.f > 0:
-                    canvas.flip()
+                    # Get additional properties
+                    if inst.ani:
+                        name = '{}/{}'.format(inst.no, index)
+                        data = resource_manager.get_data(
+                            map_nx.file, 'Back', inst.bS, 'ani', name)
+                    else:
+                        data = resource_manager.get_data(
+                            map_nx.file, 'Back', inst.bS, 'back', inst.no)
+                    x = data['origin'][0]
+                    y = data['origin'][1]
+                    z = int(data['z']) if 'z' in data else None
 
-                # Check cx, cy
-                if not inst.cx:
-                    inst.cx = w
-                if not inst.cy:
-                    inst.cy = h
+                    # Create a canvas object
+                    canvas = Canvas(sprite.image, w, h, x, y, z)
 
-                # Explicit special case
-                if tag_name and tag_name.isdigit():
-                    inst.update_layer(int(tag_name))
+                    # Flip
+                    if inst.f > 0:
+                        canvas.flip()
 
-                # Add to object
-                inst.add_canvas(canvas)
+                    # Check cx, cy
+                    if not inst.cx:
+                        inst.cx = w
+                    if not inst.cy:
+                        inst.cy = h
+
+                    # Explicit special case
+                    if tag_name and tag_name.isdigit():
+                        inst.update_layer(int(tag_name))
+
+                    # Add to object
+                    inst.add_canvas(canvas)
 
                 # Add to list
                 self.sprites.add(inst)
