@@ -34,6 +34,10 @@ class MapNx:
                 map_nodes[map_id] = node
         return map_nodes
 
+    def get_map_node(self, map_id):
+        img = "Map/Map{}/{}.img".format(map_id[0:1], map_id)
+        return self.file.resolve(img)
+
     def get_info_data(self, map_id):
         info = {}
         img = "Map/Map{}/{}.img".format(map_id[0:1], map_id)

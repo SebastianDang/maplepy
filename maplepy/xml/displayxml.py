@@ -24,18 +24,7 @@ class DisplayXml(display.Display):
         # Objects in the map
         self.map_xml = None
 
-        # Status
-        self.loaded = False
-
     def load_map(self, map_id):
-
-        # Status
-        self.loaded = False
-
-        # Unload all old data
-        self.background_sprites = None
-        self.layered_sprites.clear()
-        self.view_limit = None
 
         # Check input path
         if not os.path.exists(self.path):
@@ -56,13 +45,15 @@ class DisplayXml(display.Display):
         self.map_xml.open(map_file)
         self.map_xml.parse_root()
 
+        # Unload all old data
+        self.background_sprites = None
+        self.layered_sprites.clear()
+        self.view_limit = None
+
         # Setup and load
         self.setup_map()
         self.setup_back_sprites()
         self.setup_map_sprites()
-
-        # Status
-        self.loaded = True
 
     def setup_map(self):
 
@@ -86,7 +77,7 @@ class DisplayXml(display.Display):
         # Start bgm
         if 'bgm' in self.map_xml.info:
             self.bgm = SoundBgm()
-            self.bgm.volume = 0.1
+            self.bgm.volume = 1.0
             self.bgm.play_bgm("{}/sound.wz".format(self.path),
                               self.map_xml.info['bgm'])
 

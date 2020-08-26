@@ -40,7 +40,7 @@ class Game():
         self.displays = {}
         self.displays[DISPLAY_LOADING] = LoadDisplay(
             self.width, self.height, self.path)
-        self.displays[DISPLAY_MAP] = DisplayNx(
+        self.displays[DISPLAY_MAP] = DisplayXml(
             self.width, self.height, self.path)
 
         # Game state
@@ -53,7 +53,7 @@ class Game():
         # Console
         self.typing = False
         self.text = ''
-        self.console = Console(200, 400)
+        self.console = Console(200, 100)
 
     def get_state(self):
 
