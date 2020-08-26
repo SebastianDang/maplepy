@@ -50,6 +50,18 @@ class MapNx:
             info[child.name] = child.value
         return info
 
+    def get_minimap_data(self, map_id):
+        minimap = {}
+        img = "Map/Map{}/{}.img".format(map_id[0:1], map_id)
+        # Get map node
+        map_node = self.file.resolve(img)
+        if not map_node:
+            return None
+        info_node = map_node.getChild('miniMap')
+        for child in info_node.getChildren():
+            minimap[child.name] = child.value
+        return minimap
+
     def get_background_data(self, map_id):
         back = []
         img = "Map/Map{}/{}.img".format(map_id[0:1], map_id)

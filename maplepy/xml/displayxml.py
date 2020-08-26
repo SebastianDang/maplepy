@@ -48,6 +48,7 @@ class DisplayXml(display.Display):
         # Unload all old data
         self.background_sprites = None
         self.layered_sprites.clear()
+        self.view.topleft = (0, 0)
         self.view_limit = None
 
         # Setup and load
