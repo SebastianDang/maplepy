@@ -44,7 +44,7 @@ class Game():
             self.width, self.height, self.path)
 
         # Game state
-        self.thread = None
+        self.threads = []
         self.state = DISPLAY_MAP
         self.running = False
         self.fps = 60
@@ -57,12 +57,12 @@ class Game():
 
     def get_state(self):
 
-        if self.thread.isAlive():
+        if self.threads:
             return DISPLAY_LOADING
         else:
             return self.state
 
-    def process_command(self, text):
+    def handle_command(self, text):
 
         # Parse text
         command = text.split()
@@ -75,10 +75,21 @@ class Game():
             if cmd == 'map':
                 fn = self.displays[DISPLAY_MAP].load_map
                 args = (command[1],)
-                self.thread = threading.Thread(target=fn, args=args)
-                self.thread.start()
+                thread = threading.Thread(target=fn, args=args)
+                thread.start()
+                self.threads.append(thread)
         except:
             pass
+
+    def handle_threads(self):
+
+        # Get the result of the thread
+        for thread in self.threads:
+            if not thread.is_alive():
+                thread.join()
+
+        # Remove thread from list
+        self.threads = [thread for thread in self.threads if thread.is_alive()]
 
     def handle_events(self):
 
@@ -103,7 +114,7 @@ class Game():
                     elif event.key == pygame.K_BACKSPACE:
                         self.text = self.text[:-1]
                     elif event.key == pygame.K_RETURN:
-                        self.process_command(self.text)
+                        self.handle_command(self.text)
                         self.typing = False
                         self.text = ''
                     else:
@@ -151,7 +162,7 @@ class Game():
         self.displays[DISPLAY_LOADING].load_images()
 
         # Setup initial map
-        self.process_command('map {}'.format(self.map))
+        self.handle_command('map {}'.format(self.map))
 
         # Main loop
         self.running = True
@@ -159,6 +170,9 @@ class Game():
 
             # Get current state
             state = self.get_state()
+
+            # Handle threads
+            self.handle_threads()
 
             # Handle pygame events
             self.handle_events()
