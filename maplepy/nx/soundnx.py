@@ -3,7 +3,6 @@ import io
 import nx.nxfile as nxfile
 from nx.nxfileset import NXFileSet
 from pydub import AudioSegment
-import pygame
 
 
 class SoundNx:
@@ -35,4 +34,4 @@ class SoundNx:
         song = AudioSegment.from_file(io.BytesIO(soundbytes), format='mp3')
         song.export(wavBytes, format='wav')
 
-        return pygame.mixer.Sound(buffer=wavBytes.getbuffer())
+        return wavBytes.getbuffer()

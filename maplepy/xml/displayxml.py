@@ -1,11 +1,12 @@
 import os
 import pygame
 
+from maplepy.sound.bgm import SoundBgm
+
 import maplepy.display.display as display
 from maplepy.xml.displayitemsxml import BackgroundSpritesXml, LayeredSpritesXml
 
 from maplepy.xml.mapxml import MapXml
-from maplepy.sound.bgm import SoundBgm
 
 
 class DisplayXml(display.Display):
@@ -19,7 +20,7 @@ class DisplayXml(display.Display):
         self.path = path
 
         # Music
-        self.bgm = None
+        self.bgm = SoundBgm()
 
         # Objects in the map
         self.map_xml = None
@@ -37,7 +38,7 @@ class DisplayXml(display.Display):
             return
 
         # Build filename
-        map_file = "{}/map.wz/map/map{}/{}.img.xml".format(
+        map_file = '{}/map.wz/map/map{}/{}.img.xml'.format(
             self.path,  map_id[0:1], map_id)
 
         # Load xml
@@ -55,6 +56,9 @@ class DisplayXml(display.Display):
         self.setup_map()
         self.setup_back_sprites()
         self.setup_map_sprites()
+
+        # Play bgm
+        self.bgm.play()
 
     def setup_map(self):
 
@@ -75,12 +79,12 @@ class DisplayXml(display.Display):
             right = int(self.map_xml.info['VRRight'])
             self.set_view_limit(left, top, right - left, bottom - top)
 
-        # Start bgm
+        # Load bgm
         if 'bgm' in self.map_xml.info:
-            self.bgm = SoundBgm()
-            self.bgm.volume = 1.0
-            self.bgm.play_bgm("{}/sound.wz".format(self.path),
-                              self.map_xml.info['bgm'])
+            file = '{}/sound.wz/{}.mp3'.format(self.path,
+                                               self.map_xml.info['bgm'])
+            self.bgm.load(file, file=file)
+            self.bgm.volume(1.0)
 
     def setup_back_sprites(self):
 

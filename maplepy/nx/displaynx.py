@@ -1,6 +1,8 @@
 import os
 import pygame
 
+from maplepy.sound.bgm import SoundBgm
+
 import maplepy.display.display as display
 from maplepy.nx.displayitemsnx import BackgroundSpritesNx, LayeredSpritesNx
 
@@ -20,8 +22,7 @@ class DisplayNx(display.Display):
 
         # Other properties
         self.path = path
-        self.bgm_path = None
-        self.bgm = None
+        self.bgm = SoundBgm()
 
         # Objects in the map
         self.map_nx = MapNx()
@@ -58,6 +59,9 @@ class DisplayNx(display.Display):
         self.setup_background_sprites(map_id)
         self.setup_layered_sprites(map_id)
 
+        # Play bgm
+        self.bgm.play()
+
     def setup_map(self, map_id):
 
         # Check if map nx is loaded
@@ -89,23 +93,11 @@ class DisplayNx(display.Display):
             self.set_view_limit(-x, -y, width, height)
 
         # Bgm
-        if 'bgm' in info and info['bgm'] != self.bgm_path:
-
+        if 'bgm' in info:
             try:
-
-                # Stop previous bgm
-                if self.bgm:
-                    self.bgm.stop()
-
-                # Play bgm
-                self.bgm_path = info['bgm']
-                self.bgm = self.sound_nx.get_sound(self.bgm_path)
-                if self.bgm:
-                    # fade_ms is added because there is a popping sound
-                    # in the beginning. fade helps to reduce the pop
-                    # TODO: find better solution to the pop sound
-                    self.bgm.play(loops=-1, maxtime=0, fade_ms=1000)
-
+                buffer = self.sound_nx.get_sound(info['bgm'])
+                self.bgm.load(info['bgm'], buffer=buffer)
+                self.bgm.volume(1.0)
             except:
                 pass
 
