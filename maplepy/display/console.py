@@ -9,7 +9,7 @@ class Console(pygame.sprite.Sprite):
         # pygame.sprite.Sprite
         super().__init__()
         self.image = pygame.surface.Surface((w, h))
-        self.image.fill((0, 0, 0))  # black
+        self.image.fill((20, 20, 20))
         self.image.set_alpha(100)  # transparent
         self.rect = self.image.get_rect()
 
@@ -18,8 +18,8 @@ class Console(pygame.sprite.Sprite):
 
     def draw_wrapped(self, surface, text, color, rect, font, aa=True):
 
-        rect = rect.copy()
-        y = rect.top
+        # Starting params
+        line_y = rect.top
         line_space = -2
         font_height = font.size('Tg')[1]
 
@@ -29,7 +29,7 @@ class Console(pygame.sprite.Sprite):
             i = 1
 
             # Check if the current row will be outside rect
-            if y + font_height > rect.bottom:
+            if line_y + font_height > rect.bottom:
                 break
 
             # Determine maximum width of line
@@ -40,17 +40,17 @@ class Console(pygame.sprite.Sprite):
             if font.size(text[:i])[0] > rect.width:
                 i -= 1
 
-            # If we've wrapped the text, then adjust the wrap to the last word
+            # Adjust the wrap to the last word, if theres a space
             if i < len(text):
                 space = text.rfind(' ', 0, i) + 1
                 i = space if space > 0 else i
 
             # Render the line and blit it to the surface
             image = font.render(text[:i], aa, color)
-            surface.blit(image, (rect.left, y))
+            surface.blit(image, (rect.left, line_y))
 
             # Move to the next line
-            y += font_height + line_space
+            line_y += font_height + line_space
 
             # Remove the text we just blitted
             text = text[i:]

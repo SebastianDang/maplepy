@@ -2,10 +2,10 @@ import threading
 import pygame
 
 from maplepy.config import Config
-from maplepy.ui.loaddisplay import LoadDisplay
 from maplepy.xml.displayxml import DisplayXml
 from maplepy.nx.displaynx import DisplayNx
 from maplepy.display.console import Console
+from maplepy.display.loading import Loading
 
 CAMERA_SPEED = 4
 DISPLAY_LOADING = 0
@@ -38,8 +38,8 @@ class Game():
 
         # Create displays
         self.displays = {}
-        self.displays[DISPLAY_LOADING] = LoadDisplay(
-            self.width, self.height, self.path)
+        self.displays[DISPLAY_LOADING] = Loading(
+            self.width, self.height)
         self.displays[DISPLAY_MAP] = DisplayNx(
             self.width, self.height, self.path)
 
@@ -159,7 +159,7 @@ class Game():
     def run(self):
 
         # Setup loading display
-        self.displays[DISPLAY_LOADING].load_images()
+        self.displays[DISPLAY_LOADING].load_images(self.path)
 
         # Setup initial map
         self.handle_command('map {}'.format(self.map))

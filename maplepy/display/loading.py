@@ -2,44 +2,38 @@ import os
 import pygame
 
 
-class LoadDisplay():
+class Loading():
+    """ Class that handles display for loading. """
 
-    def __init__(self, w, h, path):
+    def __init__(self, w, h):
 
         # Required properties
-        self.width = w
-        self.height = h
-        self.path = path
-
         self.images = []
         self.images_index = 0
         self.image = None
-        self.rect = pygame.Rect(0, 0, self.width, self.height)
+        self.rect = pygame.Rect(0, 0, w, h)
         self.timer = 0
         self.delay = 10
 
-    def load_images(self):
+    def load_images(self, path):
 
         # Load images
         for i in range(0, 9):
             file = '{}/ui.wz/logo.img/loading.repeat.1.{}.png'.format(
-                self.path, str(i))
+                path, str(i))
             if os.path.isfile(file):
                 image = pygame.image.load(file).convert_alpha()
+                image = pygame.transform.scale(image, self.rect.size)
                 self.images.append(image)
             else:
                 break
-
-        # Set image
-        if self.images:
-            image = self.images[0]
-            self.image = pygame.transform.scale(image, self.rect.size)
 
     def update(self):
 
         n = len(self.images)
         if n > 0:
 
+            # Count timer
             self.timer += 1
             if self.timer > self.delay:
 
@@ -48,10 +42,7 @@ class LoadDisplay():
 
                 # Get the next image
                 self.images_index = (self.images_index + 1) % n
-                image = self.images[self.images_index]
-
-                # Scale the image to the screen
-                self.image = pygame.transform.scale(image, self.rect.size)
+                self.image = self.images[self.images_index]
 
     def blit(self, surface):
 

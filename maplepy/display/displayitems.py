@@ -50,12 +50,7 @@ class BackgroundSprites():
                     surface.blit(sprite.image, rect)
 
                 # 1 - Image is copied horizontally (eg. the sea in Lith Harbor)
-                # 2 - Image is copied vertically (eg. trees in maps near Ellinia)
-                # 3 - Image is copied in both directions (eg. the background sky color square in many maps)
                 # 4 - Image scrolls and is copied horizontally (eg. clouds)
-                # 5 - Image scrolls and is copied vertically (eg. background in the Helios Tower elevator)
-                # 6 - Image scrolls horizontally, and is copied in both directions (eg. the train in Kerning City subway JQ)
-                # 7 - Image scrolls vertically, and is copied in both directions (eg. rain drops in Ellin PQ maps)
                 horizontal = [1, 4]
                 if sprite.type in horizontal and sprite.cx > 0:
                     dx = self.calculate_tile_offset(
@@ -64,6 +59,9 @@ class BackgroundSprites():
                     while htile.x < w:
                         surface.blit(sprite.image, htile)
                         htile = htile.move(sprite.cx, 0)
+
+                # 2 - Image is copied vertically (eg. trees in maps near Ellinia)
+                # 5 - Image scrolls and is copied vertically (eg. background in the Helios Tower elevator)
                 vertical = [2, 5]
                 if sprite.type in vertical and sprite.cy > 0:
                     dy = self.calculate_tile_offset(
@@ -72,6 +70,10 @@ class BackgroundSprites():
                     while vtile.y < h:
                         surface.blit(sprite.image, vtile)
                         vtile = vtile.move(0, sprite.cy)
+
+                # 3 - Image is copied in both directions (eg. the background sky color square in many maps)
+                # 6 - Image scrolls horizontally, and is copied in both directions (eg. the train in Kerning City subway JQ)
+                # 7 - Image scrolls vertically, and is copied in both directions (eg. rain drops in Ellin PQ maps)
                 both = [3, 6, 7]
                 if sprite.type in both and sprite.cx > 0 and sprite.cy > 0:
                     dx = self.calculate_tile_offset(
