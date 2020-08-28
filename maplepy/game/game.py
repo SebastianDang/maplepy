@@ -25,7 +25,8 @@ class Game():
         self.config.init(config_file)
         self.width = self.config['width']
         self.height = self.config['height']
-        self.path = self.config['asset_path']
+        self.loading_path = self.config['loading_path']
+        self.asset_path = self.config['asset_path']
         self.map = self.config['map']
 
         # Create pygame objects
@@ -41,7 +42,7 @@ class Game():
         self.displays[DISPLAY_LOADING] = Loading(
             self.width, self.height)
         self.displays[DISPLAY_MAP] = DisplayNx(
-            self.width, self.height, self.path)
+            self.width, self.height, self.asset_path)
 
         # Game state
         self.threads = []
@@ -159,7 +160,7 @@ class Game():
     def run(self):
 
         # Setup loading display
-        self.displays[DISPLAY_LOADING].load_images(self.path)
+        self.displays[DISPLAY_LOADING].load_images(self.loading_path)
 
         # Setup initial map
         self.handle_command('map {}'.format(self.map))

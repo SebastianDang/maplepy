@@ -19,7 +19,7 @@ class Loading():
 
         # Load images
         for i in range(0, 9):
-            file = '{}/ui.wz/logo.img/loading.repeat.1.{}.png'.format(
+            file = '{}/loading.repeat.1.{}.png'.format(
                 path, str(i))
             if os.path.isfile(file):
                 image = pygame.image.load(file).convert_alpha()

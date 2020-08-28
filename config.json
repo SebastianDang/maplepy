@@ -4,6 +4,7 @@
   "width": 1920,
   "height": 1080,
   "fps": 60,
+  "loading_path": "./img/loading",
   "asset_path": "P:/Downloads/MapleStory",
   "map": "000010000"
 }
