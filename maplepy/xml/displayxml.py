@@ -116,7 +116,7 @@ class DisplayXml(display.Display):
             self.background_sprites.load_images(self.path, bS)
 
         # Load objects after
-        self.background_sprites.load_backgrounds(
+        self.background_sprites.load_background(
             self.path, bS, self.map_xml.back_items)
 
     def setup_map_sprites(self):

@@ -65,7 +65,7 @@ class BackgroundSpritesXml(displayitems.BackgroundSprites):
         # Return
         return images
 
-    def load_backgrounds(self, path, name, values):
+    def load_background(self, path, name, values):
 
         # Check if xml has finished loading
         if name not in xml_cache or not xml_cache[name].items:
@@ -78,6 +78,9 @@ class BackgroundSpritesXml(displayitems.BackgroundSprites):
 
                 # Build object
                 inst = Instance()
+
+                # Get name
+                tag_name = val['name'] if 'name' in val else None
 
                 # Required properties
                 inst.x = int(val['x'])
@@ -120,6 +123,10 @@ class BackgroundSpritesXml(displayitems.BackgroundSprites):
                     inst.cx = w
                 if not inst.cy:
                     inst.cy = h
+
+                # Explicit special case
+                if tag_name and tag_name.isdigit():
+                    inst.update_layer(int(tag_name))
 
                 # Add to object
                 inst.add_canvas(canvas)

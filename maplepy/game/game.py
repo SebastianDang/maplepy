@@ -41,7 +41,7 @@ class Game():
         self.displays = {}
         self.displays[DISPLAY_LOADING] = Loading(
             self.width, self.height)
-        self.displays[DISPLAY_MAP] = DisplayNx(
+        self.displays[DISPLAY_MAP] = DisplayXml(
             self.width, self.height, self.asset_path)
 
         # Game state
