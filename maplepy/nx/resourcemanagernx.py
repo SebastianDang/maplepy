@@ -12,7 +12,9 @@ class ResourceManagerNx():
     def get_data(self, file, category, folder, subtype, name):
 
         # Create key
-        key = '{}/{}.img/{}/{}'.format(category, folder, subtype, name)
+        folder += '.img'
+        key = '/'.join([x for x in [category, folder, subtype, name] if x])
+        # key = '{}/{}.img/{}/{}'.format(category, folder, subtype, name)
 
         # Check if data is already loaded
         if key in self.data:
@@ -43,7 +45,9 @@ class ResourceManagerNx():
     def get_sprite(self, file, category, folder, subtype, name):
 
         # Create key
-        key = '{}/{}.img/{}/{}'.format(category, folder, subtype, name)
+        folder += '.img'
+        key = '/'.join([x for x in [category, folder, subtype, name] if x])
+        # key = '{}/{}.img/{}/{}'.format(category, folder, subtype, name)
 
         # Check if sprite is already loaded
         if key in self.sprites:

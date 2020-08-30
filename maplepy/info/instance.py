@@ -19,6 +19,7 @@ class Instance(pygame.sprite.Sprite):
         self._layer = 0  # Used for layered sprite groups (z-buffer)
 
         # Common
+        self.name = None
         self.x = None
         self.y = None
         self.zM = None

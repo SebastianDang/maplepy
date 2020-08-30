@@ -121,6 +121,26 @@ class MapNx:
         layer = {'info': info, 'tile': tiles, 'obj': objects}
         return layer
 
+    def get_portal_data(self, map_id):
+        portal = []
+        img = "Map/Map{}/{}.img".format(map_id[0:1], map_id)
+        # Get map node
+        map_node = self.file.resolve(img)
+        if not map_node:
+            return None
+        # Get the current back node
+        back_node = map_node.getChild('portal')
+        if not back_node:
+            return None
+        # Get values
+        for index in back_node.listChildren():
+            array_node = back_node.getChild(index)
+            data = {'name': index}
+            for child in array_node.getChildren():
+                data[child.name] = child.value
+            portal.append(data)
+        return portal
+
     def get_data(self, path):
         data = {}
         node = self.file.resolve(path)

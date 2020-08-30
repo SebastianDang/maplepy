@@ -31,59 +31,32 @@ class BackgroundSpritesNx(displayitems.BackgroundSprites):
         for val in values:
             try:
 
-                # Build object
+                # Extract properties
                 inst = Instance()
+                for k, v in val.items():
+                    setattr(inst, k, v)
 
-                # Get name
-                tag_name = val['name'] if 'name' in val else None
+                # Build canvases
+                for index in range(20):
 
-                # Required properties
-                inst.x = int(val['x'])
-                inst.y = int(val['y'])
-                inst.cx = int(val['cx'])
-                inst.cy = int(val['cy'])
-                inst.rx = int(val['rx'])
-                inst.ry = int(val['ry'])
-                inst.f = int(val['f'])
-                inst.a = int(val['a'])
-                inst.type = int(val['type'])
-                inst.front = int(val['front'])
-                inst.ani = int(val['ani'])
-                inst.bS = val['bS']
-                inst.no = int(val['no'])
-
-                # Get sprites by type
-                sprites = []
-                if inst.ani:  # Animated
-                    for index in range(0, 20):
-                        name = '{}/{}'.format(inst.no, index)
-                        sprite = resource_manager.get_sprite(
-                            map_nx.file, 'Back', inst.bS, 'ani', name)
-                        if sprite:
-                            sprites.append(sprite)
-                        else:
-                            break
-                else:  # Static
+                    # Get sprite
+                    if inst.ani:  # Animated
+                        subtype = 'ani'
+                        no = '{}/{}'.format(inst.no, index)
+                    else:  # Static
+                        subtype = 'back'
+                        no = str(inst.no)
                     sprite = resource_manager.get_sprite(
-                        map_nx.file, 'Back', inst.bS, 'back', inst.no)
-                    if sprite:
-                        sprites.append(sprite)
+                        map_nx.file, 'Back', inst.bS, subtype, no)
 
-                # Create canvases
-                for index in range(0, len(sprites)):
+                    # Sprite not found
+                    if not sprite:
+                        break
 
-                    # Get sprite info
-                    sprite = sprites[index]
+                    # Get info
                     w, h = sprite.image.get_size()
-
-                    # Get additional properties
-                    if inst.ani:
-                        name = '{}/{}'.format(inst.no, index)
-                        data = resource_manager.get_data(
-                            map_nx.file, 'Back', inst.bS, 'ani', name)
-                    else:
-                        data = resource_manager.get_data(
-                            map_nx.file, 'Back', inst.bS, 'back', inst.no)
+                    data = resource_manager.get_data(
+                        map_nx.file, 'Back', inst.bS, subtype, no)
 
                     x = data['origin'][0]
                     y = data['origin'][1]
@@ -93,11 +66,8 @@ class BackgroundSpritesNx(displayitems.BackgroundSprites):
                     # Create a canvas object
                     canvas = Canvas(sprite.image, w, h, x, y, z)
 
-                    # Set delay
-                    canvas.set_delay(delay)
-
                     # Flip
-                    if inst.f > 0:
+                    if inst.f and inst.f > 0:
                         canvas.flip()
 
                     # Check cx, cy
@@ -106,12 +76,19 @@ class BackgroundSpritesNx(displayitems.BackgroundSprites):
                     if not inst.cy:
                         inst.cy = h
 
-                    # Explicit special case
-                    if tag_name and tag_name.isdigit():
-                        inst.update_layer(int(tag_name))
+                    # Set delay
+                    canvas.set_delay(delay)
 
                     # Add to object
                     inst.add_canvas(canvas)
+
+                    # Do not continue if static
+                    if not inst.ani:
+                        break
+
+                # Explicit special case
+                if inst.name and inst.name.isdigit():
+                    inst.update_layer(int(inst.name))
 
                 # Add to list
                 self.sprites.add(inst)
@@ -148,32 +125,25 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                 if 'tS' not in info:
                     break
 
-                # Build object
+                # Extract properties
                 inst = Instance()
-
-                # Get any extra info
-                if 'forbidFallDown' in info:
-                    inst.forbidFallDown = int(info['forbidFallDown'])
-
-                # Get name
-                tag_name = val['name'] if 'name' in val else None
-
-                # Required properties
-                inst.x = int(val['x'])
-                inst.y = int(val['y'])
                 inst.tS = info['tS']
-                inst.u = val['u']
-                inst.no = int(val['no'])
-                inst.zM = int(val['zM'])
+                for k, v in val.items():
+                    setattr(inst, k, v)
 
-                # Get sprite by key and index
+                # Get sprite
                 sprite = resource_manager.get_sprite(
-                    map_nx.file, 'Tile', inst.tS, inst.u, inst.no)
-                w, h = sprite.image.get_size()
+                    map_nx.file, 'Tile', inst.tS, inst.u, str(inst.no))
 
-                # Get additional properties
+                # Sprite not found
+                if not sprite:
+                    break
+
+                # Get info
+                w, h = sprite.image.get_size()
                 data = resource_manager.get_data(
-                    map_nx.file, 'Tile', inst.tS, inst.u, inst.no)
+                    map_nx.file, 'Tile', inst.tS, inst.u, str(inst.no))
+
                 x = data['origin'][0]
                 y = data['origin'][1]
                 z = int(data['z']) if 'z' in data else None
@@ -181,12 +151,12 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                 # Create a canvas object
                 canvas = Canvas(sprite.image, w, h, x, y, z)
 
-                # Explicit special case
-                if tag_name and tag_name.isdigit():
-                    inst.update_layer(int(tag_name))
-
                 # Add to object
                 inst.add_canvas(canvas)
+
+                # Explicit special case
+                if inst.name and inst.name.isdigit():
+                    inst.update_layer(int(inst.name))
 
                 # Add to list
                 self.sprites.add(inst)
@@ -201,59 +171,28 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
         for val in values['obj']:
             try:
 
-                # Build object
+                # Extract properties
                 inst = Instance()
+                for k, v in val.items():
+                    setattr(inst, k, v)
 
-                # Get any extra info
-                if 'forbidFallDown' in info:
-                    inst.forbidFallDown = int(info['forbidFallDown'])
+                # Build canvases
+                for index in range(20):
 
-                # Get name
-                tag_name = val['name'] if 'name' in val else None
-
-                # Required properties
-                inst.x = int(val['x'])
-                inst.y = int(val['y'])
-                inst.z = int(val['z']) if 'z' in val else None
-                inst.oS = val['oS']
-                inst.l0 = val['l0']
-                inst.l1 = val['l1']
-                inst.l2 = val['l2']
-                inst.zM = int(val['zM'])
-                inst.f = int(val['f'])
-
-                # Optional properties
-                if 'r' in val:
-                    inst.r = int(val['r'])
-                if 'move' in val:
-                    inst.move = int(val['move'])
-                if 'dynamic' in val:
-                    inst.dynamic = int(val['dynamic'])
-                if 'piece' in val:
-                    inst.piece = int(val['piece'])
-
-                # Load sprites
-                sprites = []
-                for index in range(0, 20):  # Num frames
-                    name = '{}/{}/{}'.format(inst.l1, inst.l2, index)
+                    # Get sprite
+                    no = '{}/{}/{}'.format(inst.l1, inst.l2, index)
                     sprite = resource_manager.get_sprite(
-                        map_nx.file, 'Obj', inst.oS, inst.l0, name)
-                    if sprite:
-                        sprites.append(sprite)
-                    else:
+                        map_nx.file, 'Obj', inst.oS, inst.l0, no)
+
+                    # Sprite not found
+                    if not sprite:
                         break
 
-                # Create canvases
-                for index in range(0, len(sprites)):
-
-                    # Get sprite info
-                    sprite = sprites[index]
+                    # Get info
                     w, h = sprite.image.get_size()
-
-                    # Get additional properties
-                    name = '{}/{}/{}'.format(inst.l1, inst.l2, index)
                     data = resource_manager.get_data(
-                        map_nx.file, 'Obj', inst.oS, inst.l0, name)
+                        map_nx.file, 'Obj', inst.oS, inst.l0, no)
+
                     x = data['origin'][0]
                     y = data['origin'][1]
                     z = int(data['z']) if 'z' in data else None
@@ -264,15 +203,15 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                     # Create a canvas object
                     canvas = Canvas(sprite.image, w, h, x, y, z)
 
+                    # Flip
+                    if inst.f and inst.f > 0:
+                        canvas.flip()
+
                     # Set delay
                     canvas.set_delay(delay)
 
                     # Set alphas
                     canvas.set_alpha(a0, a1)
-
-                    # Flip
-                    if inst.f > 0:
-                        canvas.flip()
 
                     # Add to object
                     inst.add_canvas(canvas)
@@ -282,6 +221,63 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                     inst.update_layer(int(val['z']))
                 else:
                     inst.update_layer(inst.zM)
+
+                # Add to list
+                self.sprites.add(inst)
+
+            except:
+                continue
+
+        # Load portal list
+        values = map_nx.get_portal_data(map_id)
+        if not values:
+            return
+
+        # Go through portal list and add
+        for val in values:
+            try:
+
+                # Extract properties
+                inst = Instance()
+                for k, v in val.items():
+                    setattr(inst, k, v)
+
+                # For now, only do type 2
+                if inst.pt != 2:
+                    continue
+
+                # Build canvases
+                for index in range(20):
+
+                    # Get sprite
+                    no = 'pv/default/{}'.format(index)
+                    sprite = resource_manager.get_sprite(
+                        map_nx.file, None, 'MapHelper', 'portal/game', no)
+
+                    # Sprite not found
+                    if not sprite:
+                        break
+
+                    # Get info
+                    w, h = sprite.image.get_size()
+                    data = resource_manager.get_data(
+                        map_nx.file, None, 'MapHelper', 'portal/game', no)
+
+                    x = data['origin'][0]
+                    y = data['origin'][1]
+                    z = int(data['z']) if 'z' in data else None
+
+                    # Create a canvas object
+                    canvas = Canvas(sprite.image, w, h, x, y, z)
+
+                    # Set delay
+                    canvas.set_delay(100)
+
+                    # Set alphas
+                    canvas.set_alpha(80, 80)
+
+                    # Add to object
+                    inst.add_canvas(canvas)
 
                 # Add to list
                 self.sprites.add(inst)
