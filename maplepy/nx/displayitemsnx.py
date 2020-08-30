@@ -228,34 +228,41 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
             except:
                 continue
 
+    def load_portal(self, map_nx, map_id):
+
         # Load portal list
         values = map_nx.get_portal_data(map_id)
         if not values:
             return
 
-        # Visible portal types
-        visible_portals = [2, 7]
+        # Hard code some known portal stuff here
+        portal_game = {2: 'pv', 7: 'pv'}
 
         # Go through portal list and add
         for val in values:
             try:
+
+                # Special case
+                if 'image' in val:
+                    val['pS'] = val.pop('image')
 
                 # Extract properties
                 inst = Instance()
                 for k, v in val.items():
                     setattr(inst, k, v)
 
-                # Check visibility
-                if inst.pt not in visible_portals:
+                # For now, only deal with in game portals
+                if inst.pt not in portal_game.keys():
                     continue
 
                 # Build canvases
                 for index in range(20):
 
                     # Get sprite
-                    no = 'pv/default/{}'.format(index)
+                    pt = portal_game[inst.pt]
+                    no = 'game/{}/{}/{}'.format(pt, inst.pS, index)
                     sprite = resource_manager.get_sprite(
-                        map_nx.file, None, 'MapHelper', 'portal/game', no)
+                        map_nx.file, None, 'MapHelper', 'portal', no)
 
                     # Sprite not found
                     if not sprite:
@@ -264,7 +271,7 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                     # Get info
                     w, h = sprite.image.get_size()
                     data = resource_manager.get_data(
-                        map_nx.file, None, 'MapHelper', 'portal/game', no)
+                        map_nx.file, None, 'MapHelper', 'portal', no)
 
                     x = data['origin'][0]
                     y = data['origin'][1]
@@ -275,9 +282,6 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
 
                     # Set delay
                     canvas.set_delay(100)
-
-                    # Set alphas
-                    canvas.set_alpha(80, 80)
 
                     # Add to object
                     inst.add_canvas(canvas)

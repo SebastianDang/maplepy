@@ -129,3 +129,8 @@ class DisplayNx(display.Display):
             layered_sprites = LayeredSpritesNx()
             layered_sprites.load_layer(self.map_nx, map_id, i)
             self.layered_sprites.append(layered_sprites)
+
+        # Load portals
+        portal_sprites = LayeredSpritesNx()
+        portal_sprites.load_portal(self.map_nx, map_id)
+        self.layered_sprites.append(portal_sprites)

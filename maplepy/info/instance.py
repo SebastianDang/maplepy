@@ -19,21 +19,21 @@ class Instance(pygame.sprite.Sprite):
         self._layer = 0  # Used for layered sprite groups (z-buffer)
 
         # Common
-        self.name = None    # Tag name
+        self.name = None        # Tag name
         self.x = None
         self.y = None
-        self.zM = None      # Z-order
-        self.f = None       # Flipped
+        self.zM = None          # Z-order
+        self.f = None           # Flipped
 
         # Background
-        self.type = None    # Render type
-        self.cx = None      # Horizontal tile offset
-        self.cy = None      # Vertical tile offset
-        self.rx = None      # Horizontal scroll offset
-        self.ry = None      # Vertical scroll offset
-        self.a = None       # Alpha
-        self.front = None   # Render in front
-        self.ani = None     # Static or animated sprite
+        self.type = None        # Render type
+        self.cx = None          # Horizontal tile offset
+        self.cy = None          # Vertical tile offset
+        self.rx = None          # Horizontal scroll offset
+        self.ry = None          # Vertical scroll offset
+        self.a = None           # Alpha
+        self.front = None       # Render in front
+        self.ani = None         # Static or animated sprite
 
         # Track scrolling
         self.dx = 0
@@ -46,14 +46,16 @@ class Instance(pygame.sprite.Sprite):
         self.piece = None
 
         # Sprite tags
-        self.bS = None      # Background sprite
-        self.tS = None      # Tile sprite
-        self.u = None       # Tile name
-        self.oS = None      # Object sprite
-        self.l0 = None      # Object label (category)
-        self.l1 = None      # Object label (type)
-        self.l2 = None      # Object label (index)
-        self.no = None      # Sprite index
+        self.bS = None          # Background sprite
+        self.tS = None          # Tile sprite
+        self.u = None           # Tile name
+        self.oS = None          # Object sprite
+        self.l0 = None          # Object label (category)
+        self.l1 = None          # Object label (type)
+        self.l2 = None          # Object label (index)
+        self.no = None          # Sprite index
+        self.pt = None          # Portal type
+        self.pS = 'default'     # Portal sprite
 
         # Collision
         self.forbidFallDown = None
