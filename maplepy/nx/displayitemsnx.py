@@ -233,6 +233,9 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
         if not values:
             return
 
+        # Visible portal types
+        visible_portals = [2, 7]
+
         # Go through portal list and add
         for val in values:
             try:
@@ -242,8 +245,8 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                 for k, v in val.items():
                     setattr(inst, k, v)
 
-                # For now, only do type 2
-                if inst.pt != 2:
+                # Check visibility
+                if inst.pt not in visible_portals:
                     continue
 
                 # Build canvases
