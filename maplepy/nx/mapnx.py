@@ -129,12 +129,12 @@ class MapNx:
         if not map_node:
             return None
         # Get the current back node
-        back_node = map_node.getChild('portal')
-        if not back_node:
+        portal_node = map_node.getChild('portal')
+        if not portal_node:
             return None
         # Get values
-        for index in back_node.listChildren():
-            array_node = back_node.getChild(index)
+        for index in portal_node.listChildren():
+            array_node = portal_node.getChild(index)
             data = {'name': index}
             for child in array_node.getChildren():
                 data[child.name] = child.value
