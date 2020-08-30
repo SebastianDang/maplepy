@@ -58,14 +58,19 @@ class ResourceManagerNx():
             # print('Nx file is invalid')
             return None
 
-        # Load from nx
+        # Get node
         node = file.resolve(key)
         if not node:
             # print('Unable to load {}'.format(key))
             return None
 
-        # Load as nx sprite
+        # Get image
         image = node.getImage()
+        if not image:
+            # print('Unable to load {}'.format(key))
+            return None
+
+        # Load as nx sprite
         sprite = SpriteNx()
         sprite.load(image.width, image.height, image.getData())
 
