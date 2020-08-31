@@ -18,6 +18,8 @@ class Singleton:
 
     """
 
+    __instance = None
+
     def __init__(self, decorated):
         self._decorated = decorated
 
@@ -29,10 +31,12 @@ class Singleton:
 
         """
         try:
-            return self._instance
+            if not self.__instance:
+                self.__instance = self._decorated()
+            return self.__instance
         except AttributeError:
-            self._instance = self._decorated()
-            return self._instance
+            self.__instance = self._decorated()
+            return self.__instance
 
     def __call__(self):
         raise TypeError('Singletons must be accessed through `instance()`.')
