@@ -100,24 +100,19 @@ class DisplayXml(display.Display):
         if not self.background:
             self.background = pygame.Surface((800, 600))  # Native resolution
 
-        # If variable is not yet initialized
-        if not self.background_sprites:
-            self.background_sprites = BackgroundSpritesXml()
-
-        # Get back name (should be unique)
-        bS_set = []
-        for back in self.map_xml.back_items:
-            bS_set.append(back['bS'])
-        bS_set = set(bS_set)
-
         # Load sets of sprites only once
+        background_sprites = BackgroundSpritesXml()
+        bS_set = set([x['bS'] for x in self.map_xml.back_items])
         for bS in bS_set:
-            self.background_sprites.load_xml(self.path, bS)
-            self.background_sprites.load_images(self.path, bS)
+            background_sprites.load_xml(self.path, bS)
+            background_sprites.load_images(self.path, bS)
 
         # Load objects after
-        self.background_sprites.load_background(
+        background_sprites.load_background(
             self.path, bS, self.map_xml.back_items)
+
+        # Set variable
+        self.background_sprites = background_sprites
 
     def setup_map_sprites(self):
 
@@ -139,13 +134,12 @@ class DisplayXml(display.Display):
                 sprites.load_tiles(self.path, 'tile',
                                    tS, map_items['tiles'])
 
-            # Objects
-            oS_set = []
-            for obj in map_items['objects']:
-                oS_set.append(obj['oS'])
-            oS_set = set(oS_set)
+            # Load sets of sprites only once
+            oS_set = set([x['oS'] for x in map_items['objects']])
             for oS in oS_set:
                 sprites.load_xml(self.path, 'obj', oS)
+
+            # Load objects after
             sprites.load_objects(self.path, 'obj',
                                  oS, map_items['objects'])
 

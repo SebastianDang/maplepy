@@ -29,11 +29,11 @@ class DisplayNx(display.Display):
         # Objects in the map
         self.map_nx = MapNx()
         for map_file in map_file_names:
-            self.map_nx.open('{}/{}'.format(self.path, map_file))
+            self.map_nx.open('{}/{}'.format(path, map_file))
 
         self.sound_nx = SoundNx()
         for sound_file in sound_file_names:
-            self.sound_nx.open('{}/{}'.format(self.path, sound_file))
+            self.sound_nx.open('{}/{}'.format(path, sound_file))
 
     def load_random_map(self):
 
@@ -130,12 +130,10 @@ class DisplayNx(display.Display):
         if not self.background:
             self.background = pygame.Surface((800, 600))  # Native resolution
 
-        # If variable is not yet initialized
-        if not self.background_sprites:
-            self.background_sprites = BackgroundSpritesNx()
-
         # Load background
-        self.background_sprites.load_background(self.map_nx, map_id)
+        background_sprites = BackgroundSpritesNx()
+        background_sprites.load_background(self.map_nx, map_id)
+        self.background_sprites = background_sprites
 
     def setup_layered_sprites(self, map_id):
 
