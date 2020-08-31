@@ -18,8 +18,10 @@ class Game():
 
         # Start pygame
         pygame.init()
-        pygame.mixer.init(frequency=22050, size=-16,
-                          channels=2, allowedchanges=0)
+        pygame.mixer.init(frequency=44100,
+                          size=-16,
+                          channels=2,
+                          allowedchanges=0)
 
         # Config
         self.config = Config.instance()
