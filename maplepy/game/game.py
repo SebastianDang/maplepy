@@ -82,6 +82,11 @@ class Game():
                 thread = threading.Thread(target=fn, args=args)
                 thread.start()
                 self.threads.append(thread)
+            if cmd == 'rand':
+                fn = self.displays[DISPLAY_MAP].load_random_map
+                thread = threading.Thread(target=fn)
+                thread.start()
+                self.threads.append(thread)
         except:
             pass
 

@@ -1,4 +1,5 @@
 import os
+import random
 import pygame
 
 from maplepy.sound.bgm import SoundBgm
@@ -23,6 +24,7 @@ class DisplayNx(display.Display):
         # Other properties
         self.path = path
         self.bgm = SoundBgm()
+        self.maps = None
 
         # Objects in the map
         self.map_nx = MapNx()
@@ -32,6 +34,23 @@ class DisplayNx(display.Display):
         self.sound_nx = SoundNx()
         for sound_file in sound_file_names:
             self.sound_nx.open('{}/{}'.format(self.path, sound_file))
+
+    def load_random_map(self):
+
+        # Check if map nx is loaded
+        if not self.map_nx.file:
+            return
+
+        # Load map nodes
+        if not self.maps:
+            self.maps = self.map_nx.get_map_nodes()
+
+        # Pick random node
+        if self.maps:
+            choices = list(self.maps.keys())
+            map_id = random.choice(choices)[:9]
+            print('map:', map_id)
+            self.load_map(map_id)
 
     def load_map(self, map_id):
 

@@ -21,17 +21,14 @@ class MapNx:
         except:
             print('Unable to open {}'.format(file))
 
-    def get_map_nodes(self, map_root):
+    def get_map_nodes(self):
         map_nodes = {}
         for i in range(0, 9):
-            map_digit = map_root.getChild('Map{}'.format(i))
+            map_digit = self.file.resolve('Map/Map{}'.format(i))
             if not map_digit:
                 continue
-            for map_id in map_digit.listChildren():
-                node = map_digit.getChild(map_id)
-                if not node:
-                    continue
-                map_nodes[map_id] = node
+            for child in map_digit.getChildren():
+                map_nodes[child.name] = child.value
         return map_nodes
 
     def get_map_node(self, map_id):
