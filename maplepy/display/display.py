@@ -13,9 +13,14 @@ class Display():
         Contains a separate background surface to draw explicit background images
         Contains background and layered sprites that have to be loaded with some data
         """
+
         # Required properties
         self.width = w
         self.height = h
+
+        # User view
+        self.view = pygame.Rect(0, 0, w, h)
+        self.view_limit = None
 
         # Background
         self.background = None
@@ -24,9 +29,14 @@ class Display():
         # Objects in the map
         self.layered_sprites = []
 
-        # User view
-        self.view = pygame.Rect(0, 0, self.width, self.height)
-        self.view_limit = None
+    def resize(self, w, h):
+        """ Resizes the display """
+        self.width = w
+        self.height = h
+        if self.view:
+            self.view = pygame.Rect(self.view.x, self.view.y, w, h)
+        else:
+            self.view = pygame.Rect(0, 0, w, h)
 
     def move_view(self, x, y):
         """ Moves the view rect """
@@ -47,7 +57,7 @@ class Display():
         if self.background_sprites:
             self.background_sprites.update()
 
-        # Tiles / Objs
+        # Tiles / Objs / Others
         for sprites in self.layered_sprites:
             sprites.update()
 
@@ -57,7 +67,7 @@ class Display():
         Draw layered sprites after the background
         """
 
-        # Background Sprites
+        # Background
         if self.background and self.background_sprites:
 
             # Blit onto background surface
@@ -69,6 +79,6 @@ class Display():
                 self.background, surface.get_size())
             surface.blit(background, surface.get_rect())
 
-        # Layered sprites
+        # Tiles / Objs / Others
         for sprites in self.layered_sprites:
             sprites.blit(surface, self.view)
