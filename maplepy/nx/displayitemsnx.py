@@ -93,7 +93,8 @@ class BackgroundSpritesNx(displayitems.BackgroundSprites):
                     inst.update_layer(int(inst.name))
 
                 # Add to list
-                self.sprites.add(inst)
+                if inst.canvas_list:
+                    self.sprites.add(inst)
 
             except:
                 logging.exception('Failed to load background')
@@ -164,7 +165,8 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                     inst.update_layer(int(inst.name))
 
                 # Add to list
-                self.sprites.add(inst)
+                if inst.canvas_list:
+                    self.sprites.add(inst)
 
             except:
                 logging.exception('Failed to load tile')
@@ -229,7 +231,8 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                     inst.update_layer(inst.zM)
 
                 # Add to list
-                self.sprites.add(inst)
+                if inst.canvas_list:
+                    self.sprites.add(inst)
 
             except:
                 logging.exception('Failed to load object')
@@ -295,7 +298,8 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                     inst.add_canvas(canvas)
 
                 # Add to list
-                self.sprites.add(inst)
+                if inst.canvas_list:
+                    self.sprites.add(inst)
 
             except:
                 logging.exception('Failed to load portal')

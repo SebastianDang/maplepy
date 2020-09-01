@@ -8,7 +8,7 @@ sys.path.insert(0, './nx')
 # Set up logging module
 logging.basicConfig(format='%(asctime)s %(levelname)s %(module)s %(message)s',
                     datefmt='%H:%M:%S',
-                    level=logging.INFO)
+                    level=logging.WARNING)
 
 # Run
 game = Game('config.json')

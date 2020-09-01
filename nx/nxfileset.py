@@ -1,4 +1,5 @@
 import os
+import logging
 from nx.nxfile import NXFile
 
 
@@ -11,7 +12,7 @@ class NXFileSet:
 
     def load(self, filePath):
         if not os.path.exists(filePath):
-            print('{} does not exist'.format(filePath))
+            logging.warning(f'{filePath} does not exist')
             return
 
         self.nxfiles.append(NXFile(filePath))
