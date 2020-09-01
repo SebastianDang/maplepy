@@ -1,4 +1,5 @@
 import threading
+import logging
 import pygame
 
 from maplepy.config import Config
@@ -76,6 +77,12 @@ class Game():
         # Process command
         try:
             cmd = command[0].lower()
+            if cmd == 'loading':
+                fn = self.displays[DISPLAY_LOADING].load_images
+                args = (command[1],)
+                thread = threading.Thread(target=fn, args=args)
+                thread.start()
+                self.threads.append(thread)
             if cmd == 'map':
                 fn = self.displays[DISPLAY_MAP].load_map
                 args = (command[1],)
@@ -88,6 +95,7 @@ class Game():
                 thread.start()
                 self.threads.append(thread)
         except:
+            logging.exception('Command failed')
             pass
 
     def handle_threads(self):
@@ -168,7 +176,7 @@ class Game():
     def run(self):
 
         # Setup loading display
-        self.displays[DISPLAY_LOADING].load_images(self.loading_path)
+        self.handle_command(f'loading {self.loading_path}')
 
         # Setup initial map
         self.handle_command(f'map {self.map}')
