@@ -8,3 +8,4 @@ A basic emulator for the popular game [MapleStory](https://maplestory.com/)!
 
 - [pygame](https://github.com/pygame/)
 - [harepacker](https://github.com/lastbattle/Harepacker-resurrected)
+- [nxformat](https://nxformat.github.io/)
