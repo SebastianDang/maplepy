@@ -30,7 +30,7 @@ class NXFile():
         self.soundCount = int.from_bytes(self.file.read(4), 'little')
         self.soundOffset = int.from_bytes(self.file.read(8), 'little')
 
-        logging.info('path: %s', self.filePath)
+        logging.info('[%s]', self.filePath)
         logging.info('nodeCount: %d', self.nodeCount)
         logging.info('nodeOffset: %d', self.nodeOffset)
         logging.info('stringCount: %d', self.stringCount)
@@ -45,42 +45,41 @@ class NXFile():
         self.images = {}
         self.sounds = {}
 
-        # setup tables
-        # setup string table
+        # # Setup tables
+        # self.populateNodesTable()
         # self.populateStringsTable()
+        # self.populateNodeChildren()
 
-        # setup images
-
+        # # Setup images
         # self.file.seek(self.imageOffset)
         # for i in range(self.imageCount):
         #     offset = int.from_bytes(self.file.read(8), 'little')
         #     self.images[i] = Image(self, offset)
 
-        # # setup sounds
-
+        # # Setup sounds
         # self.file.seek(self.soundOffset)
         # for i in range(self.soundCount):
         #     offset = int.from_bytes(self.file.read(8), 'little')
         #     self.sounds[i] = Sound(self, offset)
 
-    # def populateNodesTable(self):
-    #     self.file.seek(self.nodeOffset)
-    #     for i in range(self.nodeCount):
-    #         self.nodes.append(nodeparser.parseNode(self))
+    def populateNodesTable(self):
+        self.file.seek(self.nodeOffset)
+        for i in range(self.nodeCount):
+            self.nodes[i] = nodeparser.parseNode(self)
 
-    # def populateStringsTable(self):
-    #     self.file.seek(self.stringOffset)
-    #     for i in range(self.stringCount):
-    #         offset = int.from_bytes(self.file.read(8), 'little')
-    #         currentPosition = self.file.tell()
-    #         self.file.seek(offset)
-    #         stringLength = int.from_bytes(self.file.read(2), 'little')
-    #         self.strings[i] = self.file.read(stringLength).decode('utf-8')
-    #         self.file.seek(currentPosition)
+    def populateStringsTable(self):
+        self.file.seek(self.stringOffset)
+        for i in range(self.stringCount):
+            offset = int.from_bytes(self.file.read(8), 'little')
+            position = self.file.tell()
+            self.file.seek(offset)
+            length = int.from_bytes(self.file.read(2), 'little')
+            self.strings[i] = self.file.read(length).decode('utf-8')
+            self.file.seek(position)
 
-    # def populateNodeChildren(self):
-    #     for node in self.nodes:
-    #         node.populateChildren()
+    def populateNodeChildren(self):
+        for node in self.nodes:
+            node.populateChildren()
 
     def getString(self, index):
         """ Get string by index """
