@@ -1,4 +1,5 @@
 import os
+import logging
 from enum import Enum
 import xml.etree.ElementTree as ET
 
@@ -25,10 +26,10 @@ class BaseXml:
 
     def open(self, file):
         if self.root:
-            print('{} already opened.'.format(file))
+            logging.info(f'{file} already opened.')
             return
         if not os.path.isfile(file):
-            print('{} does not exist.'.format(file))
+            logging.warning(f'{file} does not exist.')
             return
         self.root = ET.parse(file).getroot()
 
@@ -36,7 +37,7 @@ class BaseXml:
         """Parse the xml file beginning at root."""
 
         if not self.root:
-            print('No file opened.')
+            logging.warning('No file opened.')
             return
 
         try:
@@ -69,7 +70,7 @@ class BaseXml:
             self.items = items
 
         except:
-            print('Error while parsing.')
+            logging.exception('Error while parsing.')
 
     def parse_info(self, info):
         """

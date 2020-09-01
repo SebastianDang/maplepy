@@ -1,3 +1,4 @@
+import logging
 import pygame
 
 
@@ -65,4 +66,4 @@ class SpriteNx(pygame.sprite.Sprite):
             self.data = data
 
         except:
-            print('Unable to load image')
+            logging.exception('Unable to load image')

@@ -1,4 +1,5 @@
 import math
+import logging
 import pygame
 
 
@@ -23,6 +24,7 @@ class BackgroundSprites():
             try:
                 sprite.update()
             except:
+                logging.exception('Failed to update background')
                 continue
 
     def blit(self, surface, offset=None):
@@ -89,6 +91,7 @@ class BackgroundSprites():
                         vtile = vtile.move(0, sprite.cy)
 
             except:
+                logging.exception('Failed to blit background')
                 continue
 
 
@@ -105,6 +108,7 @@ class LayeredSprites():
             try:
                 sprite.update()
             except:
+                logging.exception('Failed to update layer')
                 continue
 
     def blit(self, surface, offset=None):
@@ -130,4 +134,5 @@ class LayeredSprites():
                 surface.blit(sprite.image, rect)
 
             except:
+                logging.exception('Failed to blit layer')
                 continue

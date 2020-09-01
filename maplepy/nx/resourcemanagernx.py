@@ -1,3 +1,4 @@
+import logging
 from maplepy.nx.spritenx import SpriteNx
 
 
@@ -14,7 +15,7 @@ class ResourceManagerNx():
         # Create key
         folder += '.img'
         key = '/'.join([x for x in [category, folder, subtype, name] if x])
-        # key = '{}/{}.img/{}/{}'.format(category, folder, subtype, name)
+        # key = f'{category}/{folder}.img/{subtype}/{name}'
 
         # Check if data is already loaded
         if key in self.data:
@@ -22,7 +23,7 @@ class ResourceManagerNx():
 
         # Check if nx is loaded yet
         if not file:
-            # print('Nx file is invalid')
+            logging.warning('Nx file is invalid')
             return None
 
         data = {}
@@ -30,7 +31,6 @@ class ResourceManagerNx():
         # Load from nx
         node = file.resolve(key)
         if not node:
-            # print('Unable to load {}'.format(key))
             return None
 
         # Parse into dictionary
@@ -47,7 +47,7 @@ class ResourceManagerNx():
         # Create key
         folder += '.img'
         key = '/'.join([x for x in [category, folder, subtype, name] if x])
-        # key = '{}/{}.img/{}/{}'.format(category, folder, subtype, name)
+        # key = f'{category}/{folder}.img/{subtype}/{name}'
 
         # Check if sprite is already loaded
         if key in self.sprites:
@@ -55,19 +55,17 @@ class ResourceManagerNx():
 
         # Check if nx is loaded yet
         if not file:
-            # print('Nx file is invalid')
+            logging.warning('Nx file is invalid')
             return None
 
         # Get node
         node = file.resolve(key)
         if not node:
-            # print('Unable to load {}'.format(key))
             return None
 
         # Get image
         image = node.getImage()
         if not image:
-            # print('Unable to load {}'.format(key))
             return None
 
         # Load as nx sprite

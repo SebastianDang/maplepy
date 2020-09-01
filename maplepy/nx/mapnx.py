@@ -1,4 +1,5 @@
 import os
+import logging
 import nx.nxfile as nxfile
 from nx.nxfileset import NXFileSet
 
@@ -13,18 +14,18 @@ class MapNx:
     def open(self, file):
         # Check if file exists
         if not os.path.exists(file):
-            print('{} does not exist'.format(file))
+            logging.warning(f'{file} does not exist')
             return
         try:
             # Open nx file
             self.file.load(file)
         except:
-            print('Unable to open {}'.format(file))
+            logging.exception(f'Unable to open {file}')
 
     def get_map_nodes(self):
         map_nodes = {}
         for i in range(0, 9):
-            map_digit = self.file.resolve('Map/Map{}'.format(i))
+            map_digit = self.file.resolve(f'Map/Map{i}')
             if not map_digit:
                 continue
             for child in map_digit.getChildren():
@@ -32,12 +33,12 @@ class MapNx:
         return map_nodes
 
     def get_map_node(self, map_id):
-        img = "Map/Map{}/{}.img".format(map_id[0:1], map_id)
+        img = f'Map/Map{map_id[0:1]}/{map_id}.img'
         return self.file.resolve(img)
 
     def get_info_data(self, map_id):
         info = {}
-        img = "Map/Map{}/{}.img".format(map_id[0:1], map_id)
+        img = f'Map/Map{map_id[0:1]}/{map_id}.img'
         # Get map node
         map_node = self.file.resolve(img)
         if not map_node:
@@ -49,7 +50,7 @@ class MapNx:
 
     def get_minimap_data(self, map_id):
         minimap = {}
-        img = "Map/Map{}/{}.img".format(map_id[0:1], map_id)
+        img = f'Map/Map{map_id[0:1]}/{map_id}.img'
         # Get map node
         map_node = self.file.resolve(img)
         if not map_node:
@@ -64,7 +65,7 @@ class MapNx:
 
     def get_background_data(self, map_id):
         back = []
-        img = "Map/Map{}/{}.img".format(map_id[0:1], map_id)
+        img = f'Map/Map{map_id[0:1]}/{map_id}.img'
         # Get map node
         map_node = self.file.resolve(img)
         if not map_node:
@@ -84,7 +85,7 @@ class MapNx:
 
     def get_layer_data(self, map_id, index):
         layer = {}
-        img = "Map/Map{}/{}.img".format(map_id[0:1], map_id)
+        img = f'Map/Map{map_id[0:1]}/{map_id}.img'
         # Get map node
         map_node = self.file.resolve(img)
         if not map_node:
@@ -120,7 +121,7 @@ class MapNx:
 
     def get_portal_data(self, map_id):
         portal = []
-        img = "Map/Map{}/{}.img".format(map_id[0:1], map_id)
+        img = f'Map/Map{map_id[0:1]}/{map_id}.img'
         # Get map node
         map_node = self.file.resolve(img)
         if not map_node:

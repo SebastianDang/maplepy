@@ -44,7 +44,7 @@ class Game():
         self.displays = {}
         self.displays[DISPLAY_LOADING] = Loading(
             self.width, self.height)
-        self.displays[DISPLAY_MAP] = DisplayNx(
+        self.displays[DISPLAY_MAP] = DisplayXml(
             self.width, self.height, self.asset_path)
 
         # Game state
@@ -171,7 +171,7 @@ class Game():
         self.displays[DISPLAY_LOADING].load_images(self.loading_path)
 
         # Setup initial map
-        self.handle_command('map {}'.format(self.map))
+        self.handle_command(f'map {self.map}')
 
         # Main loop
         self.running = True

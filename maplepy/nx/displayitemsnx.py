@@ -1,3 +1,4 @@
+import logging
 import pygame
 
 import maplepy.display.displayitems as displayitems
@@ -25,6 +26,7 @@ class BackgroundSpritesNx(displayitems.BackgroundSprites):
         # Load back sprites
         values = map_nx.get_background_data(map_id)
         if not values:
+            logging.warning('Background data not found')
             return
 
         # Go through instances list and add
@@ -42,7 +44,7 @@ class BackgroundSpritesNx(displayitems.BackgroundSprites):
                     # Get sprite
                     if inst.ani:  # Animated
                         subtype = 'ani'
-                        no = '{}/{}'.format(inst.no, index)
+                        no = f'{inst.no}/{index}'
                     else:  # Static
                         subtype = 'back'
                         no = str(inst.no)
@@ -94,6 +96,7 @@ class BackgroundSpritesNx(displayitems.BackgroundSprites):
                 self.sprites.add(inst)
 
             except:
+                logging.exception('Failed to load background')
                 continue
 
 
@@ -112,6 +115,7 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
         # Load current layer
         values = map_nx.get_layer_data(map_id, index)
         if not values:
+            logging.warning('Layer data not found')
             return
 
         # Get info
@@ -123,6 +127,7 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
 
                 # Make sure there's tile information
                 if 'tS' not in info:
+                    logging.warning('Tile data not found')
                     break
 
                 # Extract properties
@@ -162,6 +167,7 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                 self.sprites.add(inst)
 
             except:
+                logging.exception('Failed to load tile')
                 continue
 
         # Fix overlapping tiles
@@ -180,7 +186,7 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                 for index in range(20):
 
                     # Get sprite
-                    no = '{}/{}/{}'.format(inst.l1, inst.l2, index)
+                    no = f'{inst.l1}/{inst.l2}/{index}'
                     sprite = resource_manager.get_sprite(
                         map_nx.file, 'Obj', inst.oS, inst.l0, no)
 
@@ -226,6 +232,7 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                 self.sprites.add(inst)
 
             except:
+                logging.exception('Failed to load object')
                 continue
 
     def load_portal(self, map_nx, map_id):
@@ -233,6 +240,7 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
         # Load portal list
         values = map_nx.get_portal_data(map_id)
         if not values:
+            logging.warning('Portal data not found')
             return
 
         # Hard code some known portal stuff here
@@ -260,7 +268,7 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
 
                     # Get sprite
                     pt = portal_game[inst.pt]
-                    no = 'game/{}/{}/{}'.format(pt, inst.pS, index)
+                    no = f'game/{pt}/{inst.pS}/{index}'
                     sprite = resource_manager.get_sprite(
                         map_nx.file, None, 'MapHelper', 'portal', no)
 
@@ -290,6 +298,7 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                 self.sprites.add(inst)
 
             except:
+                logging.exception('Failed to load portal')
                 continue
 
     def fix_overlapping_sprites(self):

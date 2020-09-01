@@ -1,4 +1,5 @@
 import os
+import logging
 import pygame
 
 import maplepy.display.displayitems as displayitems
@@ -25,11 +26,11 @@ class BackgroundSpritesXml(displayitems.BackgroundSprites):
 
         # Check if xml has already been loaded before
         if name in xml_cache:
-            print('{} was already loaded.'.format(name))
+            logging.info(f'{name} was already loaded.')
             return
 
         # Load and parse the xml
-        file = "{}/map.wz/Back/{}.img.xml".format(path, name)
+        file = f'{path}/map.wz/Back/{name}.img.xml'
         xml_cache[name] = BaseXml()
         xml_cache[name].open(file)
         xml_cache[name].parse_root(Layer.CANVAS_ARRAY)
@@ -42,7 +43,7 @@ class BackgroundSpritesXml(displayitems.BackgroundSprites):
 
         # Check if xml has finished loading
         if name not in xml_cache or not xml_cache[name].items:
-            print('{} was not loaded yet.'.format(name))
+            logging.warning(f'{name} was not loaded yet.')
             return
 
         # Get current xml file
@@ -51,8 +52,7 @@ class BackgroundSpritesXml(displayitems.BackgroundSprites):
         # Load images for a given xml file
         images = []
         for index in range(0, 100):  # Num images
-            file = "{}/map.wz/Back/{}/back.{}.png".format(
-                path, xml.name, str(index))
+            file = f'{path}/map.wz/Back/{xml.name}/back.{index}.png'
             if os.path.isfile(file):
                 image = pygame.image.load(file).convert_alpha()
                 images.append(image)
@@ -69,7 +69,7 @@ class BackgroundSpritesXml(displayitems.BackgroundSprites):
 
         # Check if xml has finished loading
         if name not in xml_cache or not xml_cache[name].items:
-            print('{} was not loaded yet.'.format(name))
+            logging.warning(f'{name} was not loaded yet.')
             return
 
         # Go through instances list and add
@@ -135,7 +135,7 @@ class BackgroundSpritesXml(displayitems.BackgroundSprites):
                 self.sprites.add(inst)
 
             except:
-                print('Error while loading background')
+                logging.exception('Error while loading background')
                 continue
 
 
@@ -152,16 +152,15 @@ class LayeredSpritesXml(displayitems.LayeredSprites):
     def load_xml(self, path, subtype, name):
 
         # Create key
-        key = "{}/{}".format(subtype, name)
+        key = f'{subtype}/{name}'
 
         # Check if file has already been loaded before
         if key in xml_cache:
-            print('{} was already loaded.'.format(key))
+            logging.info(f'{key} was already loaded.')
             return
 
         # Open file
-        file = "{}/map.wz/{}/{}.img.xml".format(
-            path, subtype, name)
+        file = f'{path}/map.wz/{subtype}/{name}.img.xml'
         xml_cache[key] = BaseXml()
         xml_cache[key].open(file)
 
@@ -174,11 +173,11 @@ class LayeredSpritesXml(displayitems.LayeredSprites):
     def load_tiles(self, path, subtype, name, values):
 
         # Create key
-        key = "{}/{}".format(subtype, name)
+        key = f'{subtype}/{name}'
 
         # Check if file has finished loading
         if key not in xml_cache:
-            print('{} was was not loaded yet.'.format(key))
+            logging.warning(f'{key} was not loaded yet.')
             return
 
         # Get images
@@ -249,7 +248,7 @@ class LayeredSpritesXml(displayitems.LayeredSprites):
                 self.sprites.add(inst)
 
             except:
-                print('Error while loading tiles')
+                logging.exception('Error while loading tiles')
                 continue
 
         # Fix tiles that are overlapping
@@ -258,7 +257,7 @@ class LayeredSpritesXml(displayitems.LayeredSprites):
     def load_tile_images(self, path, subtype, name):
 
         # Create key
-        key = "{}/{}".format(subtype, name)
+        key = f'{subtype}/{name}'
 
         # Check if sprites are already loaded
         if key in image_cache:
@@ -269,8 +268,7 @@ class LayeredSpritesXml(displayitems.LayeredSprites):
         for obj in xml_cache[key].items:
             images = []
             for index in range(0, 20):  # Max num of frames
-                file = "{}/map.wz/{}/{}.img/{}.{}.png".format(
-                    path, subtype, name, obj, str(index))
+                file = f'{path}/map.wz/{subtype}/{name}.img/{obj}.{index}.png'
                 if os.path.isfile(file):
                     image = pygame.image.load(file).convert_alpha()
                     images.append(image)
@@ -333,11 +331,11 @@ class LayeredSpritesXml(displayitems.LayeredSprites):
                     path, subtype, inst.oS, inst.l0, inst.l1, inst.l2)
 
                 # Create key
-                key = "{}/{}".format(subtype, inst.oS)
+                key = f'{subtype}/{inst.oS}'
 
                 # Get xml
                 if key not in xml_cache or not xml_cache[key].items:
-                    print('{} was not loaded yet.'.format(key))
+                    logging.warning(f'{key} was not loaded yet.')
                     continue
                 xml = xml_cache[key]
 
@@ -397,14 +395,13 @@ class LayeredSpritesXml(displayitems.LayeredSprites):
                 self.sprites.add(inst)
 
             except:
-                print('Error while loading objects')
+                logging.exception('Error while loading objects')
                 continue
 
     def load_object_images(self, path, subtype, name, l0, l1, l2):
 
         # Create key
-        key = "{}/{}/{}.{}.{}".format(
-            subtype, name, l0, l1, l2)
+        key = f'{subtype}/{name}/{l0}.{l1}.{l2}'
 
         # Check if sprites are already loaded
         if key in image_cache:
@@ -413,8 +410,7 @@ class LayeredSpritesXml(displayitems.LayeredSprites):
         # Get a list of images for the key
         images = []
         for index in range(0, 20):  # Num frames
-            file = '{}/map.wz/{}/{}.img/{}.{}.{}.{}.png'.format(
-                path, subtype, name, l0, l1, l2, str(index))
+            file = f'{path}/map.wz/{subtype}/{name}.img/{l0}.{l1}.{l2}.{index}.png'
             if os.path.isfile(file):
                 image = pygame.image.load(file).convert_alpha()
                 images.append(image)
@@ -459,8 +455,7 @@ class LayeredSpritesXml(displayitems.LayeredSprites):
                 if key not in image_cache:
                     images = []
                     for index in range(0, 20):  # Num frames
-                        file = '{}/img/portals/{}.{}.png'.format(
-                            '.', key, str(index))
+                        file = f'./img/portals/{key}.{index}.png'
                         if os.path.isfile(file):
                             image = pygame.image.load(file).convert_alpha()
                             images.append(image)
@@ -490,5 +485,5 @@ class LayeredSpritesXml(displayitems.LayeredSprites):
                 self.sprites.add(inst)
 
             except:
-                print('Error while loading portals')
+                logging.exception('Error while loading portals')
                 continue

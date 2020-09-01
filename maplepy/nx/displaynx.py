@@ -1,4 +1,5 @@
 import os
+import logging
 import random
 import pygame
 
@@ -28,12 +29,12 @@ class DisplayNx(display.Display):
 
         # Objects in the map
         self.map_nx = MapNx()
-        for map_file in map_file_names:
-            self.map_nx.open('{}/{}'.format(path, map_file))
+        for file in map_file_names:
+            self.map_nx.open(f'{path}/{file}')
 
         self.sound_nx = SoundNx()
-        for sound_file in sound_file_names:
-            self.sound_nx.open('{}/{}'.format(path, sound_file))
+        for file in sound_file_names:
+            self.sound_nx.open(f'{path}/{file}')
 
     def load_random_map(self):
 
@@ -49,14 +50,14 @@ class DisplayNx(display.Display):
         if self.maps:
             choices = list(self.maps.keys())
             map_id = random.choice(choices)[:9]
-            print('map:', map_id)
+            logging.info(f'Load random map: {map_id}')
             self.load_map(map_id)
 
     def load_map(self, map_id):
 
         # Check map_id input
         if not map_id or not map_id.isdigit():
-            print('{} is not a valid map id'.format(map_id))
+            logging.warning(f'{map_id} is not a valid map id')
             return
 
         # Check if map nx is loaded

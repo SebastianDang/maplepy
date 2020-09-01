@@ -30,15 +30,15 @@ class NXFile():
         self.soundCount = int.from_bytes(self.file.read(4), 'little')
         self.soundOffset = int.from_bytes(self.file.read(8), 'little')
 
-        logging.info('[%s]', self.filePath)
-        logging.info('nodeCount: %d', self.nodeCount)
-        logging.info('nodeOffset: %d', self.nodeOffset)
-        logging.info('stringCount: %d', self.stringCount)
-        logging.info('stringOffset: %d', self.stringOffset)
-        logging.info('imageCount: %d', self.imageCount)
-        logging.info('imageOffset: %d', self.imageOffset)
-        logging.info('soundCount: %d', self.soundCount)
-        logging.info('soundOffset: %d', self.soundOffset)
+        logging.info(f'{self.filePath}')
+        logging.info(f'nodeCount: {self.nodeCount}')
+        logging.info(f'nodeOffset: {self.nodeOffset}')
+        logging.info(f'stringCount: {self.stringCount}')
+        logging.info(f'stringOffset: {self.stringOffset}')
+        logging.info(f'imageCount: {self.imageCount}')
+        logging.info(f'imageOffset: {self.imageOffset}')
+        logging.info(f'soundCount: {self.soundCount}')
+        logging.info(f'soundOffset: {self.soundOffset}')
 
         self.nodes = [None] * self.nodeCount
         self.strings = {}

@@ -1,4 +1,5 @@
 import os
+import logging
 import pygame
 
 from maplepy.sound.bgm import SoundBgm
@@ -29,17 +30,16 @@ class DisplayXml(display.Display):
 
         # Check input path
         if not os.path.exists(self.path):
-            print('{} does not exist'.format(self.path))
+            logging.warning(f'{self.path} does not exist')
             return
 
         # Check map_id input
         if not map_id or not map_id.isdigit():
-            print('{} is not a valid map id'.format(map_id))
+            logging.warning(f'{map_id} is not a valid map id')
             return
 
         # Build filename
-        map_file = '{}/map.wz/map/map{}/{}.img.xml'.format(
-            self.path,  map_id[0:1], map_id)
+        map_file = f'{self.path}/map.wz/map/map{map_id[0:1]}/{map_id}.img.xml'
 
         # Load xml
         self.map_xml = MapXml()
@@ -81,8 +81,7 @@ class DisplayXml(display.Display):
 
         # Load bgm
         if 'bgm' in self.map_xml.info:
-            file = '{}/sound.wz/{}.mp3'.format(self.path,
-                                               self.map_xml.info['bgm'])
+            file = f'{self.path}/sound.wz/{self.map_xml.info["bgm"]}.mp3'
             self.bgm.load(file, file=file)
             self.bgm.volume(1.0)
 

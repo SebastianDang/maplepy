@@ -1,4 +1,5 @@
 import os
+import logging
 import xml.etree.ElementTree as ET
 
 
@@ -23,10 +24,10 @@ class MapXml:
             file (xml): MapleStory xml file
         """
         if self.root:
-            print('{} already opened.'.format(file))
+            logging.info(f'{file} already opened.')
             return
         if not os.path.isfile(file):
-            print('{} does not exist.'.format(file))
+            logging.warning(f'{file} does not exist.')
             return
         self.root = ET.parse(file).getroot()
 
@@ -35,7 +36,7 @@ class MapXml:
         Parse MapleStory xml file
         """
         if not self.root:
-            print('No xml file opened.')
+            logging.warning('No xml file opened.')
             return
 
         try:
@@ -85,7 +86,7 @@ class MapXml:
                     pass
 
         except:
-            print('Error while parsing root.')
+            logging.exception('Error while parsing root.')
 
     def parse_array(self, parent):
         """
@@ -101,8 +102,8 @@ class MapXml:
                 data['name'] = child.attrib.get('name')
                 items.append(data)
             return items
-        except Exception:
-            print('Error while parsing array.')
+        except:
+            logging.exception('Error while parsing array.')
 
     def parse_values(self, parent):
         """
@@ -118,8 +119,8 @@ class MapXml:
                 if child.tag in value_tags:
                     items[child.get('name')] = child.get('value')
             return items
-        except Exception:
-            print('Error while parsing value.')
+        except:
+            logging.exception('Error while parsing value.')
 
     def parse_digit_arrays(self, parent):
         """
@@ -158,5 +159,5 @@ class MapXml:
                         objects.append(obj)
             self.map_items.append(
                 {"info": info, "tiles": tiles, "objects": objects})
-        except Exception:
-            print('Error while parsing digit arrays.')
+        except:
+            logging.exception('Error while parsing digit arrays.')

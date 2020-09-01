@@ -19,8 +19,7 @@ class Loading():
 
         # Load images
         for i in range(0, 9):
-            file = '{}/loading.repeat.1.{}.png'.format(
-                path, str(i))
+            file = f'{path}/loading.repeat.1.{i}.png'
             if os.path.isfile(file):
                 image = pygame.image.load(file).convert_alpha()
                 image = pygame.transform.scale(image, self.rect.size)
