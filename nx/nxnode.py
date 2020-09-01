@@ -5,13 +5,16 @@ from nx.nxsound import NXSound
 class NXNode():
 
     def __init__(self,  nxfile, nameIndex, childIndex, childCount, type):
+
+        # Constructor
         self.nxfile = nxfile
         self.nameIndex = nameIndex
         self.childIndex = childIndex
         self.childCount = childCount
         self.type = type
+
+        # Variables
         self.childMap = {}
-        self.didPopulateChildren = False
         self.stringIndex = None
         self.imageIndex = None
         self.width = None
@@ -39,38 +42,40 @@ class NXNode():
         self._value = value
 
     def populateChildren(self):
-        """Populates immediate child nodes. No-ops if ran more than once.
-        """
-        if self.didPopulateChildren:
+        """ Populates immediate child nodes. No-ops if ran more than once. """
+
+        # Check if there are any children or already populated
+        if self.childCount == 0 or self.childMap:
             return
 
-        if self.childCount == 0:
-            return
-
+        # Populate child map
+        childMap = {}
         for i in range(self.childIndex, self.childIndex + self.childCount):
             childNode = self.nxfile.getNode(i)
-            self.childMap[childNode.name] = childNode
+            childMap[childNode.name] = childNode
 
-        self.didPopulateChildren = True
+        # Update variable
+        self.childMap = childMap
 
     def listChildren(self):
-        """Lists names of children nodes.
-        """
+        """ Lists names of children nodes. """
         self.populateChildren()
         return list(self.childMap.keys())
 
     def getChildren(self):
-        """Get children nodes as a list.
-        """
+        """ Get children nodes as a list. """
         self.populateChildren()
         return list(self.childMap.values())
 
     def getChild(self, name):
+        """ Get child node by name """
         self.populateChildren()
         return self.childMap.get(name)
 
     def resolve(self, path):
-        paths = path.split("/")
+        """ Get child node by path """
+
+        paths = path.split('/')
         node = self
         for path in paths:
             node = node.getChild(path)
@@ -80,38 +85,42 @@ class NXNode():
         return node
 
     def getImage(self):
+        """ Get image at current index """
+
         image = self.nxfile.images.get(self.imageIndex)
 
         if not image:
+
+            # Check for outlink node
             if self['_outlink']:
                 value = self['_outlink'].value
                 outlinkNode = self.nxfile.resolve(value[value.index('/')+1:])
-                image = outlinkNode.getImage()
-                self.nxfile.images[self.imageIndex] = image
-                return image
+                if outlinkNode:
+                    image = outlinkNode.getImage()
+                    self.nxfile.images[self.imageIndex] = image
+                    return image
 
-            # load image if not found
+            # Load image from node
             self.nxfile.file.seek(
                 self.nxfile.imageOffset + self.imageIndex * 8)
-            offset = int.from_bytes(self.nxfile.file.read(8), "little")
+            offset = int.from_bytes(self.nxfile.file.read(8), 'little')
             image = NXImage(self.nxfile, offset, self.width, self.height)
             self.nxfile.images[self.imageIndex] = image
 
         return image
 
     def getSound(self):
+        """ Get sound at current index """
+
         sound = self.nxfile.sounds.get(self.soundIndex)
 
         if not sound:
-            sound = self.loadSound(self.nxfile, self.soundIndex)
 
-        return sound.getData(self.length)
+            # Load sound from node
+            self.nxfile.file.seek(
+                self.nxfile.soundOffset + self.soundIndex * 8)
+            offset = int.from_bytes(self.nxfile.file.read(8), 'little')
+            sound = NXSound(self.nxfile, offset)
+            self.nxfile.sounds[self.soundIndex] = sound
 
-    def loadSound(self, nxfile, soundIndex):
-        # currentPos = nxfile.file.tell()
-        nxfile.file.seek(nxfile.soundOffset + soundIndex * 8)
-        offset = int.from_bytes(nxfile.file.read(8), "little")
-        sound = NXSound(nxfile, offset)
-        nxfile.sounds[soundIndex] = sound
-        # nxfile.file.seek(currentPos)
-        return sound
+        return sound.getData(self.length) if sound else None

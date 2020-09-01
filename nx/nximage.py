@@ -10,7 +10,8 @@ class NXImage:
         self.height = height
 
     def getData(self):
+        """ Get image data """
         self.nxfile.file.seek(self.offset)
-        compressedSize = int.from_bytes(self.nxfile.file.read(4), "little")
+        compressedSize = int.from_bytes(self.nxfile.file.read(4), 'little')
         compressedBytes = self.nxfile.file.read(compressedSize)
         return lz4.block.decompress(compressedBytes, self.width * self.height * 4, True)
