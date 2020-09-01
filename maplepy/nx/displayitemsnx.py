@@ -38,28 +38,33 @@ class BackgroundSpritesNx(displayitems.BackgroundSprites):
                 for k, v in val.items():
                     setattr(inst, k, v)
 
-                # Build canvases
-                for index in range(20):
+                # Get node
+                subtype = 'ani' if inst.ani else 'back'
+                key = f'Back/{inst.bS}.img/{subtype}/{inst.no}'
+                node = map_nx.file.resolve(key)
+                count = node.childCount if node and inst.ani else 1
 
-                    # Get sprite
+                # Build canvases
+                for index in range(count):
+
+                    # Get data
                     if inst.ani:  # Animated
-                        subtype = 'ani'
+                        # subtype = 'ani'
                         no = f'{inst.no}/{index}'
                     else:  # Static
-                        subtype = 'back'
+                        # subtype = 'back'
                         no = str(inst.no)
                     sprite = resource_manager.get_sprite(
                         map_nx.file, 'Back', inst.bS, subtype, no)
+                    data = resource_manager.get_data(
+                        map_nx.file, 'Back', inst.bS, subtype, no)
 
-                    # Sprite not found
-                    if not sprite:
+                    # Data not found
+                    if not sprite or not data:
                         break
 
                     # Get info
                     w, h = sprite.image.get_size()
-                    data = resource_manager.get_data(
-                        map_nx.file, 'Back', inst.bS, subtype, no)
-
                     x = data['origin'][0]
                     y = data['origin'][1]
                     z = int(data['z']) if 'z' in data else None
@@ -137,19 +142,18 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                 for k, v in val.items():
                     setattr(inst, k, v)
 
-                # Get sprite
+                # Get Data
                 sprite = resource_manager.get_sprite(
                     map_nx.file, 'Tile', inst.tS, inst.u, str(inst.no))
-
-                # Sprite not found
-                if not sprite:
-                    break
-
-                # Get info
-                w, h = sprite.image.get_size()
                 data = resource_manager.get_data(
                     map_nx.file, 'Tile', inst.tS, inst.u, str(inst.no))
 
+                # Data not found
+                if not sprite or not data:
+                    continue
+
+                # Get info
+                w, h = sprite.image.get_size()
                 x = data['origin'][0]
                 y = data['origin'][1]
                 z = int(data['z']) if 'z' in data else None
@@ -184,23 +188,27 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                 for k, v in val.items():
                     setattr(inst, k, v)
 
-                # Build canvases
-                for index in range(20):
+                # Get node
+                key = f'Obj/{inst.oS}.img/{inst.l0}/{inst.l1}/{inst.l2}'
+                node = map_nx.file.resolve(key)
+                count = node.childCount
 
-                    # Get sprite
+                # Build canvases
+                for index in range(count):
+
+                    # Get data
                     no = f'{inst.l1}/{inst.l2}/{index}'
                     sprite = resource_manager.get_sprite(
                         map_nx.file, 'Obj', inst.oS, inst.l0, no)
+                    data = resource_manager.get_data(
+                        map_nx.file, 'Obj', inst.oS, inst.l0, no)
 
-                    # Sprite not found
-                    if not sprite:
+                    # Data not found
+                    if not sprite or not data:
                         break
 
                     # Get info
                     w, h = sprite.image.get_size()
-                    data = resource_manager.get_data(
-                        map_nx.file, 'Obj', inst.oS, inst.l0, no)
-
                     x = data['origin'][0]
                     y = data['origin'][1]
                     z = int(data['z']) if 'z' in data else None
@@ -266,24 +274,28 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                 if inst.pt not in portal_game.keys():
                     continue
 
-                # Build canvases
-                for index in range(20):
+                # Get node
+                key = f'MapHelper.img/portal/game/{portal_game[inst.pt]}/{inst.pS}'
+                node = map_nx.file.resolve(key)
+                count = node.childCount
 
-                    # Get sprite
+                # Build canvases
+                for index in range(count):
+
+                    # Get data
                     pt = portal_game[inst.pt]
                     no = f'game/{pt}/{inst.pS}/{index}'
                     sprite = resource_manager.get_sprite(
                         map_nx.file, None, 'MapHelper', 'portal', no)
+                    data = resource_manager.get_data(
+                        map_nx.file, None, 'MapHelper', 'portal', no)
 
-                    # Sprite not found
-                    if not sprite:
+                    # Data not found
+                    if not sprite or not data:
                         break
 
                     # Get info
                     w, h = sprite.image.get_size()
-                    data = resource_manager.get_data(
-                        map_nx.file, None, 'MapHelper', 'portal', no)
-
                     x = data['origin'][0]
                     y = data['origin'][1]
                     z = int(data['z']) if 'z' in data else None

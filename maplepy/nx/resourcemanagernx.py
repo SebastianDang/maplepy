@@ -31,6 +31,7 @@ class ResourceManagerNx():
         # Load from nx
         node = file.resolve(key)
         if not node:
+            logging.warning(f'{key} not found')
             return None
 
         # Parse into dictionary
@@ -61,11 +62,13 @@ class ResourceManagerNx():
         # Get node
         node = file.resolve(key)
         if not node:
+            logging.warning(f'{key} not found')
             return None
 
         # Get image
         image = node.getImage()
         if not image:
+            logging.warning(f'{key} is not a sprite')
             return None
 
         # Load as nx sprite
