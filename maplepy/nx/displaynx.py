@@ -94,7 +94,7 @@ class DisplayNx(display.Display):
         if not info or not minimap:
             return
 
-        # Get view boundaries
+        # Set view boundaries
         view_keys = ['VRTop', 'VRLeft', 'VRBottom', 'VRRight']
         minimap_keys = ['centerX', 'centerY', 'width', 'height']
         if all(key in info for key in view_keys):
@@ -102,14 +102,12 @@ class DisplayNx(display.Display):
             left = int(info['VRLeft'])
             bottom = int(info['VRBottom'])
             right = int(info['VRRight'])
-            self.view.topleft = (left, top)
             self.set_view_limit(left, top, right - left, bottom - top)
         elif minimap and all(key in minimap for key in minimap_keys):
             x = int(minimap['centerX'])
             y = int(minimap['centerY'])
             width = int(minimap['width'])
             height = int(minimap['height'])
-            self.view.topleft = (-x, -y)
             self.set_view_limit(-x, -y, width, height)
 
         # Bgm
@@ -126,10 +124,6 @@ class DisplayNx(display.Display):
         # Check if map nx is loaded
         if not self.map_nx.file:
             return
-
-        # Create background
-        if not self.background:
-            self.background = pygame.Surface((800, 600))  # Native resolution
 
         # Load background
         background_sprites = BackgroundSpritesNx()

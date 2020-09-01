@@ -23,7 +23,7 @@ class Display():
         self.view_limit = None
 
         # Background
-        self.background = None
+        self.background = pygame.Surface((800, 600))
         self.background_sprites = None
 
         # Objects in the map
@@ -33,10 +33,9 @@ class Display():
         """ Resizes the display """
         self.width = w
         self.height = h
-        if self.view:
-            self.view = pygame.Rect(self.view.x, self.view.y, w, h)
-        else:
-            self.view = pygame.Rect(0, 0, w, h)
+        x = self.view.x if self.view else 0
+        y = self.view.y if self.view else 0
+        self.view = pygame.Rect(x, y, w, h)
 
     def move_view(self, x, y):
         """ Moves the view rect """

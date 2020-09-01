@@ -95,10 +95,6 @@ class DisplayXml(display.Display):
         if not self.map_xml.back_items:
             return
 
-        # Create background
-        if not self.background:
-            self.background = pygame.Surface((800, 600))  # Native resolution
-
         # Load sets of sprites only once
         background_sprites = BackgroundSpritesXml()
         bS_set = set([x['bS'] for x in self.map_xml.back_items])

@@ -60,7 +60,10 @@ class MapNx:
         if not minimap_node:
             return None
         for child in minimap_node.getChildren():
-            minimap[child.name] = child.value
+            if child.name == 'canvas':
+                minimap[child.name] = (child.width, child.height)
+            else:
+                minimap[child.name] = child.value
         return minimap
 
     def get_background_data(self, map_id):
