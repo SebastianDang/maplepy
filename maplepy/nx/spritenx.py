@@ -37,25 +37,35 @@ class SpriteNx(pygame.sprite.Sprite):
         """
         try:
 
-            # Create a new image
-            image = pygame.Surface((w, h), pygame.SRCALPHA)
-            # image.set_colorkey((0, 0, 0, 0))  # Transparent
+            if True:
 
-            # Create pixel array to access x,y coordinates
-            pxarray = pygame.PixelArray(image)
-            for y in range(0, h):
-                for x in range(0, w):
-                    b = data[(y*w*4) + (x*4) + 0]
-                    g = data[(y*w*4) + (x*4) + 1]
-                    r = data[(y*w*4) + (x*4) + 2]
-                    a = data[(y*w*4) + (x*4) + 3]
-                    pxarray[x, y] = (r, g, b, a)
+                # Swap b and r (b,r = r,b)
+                data[0::4], data[2::4] = data[2::4], data[0::4]
 
-            # pixel array must be deleted to 'unlock' the image
-            del pxarray
+                # Create a new image
+                image = pygame.image.frombuffer(data, (w, h), 'RGBA')
 
-            # Call unlock, to be safe
-            image.unlock()
+            else:
+
+                # Create a new image
+                image = pygame.Surface((w, h), pygame.SRCALPHA)
+                # image.set_colorkey((0, 0, 0, 0))  # Transparent
+
+                # Create pixel array to access x,y coordinates
+                pxarray = pygame.PixelArray(image)
+                for y in range(0, h):
+                    for x in range(0, w):
+                        b = data[(y*w*4) + (x*4) + 0]
+                        g = data[(y*w*4) + (x*4) + 1]
+                        r = data[(y*w*4) + (x*4) + 2]
+                        a = data[(y*w*4) + (x*4) + 3]
+                        pxarray[x, y] = (r, g, b, a)
+
+                # pixel array must be deleted to 'unlock' the image
+                del pxarray
+
+                # Call unlock, to be safe
+                image.unlock()
 
             # Update current sprite
             self.image = image.convert_alpha()
