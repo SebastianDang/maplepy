@@ -53,7 +53,7 @@ class Game():
         self.state = DISPLAY_MAP
         self.running = False
         self.fps = 60
-        self.input_blocker = {}
+        self.pressed = {}
 
         # Console
         self.typing = False
@@ -105,7 +105,7 @@ class Game():
             if not thread.is_alive():
                 thread.join()
 
-        # Remove thread from list
+        # Remove thread from list if not alive
         self.threads = [thread for thread in self.threads if thread.is_alive()]
 
     def handle_events(self):
@@ -146,15 +146,21 @@ class Game():
 
     def handle_inputs(self):
 
+        # Prevent quickly pressed keys, remove if done
+        self.pressed = {k: v-1 for k, v in self.pressed.items() if v > 1}
+
         # Get current state
         state = self.get_state()
 
         # Get inputs
         # mouse_x, mouse_y = pygame.mouse.get_pos()
-        # mouse_input = pygame.mouse.get_pressed()
+        mouse_dx, mouse_dy = pygame.mouse.get_rel()
+        mouse_input = pygame.mouse.get_pressed()
         key_input = pygame.key.get_pressed()
 
         # Camera movement
+        if state == DISPLAY_MAP and mouse_input[2]:
+            self.displays[state].move_view(-mouse_dx, -mouse_dy)
         if state == DISPLAY_MAP and key_input[pygame.K_UP]:
             self.displays[state].move_view(0, -CAMERA_SPEED)
         if state == DISPLAY_MAP and key_input[pygame.K_DOWN]:
@@ -163,15 +169,6 @@ class Game():
             self.displays[state].move_view(-CAMERA_SPEED, 0)
         if state == DISPLAY_MAP and key_input[pygame.K_RIGHT]:
             self.displays[state].move_view(CAMERA_SPEED, 0)
-
-        # Prevent quickly repeated keys, remove if done
-        input_blocker_removal = []
-        for key, delay in self.input_blocker.items():
-            self.input_blocker[key] = delay - 1
-            if self.input_blocker[key] <= 0:
-                input_blocker_removal.append(key)
-        for key in input_blocker_removal:
-            self.input_blocker.pop(key, None)
 
     def run(self):
 
