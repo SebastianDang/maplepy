@@ -8,21 +8,15 @@ from maplepy.nx.displaynx import DisplayNx
 from maplepy.display.console import Console
 from maplepy.display.loading import Loading
 
+FLAGS = pygame.HWSURFACE | pygame.HWACCEL | pygame.SRCALPHA
 CAMERA_SPEED = 4
-DISPLAY_LOADING = 0
-DISPLAY_MAP = 1
+STATE_LOADING = 0
+STATE_DISPLAY = 1
 
 
 class Game():
 
     def __init__(self, config_file):
-
-        # Start pygame
-        pygame.init()
-        pygame.mixer.init(frequency=44100,
-                          size=-16,
-                          channels=2,
-                          allowedchanges=0)
 
         # Config
         self.config = Config.instance()
@@ -33,24 +27,29 @@ class Game():
         self.asset_path = self.config['asset_path']
         self.map = self.config['map']
 
-        # Create pygame objects
+        # Start pygame
+        pygame.init()
+        pygame.mixer.init(frequency=44100,
+                          size=-16,
+                          channels=2,
+                          allowedchanges=0)
+        pygame.display.set_caption(self.config['caption'])
         icon = pygame.image.load(self.config['icon'])
         pygame.display.set_icon(icon)
-        pygame.display.set_caption(self.config['caption'])
-        self.screen = pygame.display.set_mode(
-            (self.width, self.height), pygame.HWACCEL)
+
+        # Create pygame objects
+        self.screen = pygame.display.set_mode((self.width, self.height), FLAGS)
         self.clock = pygame.time.Clock()
 
         # Create displays
-        self.displays = {}
-        self.displays[DISPLAY_LOADING] = Loading(
-            self.width, self.height)
-        self.displays[DISPLAY_MAP] = DisplayNx(
-            self.width, self.height, self.asset_path)
+        self.displays = {
+            STATE_LOADING: Loading(self.width, self.height),
+            STATE_DISPLAY: DisplayNx(self.width, self.height, self.asset_path)
+        }
 
         # Game state
         self.threads = []
-        self.state = DISPLAY_MAP
+        self.state = STATE_DISPLAY
         self.running = False
         self.fps = 60
         self.pressed = {}
@@ -63,7 +62,7 @@ class Game():
     def get_state(self):
 
         if self.threads:
-            return DISPLAY_LOADING
+            return STATE_LOADING
         else:
             return self.state
 
@@ -78,19 +77,19 @@ class Game():
         try:
             cmd = command[0].lower()
             if cmd == 'loading':
-                fn = self.displays[DISPLAY_LOADING].load_images
+                fn = self.displays[STATE_LOADING].load_images
                 args = (command[1],)
                 thread = threading.Thread(target=fn, args=args)
                 thread.start()
                 self.threads.append(thread)
             if cmd == 'map':
-                fn = self.displays[DISPLAY_MAP].load_map
+                fn = self.displays[STATE_DISPLAY].load_map
                 args = (command[1],)
                 thread = threading.Thread(target=fn, args=args)
                 thread.start()
                 self.threads.append(thread)
             if cmd == 'rand':
-                fn = self.displays[DISPLAY_MAP].load_random_map
+                fn = self.displays[STATE_DISPLAY].load_random_map
                 thread = threading.Thread(target=fn)
                 thread.start()
                 self.threads.append(thread)
@@ -122,7 +121,7 @@ class Game():
                 self.running = False
 
             # Console input
-            if state != DISPLAY_LOADING and event.type == pygame.KEYDOWN:
+            if state != STATE_LOADING and event.type == pygame.KEYDOWN:
                 if self.typing:
                     if event.key == pygame.K_ESCAPE:
                         self.typing = False
@@ -159,15 +158,15 @@ class Game():
         key_input = pygame.key.get_pressed()
 
         # Camera movement
-        if state == DISPLAY_MAP and mouse_input[2]:
+        if state == STATE_DISPLAY and mouse_input[2]:
             self.displays[state].move_view(-mouse_dx, -mouse_dy)
-        if state == DISPLAY_MAP and key_input[pygame.K_UP]:
+        if state == STATE_DISPLAY and key_input[pygame.K_UP]:
             self.displays[state].move_view(0, -CAMERA_SPEED)
-        if state == DISPLAY_MAP and key_input[pygame.K_DOWN]:
+        if state == STATE_DISPLAY and key_input[pygame.K_DOWN]:
             self.displays[state].move_view(0, CAMERA_SPEED)
-        if state == DISPLAY_MAP and key_input[pygame.K_LEFT]:
+        if state == STATE_DISPLAY and key_input[pygame.K_LEFT]:
             self.displays[state].move_view(-CAMERA_SPEED, 0)
-        if state == DISPLAY_MAP and key_input[pygame.K_RIGHT]:
+        if state == STATE_DISPLAY and key_input[pygame.K_RIGHT]:
             self.displays[state].move_view(CAMERA_SPEED, 0)
 
     def run(self):
