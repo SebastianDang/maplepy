@@ -22,9 +22,10 @@ class SoundNx:
             logging.exception(f'Unable to open {file}')
 
     def get_sound(self, path):
+
         paths = path.split('/')
-        soundPath = f'{paths[0]}.img/{paths[1]}'
-        sound_node = self.file.resolve(soundPath)
+        sound_path = f'{paths[0]}.img/{paths[1]}'
+        sound_node = self.file.resolve(sound_path)
         if not sound_node:
             return None
 
@@ -32,19 +33,13 @@ class SoundNx:
         sound = sound_node.getSound()
         data = io.BytesIO(sound[82:])
 
-        # # Debug audio format
-        # for i in range(0, 50): # 32
-
-        #     header = sound[i:82]
-
-        #     fmt = int.from_bytes(header[8:12], 'big')
-        #     channels = int.from_bytes(header[22:24], 'little')
-        #     sample_rate = int.from_bytes(header[24:28], 'little')
-        #     byte_rate = int.from_bytes(header[28:32], 'little')
-        #     block_align = int.from_bytes(header[32:34], 'little')
-        #     bits_per_sample = int.from_bytes(header[34:36], 'little')
-
-        #     pass
+        # header = sound[32:82]
+        # fmt = int.from_bytes(header[8:12], 'big')
+        # channels = int.from_bytes(header[22:24], 'little')
+        # sample_rate = int.from_bytes(header[24:28], 'little')
+        # byte_rate = int.from_bytes(header[28:32], 'little')
+        # block_align = int.from_bytes(header[32:34], 'little')
+        # bits_per_sample = int.from_bytes(header[34:36], 'little')
 
         # Convert to wav
         audio_bytes = io.BytesIO()

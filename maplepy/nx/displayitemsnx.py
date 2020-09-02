@@ -262,8 +262,7 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
             try:
 
                 # Special case
-                if 'image' in val:
-                    val['pS'] = val.pop('image')
+                val['pS'] = val.pop('image') if 'image' in val else 'default'
 
                 # Extract properties
                 inst = Instance()

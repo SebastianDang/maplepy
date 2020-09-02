@@ -5,8 +5,9 @@ class Instance(pygame.sprite.Sprite):
     """
     Class contains canvases use to draw and instance variables for:
         backgrounds
-        objects
         tiles
+        objects
+        portals
     """
 
     def __init__(self):
@@ -16,12 +17,13 @@ class Instance(pygame.sprite.Sprite):
         self.image = None
         self.mask = None
         self.rect = None
-        self._layer = 0  # Used for layered sprite groups (z-buffer)
+        self._layer = 0         # Used for layered sprite groups (z-buffer)
 
         # Common
         self.name = None        # Tag name
-        self.x = None
-        self.y = None
+        self.x = None           # Coordinate
+        self.y = None           # Coordinate
+        self.z = None           # Coordinate
         self.zM = None          # Z-order
         self.f = None           # Flipped
 
@@ -35,15 +37,17 @@ class Instance(pygame.sprite.Sprite):
         self.front = None       # Render in front
         self.ani = None         # Static or animated sprite
 
-        # Track scrolling
-        self.dx = 0
-        self.dy = 0
-
         # Object
         self.r = None
         self.move = None
         self.dynamic = None
-        self.piece = None
+        self.piece = None       # Value of name
+
+        # Portal
+        self.pn = None          # Portal name
+        self.pt = None          # Portal type
+        self.tm = None          # Portal target map
+        self.tn = None          # Portal target name
 
         # Sprite tags
         self.bS = None          # Background sprite
@@ -53,9 +57,8 @@ class Instance(pygame.sprite.Sprite):
         self.l0 = None          # Object label (category)
         self.l1 = None          # Object label (type)
         self.l2 = None          # Object label (index)
+        self.pS = None          # Portal sprite (image or 'default')
         self.no = None          # Sprite index
-        self.pt = None          # Portal type
-        self.pS = 'default'     # Portal sprite
 
         # Collision
         self.forbidFallDown = None
@@ -64,6 +67,10 @@ class Instance(pygame.sprite.Sprite):
         self.canvas_list = []
         self.canvas_list_index = 0
         self.frame_count = 0
+
+        # Track scrolling
+        self.dx = 0
+        self.dy = 0
 
     def update_layer(self, layer):
         self._layer = layer
