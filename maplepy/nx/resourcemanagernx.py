@@ -71,6 +71,10 @@ class ResourceManagerNx():
             logging.warning(f'{key} is not a sprite')
             return None
 
+        return self.add_sprite(key, image)
+
+    def add_sprite(self, key, image):
+
         # Load as nx sprite
         sprite = SpriteNx()
         sprite.load(image.width, image.height, image.getData())
