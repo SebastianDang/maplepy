@@ -29,7 +29,10 @@ class Display():
         # Objects in the map
         self.layered_sprites = []
 
-    def resize(self, w, h):
+        # Items are alwauys on top
+        self.overlayed_sprites = None
+
+    def resize_view(self, w, h):
         """ Resizes the display """
         self.width = w
         self.height = h
@@ -60,10 +63,15 @@ class Display():
         for sprites in self.layered_sprites:
             sprites.update()
 
+        # UI
+        if self.overlayed_sprites:
+            self.overlayed_sprites.update()
+
     def blit(self, surface):
         """
         Draw background sprites onto a separate surface, then scale it to the target surface
-        Draw layered sprites after the background
+        Draw layered sprites together, ordered by layer index
+        Draw overlayed sprites last, always on top
         """
 
         # Background
@@ -81,3 +89,7 @@ class Display():
         # Tiles / Objs / Others
         for sprites in self.layered_sprites:
             sprites.blit(surface, self.view)
+
+        # UI
+        if self.overlayed_sprites:
+            self.overlayed_sprites.blit(surface)
