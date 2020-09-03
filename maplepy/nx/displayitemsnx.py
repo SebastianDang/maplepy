@@ -116,6 +116,33 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
         # Create sprites
         super().__init__()
 
+    def load_minimap(self, info, val):
+
+        # Translate
+        val['x'] = 0
+        val['y'] = 0
+
+        # Extract properties
+        inst = Instance()
+        for k, v in val.items():
+            setattr(inst, k, v)
+
+        # Get data
+        key =  info['mapMark']
+        sprite = resource_manager.add_sprite(f'{key}', inst.canvas_image)
+
+        # Build canvas
+        w = inst.width >> inst.mag
+        h = inst.height >> inst.mag
+        canvas = Canvas(sprite.image, w, h)
+
+        # Add to object
+        inst.add_canvas(canvas)
+
+        # Add to list
+        if inst.canvas_list:
+            self.sprites.add(inst)
+
     def load_layer(self, map_nx, map_id, index):
 
         # Load current layer

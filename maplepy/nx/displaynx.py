@@ -71,13 +71,14 @@ class DisplayNx(display.Display):
             return
 
         # Unload all old data
-        self.background_sprites = None
-        self.layered_sprites.clear()
         self.view.topleft = (0, 0)
         self.view_limit = None
+        self.background_sprites = None
+        self.layered_sprites.clear()
+        self.overlayed_sprites = None
 
         # Setup and load
-        self.setup_map(map_id)
+        self.setup_info(map_id)
         self.setup_background_sprites(map_id)
         self.setup_layered_sprites(map_id)
         self.setup_portal_sprites(map_id)
@@ -85,7 +86,7 @@ class DisplayNx(display.Display):
         # Play bgm
         self.bgm.play()
 
-    def setup_map(self, map_id):
+    def setup_info(self, map_id):
 
         # Check if map nx is loaded
         if not self.map_nx.file:
@@ -106,12 +107,18 @@ class DisplayNx(display.Display):
             bottom = int(info['VRBottom'])
             right = int(info['VRRight'])
             self.set_view_limit(left, top, right - left, bottom - top)
-        elif minimap and all(key in minimap for key in minimap_keys):
+        elif all(key in minimap for key in minimap_keys):
             x = int(minimap['centerX'])
             y = int(minimap['centerY'])
             width = int(minimap['width'])
             height = int(minimap['height'])
             self.set_view_limit(-x, -y, width, height)
+
+        # Create mini map ui
+        if 'canvas_image' in minimap:
+            overlay_sprites = LayeredSpritesNx()
+            overlay_sprites.load_minimap(info, minimap)
+            self.overlayed_sprites = overlay_sprites
 
         # Bgm
         if 'bgm' in info:
