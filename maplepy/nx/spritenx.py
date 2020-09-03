@@ -37,7 +37,7 @@ class SpriteNx(pygame.sprite.Sprite):
         """
         try:
 
-            if True:
+            if True:  # Automatic buffer method
 
                 # Swap b and r (b,r = r,b)
                 data[0::4], data[2::4] = data[2::4], data[0::4]
@@ -45,7 +45,7 @@ class SpriteNx(pygame.sprite.Sprite):
                 # Create a new image
                 image = pygame.image.frombuffer(data, (w, h), 'RGBA')
 
-            else:
+            else:  # Manually loop
 
                 # Create a new image
                 image = pygame.Surface((w, h), pygame.SRCALPHA)

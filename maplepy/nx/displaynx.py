@@ -1,6 +1,7 @@
 import os
 import logging
 import random
+import time
 import pygame
 
 from maplepy.sound.bgm import SoundBgm
@@ -13,6 +14,7 @@ from maplepy.nx.soundnx import SoundNx
 
 map_file_names = ['map.nx', 'map001.nx', 'map002.nx', 'map2.nx']
 sound_file_names = ['sound.nx', 'sound001.nx', 'sound2.nx']
+random.seed(time.time())
 
 
 class DisplayNx(display.Display):
@@ -78,6 +80,7 @@ class DisplayNx(display.Display):
         self.setup_map(map_id)
         self.setup_background_sprites(map_id)
         self.setup_layered_sprites(map_id)
+        self.setup_portal_sprites(map_id)
 
         # Play bgm
         self.bgm.play()
@@ -141,6 +144,12 @@ class DisplayNx(display.Display):
             layered_sprites = LayeredSpritesNx()
             layered_sprites.load_layer(self.map_nx, map_id, i)
             self.layered_sprites.append(layered_sprites)
+
+    def setup_portal_sprites(self, map_id):
+
+        # Check if map nx is loaded
+        if not self.map_nx.file:
+            return
 
         # Load portals
         portal_sprites = LayeredSpritesNx()
