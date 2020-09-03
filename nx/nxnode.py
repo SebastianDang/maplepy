@@ -93,8 +93,18 @@ class NXNode():
 
             # Check for outlink node
             if self['_outlink']:
+
+                # Get path
                 value = self['_outlink'].value
-                outlinkNode = self.nxfile.resolve(value[value.index('/')+1:])
+                path = value[value.index('/')+1:]
+
+                # Resolve using parent fileset or current file
+                if self.nxfile.parent:
+                    outlinkNode = self.nxfile.parent.resolve(path)
+                else:
+                    outlinkNode = self.nxfile.resolve(path)
+
+                # Return outlink node
                 if outlinkNode:
                     image = outlinkNode.getImage()
                     self.nxfile.images[self.imageIndex] = image

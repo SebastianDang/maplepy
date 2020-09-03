@@ -5,15 +5,16 @@ import nx.nodeparser as nodeparser
 
 
 class NXFile():
-    """
-    Read from the NX file format [PKG4]
-    """
+    """ Read from the NX file format [PKG4] """
 
-    def __init__(self, filePath, eager=None):
+    def __init__(self, path, parent=None):
+
+        # Update variables
+        self.path = path
+        self.parent = parent
 
         # Open file for reading
-        self.filePath = filePath
-        self.file = open(filePath, 'rb')
+        self.file = open(path, 'rb')
 
         # Check for nx pkg4 type
         magic = self.file.read(4).decode('ascii')
@@ -30,7 +31,7 @@ class NXFile():
         self.soundCount = int.from_bytes(self.file.read(4), 'little')
         self.soundOffset = int.from_bytes(self.file.read(8), 'little')
 
-        logging.info(f'{self.filePath}')
+        logging.info(f'{self.path}')
         logging.info(f'nodeCount: {self.nodeCount}')
         logging.info(f'nodeOffset: {self.nodeOffset}')
         logging.info(f'stringCount: {self.stringCount}')
