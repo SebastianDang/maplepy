@@ -65,8 +65,8 @@ class BackgroundSpritesNx(displayitems.BackgroundSprites):
 
                     # Get info
                     w, h = sprite.image.get_size()
-                    x = data['origin'][0]
-                    y = data['origin'][1]
+                    x = data['origin'][0] if 'origin' in data else 0
+                    y = data['origin'][1] if 'origin' in data else 0
                     z = int(data['z']) if 'z' in data else None
                     delay = int(data['delay']) if 'delay' in data else 120
 
@@ -154,8 +154,8 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
 
                 # Get info
                 w, h = sprite.image.get_size()
-                x = data['origin'][0]
-                y = data['origin'][1]
+                x = data['origin'][0] if 'origin' in data else 0
+                y = data['origin'][1] if 'origin' in data else 0
                 z = int(data['z']) if 'z' in data else None
 
                 # Create a canvas object
@@ -209,8 +209,8 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
 
                     # Get info
                     w, h = sprite.image.get_size()
-                    x = data['origin'][0]
-                    y = data['origin'][1]
+                    x = data['origin'][0] if 'origin' in data else 0
+                    y = data['origin'][1] if 'origin' in data else 0
                     z = int(data['z']) if 'z' in data else None
                     delay = int(data['delay']) if 'delay' in data else 120
                     a0 = int(data['a0']) if 'a0' in data else 255
@@ -295,8 +295,8 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
 
                     # Get info
                     w, h = sprite.image.get_size()
-                    x = data['origin'][0]
-                    y = data['origin'][1]
+                    x = data['origin'][0] if 'origin' in data else 0
+                    y = data['origin'][1] if 'origin' in data else 0
                     z = int(data['z']) if 'z' in data else None
 
                     # Create a canvas object
