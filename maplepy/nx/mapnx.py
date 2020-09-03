@@ -152,11 +152,8 @@ class MapNx:
             return None
 
         # Get values
-        for child in minimap_node.getChildren():
-            if child.name == 'canvas':
-                minimap[child.name] = (child.width, child.height)
-            else:
-                minimap[child.name] = child.value
+        minimap = self.get_values(minimap_node)
+        minimap['canvas_image'] = minimap_node['canvas'].getImage()
 
         # Return
         return minimap
