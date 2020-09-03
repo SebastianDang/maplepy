@@ -12,18 +12,25 @@ class MapNx:
         self.file = NXFileSet()
 
     def open(self, file):
+        """ Load file from path """
 
         # Check if file exists
         if not os.path.exists(file):
             logging.warning(f'{file} does not exist')
             return
+
         try:
             # Open nx file
             self.file.load(file)
         except:
             logging.exception(f'Unable to open {file}')
 
+    def get_values(self, node):
+        """ Return the node's children as a dictionary """
+        return {c.name: c.value for c in node.getChildren()}
+
     def get_map_nodes(self):
+        """ Return all available map nodes """
 
         map_nodes = {}
 
@@ -38,6 +45,7 @@ class MapNx:
         return map_nodes
 
     def get_map_node(self, map_id):
+        """ Return the map node by id """
         path = f'Map/Map{map_id[0:1]}/{map_id}.img'
         return self.file.resolve(path)
 
@@ -57,27 +65,8 @@ class MapNx:
         # Return
         return info
 
-    def get_minimap_data(self, map_id):
-
-        minimap = {}
-
-        # Get minimap node
-        path = f'Map/Map{map_id[0:1]}/{map_id}.img/miniMap'
-        minimap_node = self.file.resolve(path)
-        if not minimap_node:
-            return None
-
-        # Get values
-        for child in minimap_node.getChildren():
-            if child.name == 'canvas':
-                minimap[child.name] = (child.width, child.height)
-            else:
-                minimap[child.name] = child.value
-
-        # Return
-        return minimap
-
-    def get_background_data(self, map_id):
+    def get_back_data(self, map_id):
+        """ Return back data for the map """
 
         back = []
 
@@ -96,7 +85,28 @@ class MapNx:
         # Return
         return back
 
+    def get_life_data(self, map_id):
+        """ Return life data for the map """
+
+        life = []
+
+        # Get portal node
+        path = f'Map/Map{map_id[0:1]}/{map_id}.img/life'
+        life_node = self.file.resolve(path)
+        if not life_node:
+            return None
+
+        # Get values
+        for node in life_node.getChildren():
+            values = self.get_values(node)
+            values['name'] = node.name
+            life.append(values)
+
+        # Return
+        return life
+
     def get_layer_data(self, map_id, index):
+        """ Return layer data for the map """
 
         layer = {}
 
@@ -130,7 +140,29 @@ class MapNx:
         layer = {'info': info, 'tile': tiles, 'obj': objects}
         return layer
 
+    def get_minimap_data(self, map_id):
+        """ Return minimap data for the map """
+
+        minimap = {}
+
+        # Get minimap node
+        path = f'Map/Map{map_id[0:1]}/{map_id}.img/miniMap'
+        minimap_node = self.file.resolve(path)
+        if not minimap_node:
+            return None
+
+        # Get values
+        for child in minimap_node.getChildren():
+            if child.name == 'canvas':
+                minimap[child.name] = (child.width, child.height)
+            else:
+                minimap[child.name] = child.value
+
+        # Return
+        return minimap
+
     def get_portal_data(self, map_id):
+        """ Return portal data for the map """
 
         portal = []
 
@@ -148,6 +180,3 @@ class MapNx:
 
         # Return
         return portal
-
-    def get_values(self, node):
-        return {c.name: c.value for c in node.getChildren()}

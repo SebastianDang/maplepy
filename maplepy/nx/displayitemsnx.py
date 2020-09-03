@@ -24,7 +24,7 @@ class BackgroundSpritesNx(displayitems.BackgroundSprites):
     def load_background(self, map_nx, map_id):
 
         # Load back sprites
-        values = map_nx.get_background_data(map_id)
+        values = map_nx.get_back_data(map_id)
         if not values:
             logging.warning('Background data not found')
             return
