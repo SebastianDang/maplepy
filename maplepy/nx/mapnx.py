@@ -54,7 +54,7 @@ class MapNx:
 
         info = {}
 
-        # Get map node
+        # Get info node
         path = f'Map/Map{map_id[0:1]}/{map_id}.img/info'
         info_node = self.file.resolve(path)
         if not info_node:

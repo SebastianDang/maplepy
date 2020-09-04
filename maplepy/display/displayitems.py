@@ -32,6 +32,8 @@ class BackgroundSprites():
 
         # Get surface properties
         w, h = surface.get_size()
+        cx = offset.centerx - surface.get_rect().centerx if offset else 0
+        cy = offset.centery - surface.get_rect().centery if offset else 0
 
         # For all sprites
         for sprite in self.sprites:
@@ -41,10 +43,8 @@ class BackgroundSprites():
                 rect = sprite.rect.move(sprite.dx, sprite.dy)
 
                 # Camera offset
-                dx = offset.x if offset else 0
-                dy = offset.y if offset else 0
-                x = self.calculate_cam_offset(sprite.rx, dx, 0.5 * w)
-                y = self.calculate_cam_offset(sprite.ry, dy, 0.5 * h)
+                x = self.calculate_cam_offset(sprite.rx, cx, 0.5 * w)
+                y = self.calculate_cam_offset(sprite.ry, cy, 0.5 * h)
                 rect = rect.move(x, y)
 
                 # 0 - Simple image (eg. the hill with the tree in the background of Henesys)

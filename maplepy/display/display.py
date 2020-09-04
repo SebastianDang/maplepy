@@ -23,7 +23,7 @@ class Display():
         self.view_limit = None
 
         # Background
-        self.background = pygame.Surface((800, 600))
+        self.background = pygame.Surface((w, h))
         self.background_sprites = None
 
         # Objects in the map

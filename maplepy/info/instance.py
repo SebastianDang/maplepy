@@ -85,7 +85,6 @@ class Instance(pygame.sprite.Sprite):
             self.image = canvas.image
             self.mask = pygame.mask.from_surface(self.image)
         if not self.rect:
-            self.rect = canvas.rect.copy()
             self.rect = canvas.rect.copy().move(self.x, self.y)
 
     def step_frame(self):
