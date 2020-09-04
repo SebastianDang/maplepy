@@ -96,14 +96,11 @@ class DisplayNx(display.Display):
         info = self.map_nx.get_info_data(map_id)
         minimap = self.map_nx.get_minimap_data(map_id)
         foothold = self.map_nx.get_foothold_data(map_id)
-        if not info or not minimap or not foothold:
-            return
+        ladder = self.map_nx.get_ladder_data(map_id)
 
-        # Get min/max foothold items
-        x1 = min([min([x['x1'] for x in v]) for k, v in foothold.items()])
-        y1 = min([min([x['y1'] for x in v]) for k, v in foothold.items()])
-        x2 = min([min([x['x2'] for x in v]) for k, v in foothold.items()])
-        y2 = min([min([x['y2'] for x in v]) for k, v in foothold.items()])
+        # Check for required data
+        if not info or not minimap:
+            return
 
         # Set view boundaries using VR
         view_keys = ['VRTop', 'VRLeft', 'VRBottom', 'VRRight']
@@ -124,7 +121,12 @@ class DisplayNx(display.Display):
             self.set_view_limit(-x, -y, width, height)
 
         # Set view boundaries using footholds
-        if x1 <= x2 and y1 <= y2 and not self.view_limit:
+        if foothold and not self.view_limit:
+            # Get min/max foothold items
+            x1 = min([min([x['x1'] for x in v]) for k, v in foothold.items()])
+            y1 = min([min([x['y1'] for x in v]) for k, v in foothold.items()])
+            x2 = min([min([x['x2'] for x in v]) for k, v in foothold.items()])
+            y2 = min([min([x['y2'] for x in v]) for k, v in foothold.items()])
             self.set_view_limit(x1, y1, x2 - x1, y2 - y1)
 
         # Create mini map ui

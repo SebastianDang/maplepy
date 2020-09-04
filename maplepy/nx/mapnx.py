@@ -163,6 +163,25 @@ class MapNx:
         # Return
         return foothold
 
+    def get_ladder_data(self, map_id):
+
+        ladder = {}
+
+        # Get minimap node
+        path = f'Map/Map{map_id[0:1]}/{map_id}.img/ladderRope'
+        ladder_node = self.file.resolve(path)
+        if not ladder_node:
+            return None
+
+        # Get values
+        for node in ladder_node.getChildren():
+            values = self.get_values(node)
+            values['name'] = node.name
+            ladder[node.name] = values
+
+        # Return
+        return ladder
+
     def get_minimap_data(self, map_id):
         """ Return minimap data for the map """
 
