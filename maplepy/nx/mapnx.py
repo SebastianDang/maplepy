@@ -50,6 +50,7 @@ class MapNx:
         return self.file.resolve(path)
 
     def get_info_data(self, map_id):
+        """ Return info data for the map """
 
         info = {}
 
@@ -140,7 +141,12 @@ class MapNx:
         layer = {'info': info, 'tile': tiles, 'obj': objects}
         return layer
 
+    def get_reactor_data(self, map_id):
+        """ Return reactor data for the map """
+        pass
+
     def get_foothold_data(self, map_id):
+        """ Return foothold data for the map """
 
         foothold = {}
 
@@ -164,6 +170,7 @@ class MapNx:
         return foothold
 
     def get_ladder_data(self, map_id):
+        """ Return ladder rope data for the map """
 
         ladder = {}
 
@@ -183,7 +190,7 @@ class MapNx:
         return ladder
 
     def get_minimap_data(self, map_id):
-        """ Return minimap data for the map """
+        """ Return mini map data for the map """
 
         minimap = {}
 
