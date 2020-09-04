@@ -92,27 +92,40 @@ class DisplayNx(display.Display):
         if not self.map_nx.file:
             return
 
-        # Get info
+        # Get info, minimap, foothold
         info = self.map_nx.get_info_data(map_id)
         minimap = self.map_nx.get_minimap_data(map_id)
-        if not info or not minimap:
+        foothold = self.map_nx.get_foothold_data(map_id)
+        if not info or not minimap or not foothold:
             return
 
-        # Set view boundaries
+        # Get min/max foothold items
+        x1 = min([min([x['x1'] for x in v]) for k, v in foothold.items()])
+        y1 = min([min([x['y1'] for x in v]) for k, v in foothold.items()])
+        x2 = min([min([x['x2'] for x in v]) for k, v in foothold.items()])
+        y2 = min([min([x['y2'] for x in v]) for k, v in foothold.items()])
+
+        # Set view boundaries using VR
         view_keys = ['VRTop', 'VRLeft', 'VRBottom', 'VRRight']
-        minimap_keys = ['centerX', 'centerY', 'width', 'height']
         if all(key in info for key in view_keys):
             top = int(info['VRTop'])
             left = int(info['VRLeft'])
             bottom = int(info['VRBottom'])
             right = int(info['VRRight'])
             self.set_view_limit(left, top, right - left, bottom - top)
-        elif all(key in minimap for key in minimap_keys):
+
+        # Set view boundaries using minimap
+        minimap_keys = ['centerX', 'centerY', 'width', 'height']
+        if all(key in minimap for key in minimap_keys) and not self.view_limit:
             x = int(minimap['centerX'])
             y = int(minimap['centerY'])
             width = int(minimap['width'])
             height = int(minimap['height'])
             self.set_view_limit(-x, -y, width, height)
+
+        # Set view boundaries using footholds
+        if x1 <= x2 and y1 <= y2 and not self.view_limit:
+            self.set_view_limit(x1, y1, x2 - x1, y2 - y1)
 
         # Create mini map ui
         if 'canvas_image' in minimap:

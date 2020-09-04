@@ -140,6 +140,29 @@ class MapNx:
         layer = {'info': info, 'tile': tiles, 'obj': objects}
         return layer
 
+    def get_foothold_data(self, map_id):
+
+        foothold = {}
+
+        # Get foothold node
+        path = f'Map/Map{map_id[0:1]}/{map_id}.img/foothold'
+        foothold_node = self.file.resolve(path)
+        if not foothold_node:
+            return None
+
+        # Get values
+        for layer in foothold_node.getChildren():
+            for array in layer.getChildren():
+                group = []
+                for node in array.getChildren():
+                    values = self.get_values(node)
+                    values['name'] = node.name
+                    group.append(values)
+                foothold[f'{layer.name}/{array.name}'] = group
+
+        # Return
+        return foothold
+
     def get_minimap_data(self, map_id):
         """ Return minimap data for the map """
 
