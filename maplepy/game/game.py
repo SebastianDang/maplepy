@@ -25,6 +25,7 @@ class Game():
         self.height = self.config['height']
         self.loading_path = self.config['loading_path']
         self.asset_path = self.config['asset_path']
+        self.asset_type = self.config['asset_type']
         self.map = self.config['map']
 
         # Start pygame
@@ -41,10 +42,17 @@ class Game():
         self.screen = pygame.display.set_mode((self.width, self.height), FLAGS)
         self.clock = pygame.time.Clock()
 
+        # Handle different displays
+        available_displays = {
+            'nx': DisplayNx,
+            'xml': DisplayXml
+        }
+        Display = available_displays[self.asset_type]
+
         # Create displays
         self.displays = {
             STATE_LOADING: Loading(self.width, self.height),
-            STATE_DISPLAY: DisplayNx(self.width, self.height, self.asset_path)
+            STATE_DISPLAY: Display(self.width, self.height, self.asset_path)
         }
 
         # Game state

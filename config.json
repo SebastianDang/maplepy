@@ -6,5 +6,6 @@
   "fps": 60,
   "loading_path": "./img/loading",
   "asset_path": "P:/Downloads/MapleStory",
+  "asset_type": "nx",
   "map": "000010000"
 }
