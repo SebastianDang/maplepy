@@ -86,13 +86,13 @@ class Game():
             cmd = command[0].lower()
             if cmd == 'loading':
                 fn = self.displays[STATE_LOADING].load_images
-                args = (command[1],)
+                args = tuple(command[1:3])
                 thread = threading.Thread(target=fn, args=args)
                 thread.start()
                 self.threads.append(thread)
             if cmd == 'map':
                 fn = self.displays[STATE_DISPLAY].load_map
-                args = (command[1],)
+                args = tuple(command[1:2])
                 thread = threading.Thread(target=fn, args=args)
                 thread.start()
                 self.threads.append(thread)
@@ -187,7 +187,8 @@ class Game():
     def run(self):
 
         # Setup loading display
-        self.handle_command(f'loading {self.loading_path}')
+        self.handle_command(
+            f'loading {self.loading_path} loading.repeat.1 asdf adsf')
 
         # Setup initial map
         self.handle_command(f'map {self.map}')
