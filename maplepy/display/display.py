@@ -49,7 +49,13 @@ class Display():
         self.view_limit = pygame.Rect(x, y, width, height)
 
     def update(self):
-        """ Update camera and sprites """
+        """
+        Update camera and sprites
+        Camera:
+            If view is larger than view_limit,
+            view is centered inside of view_limit,
+            but its size is unchanged.
+        """
 
         # Camera
         if self.view and self.view_limit:

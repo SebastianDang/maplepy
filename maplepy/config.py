@@ -58,7 +58,7 @@ class Config:
         self.__args[key] = item
 
     def __getitem__(self, key):
-        return self.__args[key]
+        return self.__args.get(key)
 
     def init(self, filename):
         logging.info(f'[{filename}]')
