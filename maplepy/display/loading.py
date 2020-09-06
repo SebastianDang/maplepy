@@ -15,9 +15,16 @@ class Loading():
         self.timer = 0
         self.delay = 10
 
-    def load_images(self, path):
+    def resize(self, w, h):
+        """ Resizes the display """
 
-        # Load images
+        self.images = [pygame.transform.scale(x, (w, h)) for x in self.images]
+        self.image = pygame.transform.scale(self.image, (w, h))
+        self.rect = pygame.Rect(0, 0, w, h)
+
+    def load_images(self, path):
+        """ Load a set of images """
+
         for i in range(0, 9):
             file = f'{path}/loading.repeat.1.{i}.png'
             if os.path.isfile(file):
@@ -28,6 +35,7 @@ class Loading():
                 break
 
     def update(self):
+        """ Update current image to next image """
 
         n = len(self.images)
         if n > 0:
@@ -44,9 +52,9 @@ class Loading():
                 self.image = self.images[self.images_index]
 
     def blit(self, surface):
+        """ Draw current image """
 
-        if surface:
-            if self.image:
-                surface.blit(self.image, self.rect)
-            else:
-                surface.fill((255, 255, 255, 0))
+        if self.image:
+            surface.blit(self.image, self.rect)
+        else:
+            surface.fill((255, 255, 255, 0))

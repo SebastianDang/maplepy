@@ -32,13 +32,14 @@ class Display():
         # Items are alwauys on top
         self.overlayed_sprites = None
 
-    def resize_view(self, w, h):
+    def resize(self, w, h):
         """ Resizes the display """
         self.width = w
         self.height = h
         x = self.view.x if self.view else 0
         y = self.view.y if self.view else 0
         self.view = pygame.Rect(x, y, w, h)
+        self.background = pygame.Surface((w, h))
 
     def move_view(self, x, y):
         """ Moves the view rect """

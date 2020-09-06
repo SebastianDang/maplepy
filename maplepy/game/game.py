@@ -8,7 +8,7 @@ from maplepy.nx.displaynx import DisplayNx
 from maplepy.display.console import Console
 from maplepy.display.loading import Loading
 
-FLAGS = pygame.HWSURFACE | pygame.HWACCEL | pygame.SRCALPHA
+FLAGS = pygame.HWSURFACE | pygame.HWACCEL | pygame.SRCALPHA | pygame.RESIZABLE
 CAMERA_SPEED = 4
 STATE_LOADING = 0
 STATE_DISPLAY = 1
@@ -127,6 +127,13 @@ class Game():
             if event.type == pygame.QUIT:
                 pygame.event.clear()
                 self.running = False
+
+            # Resized
+            if event.type == pygame.VIDEORESIZE:
+                self.width = event.w
+                self.height = event.h
+                for _, display in self.displays.items():
+                    display.resize(event.w, event.h)
 
             # Console input
             if state != STATE_LOADING and event.type == pygame.KEYDOWN:
