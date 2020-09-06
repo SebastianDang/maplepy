@@ -22,11 +22,11 @@ class Loading():
         self.image = pygame.transform.scale(self.image, (w, h))
         self.rect = pygame.Rect(0, 0, w, h)
 
-    def load_images(self, path, load):
+    def load_images(self, path, name):
         """ Load a set of images """
 
         for i in range(0, 20):
-            file = f'{path}/{load}.{i}.png'
+            file = f'{path}/{name}.{i}.png'
             if os.path.isfile(file):
                 image = pygame.image.load(file).convert_alpha()
                 image = pygame.transform.scale(image, self.rect.size)
