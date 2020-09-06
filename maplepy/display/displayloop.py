@@ -2,8 +2,8 @@ import os
 import pygame
 
 
-class Loading():
-    """ Class that handles display for loading. """
+class DisplayLoop():
+    """ Class that handles display for looping a set of images. """
 
     def __init__(self, w, h):
 
@@ -25,6 +25,7 @@ class Loading():
     def load_images(self, path, name):
         """ Load a set of images """
 
+        self.images.clear()
         for i in range(0, 20):
             file = f'{path}/{name}.{i}.png'
             if os.path.isfile(file):

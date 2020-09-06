@@ -6,7 +6,7 @@ from maplepy.config import Config
 from maplepy.xml.displayxml import DisplayXml
 from maplepy.nx.displaynx import DisplayNx
 from maplepy.display.console import Console
-from maplepy.display.loading import Loading
+from maplepy.display.displayloop import DisplayLoop
 
 FLAGS = pygame.HWSURFACE | pygame.HWACCEL | pygame.SRCALPHA | pygame.RESIZABLE
 CAMERA_SPEED = 4
@@ -51,7 +51,7 @@ class Game():
 
         # Create displays
         self.displays = {
-            STATE_LOADING: Loading(self.width, self.height),
+            STATE_LOADING: DisplayLoop(self.width, self.height),
             STATE_DISPLAY: Display(self.width, self.height, self.asset_path)
         }
 
