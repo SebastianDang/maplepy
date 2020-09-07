@@ -23,10 +23,10 @@ class Game():
         self.config.init(config_file)
         self.width = self.config['width']
         self.height = self.config['height']
-        self.loading_path = self.config['loading_path']
         self.asset_path = self.config['asset_path']
         self.asset_type = self.config['asset_type']
         self.map = self.config['map']
+        self.loading_display = self.config['loading_display_loop']
 
         # Start pygame
         pygame.init()
@@ -187,8 +187,7 @@ class Game():
     def run(self):
 
         # Setup loading display
-        self.handle_command(
-            f'loading {self.loading_path} loading.repeat.1 asdf adsf')
+        self.handle_command(f'loading {" ".join(self.loading_display)} ')
 
         # Setup initial map
         self.handle_command(f'map {self.map}')

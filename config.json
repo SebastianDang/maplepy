@@ -4,8 +4,11 @@
   "width": 1920,
   "height": 1080,
   "fps": 60,
-  "loading_path": "./img/loading",
   "asset_path": "P:/Downloads/MapleStory",
   "asset_type": "nx",
-  "map": "000010000"
+  "map": "000010000",
+  "loading_display_loop": [
+    "./img/loading",
+    "loading.repeat.1"
+  ]
 }
