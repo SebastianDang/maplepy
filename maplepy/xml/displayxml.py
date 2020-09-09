@@ -1,12 +1,11 @@
-import os
 import logging
+import os
+
 import pygame
 
-from maplepy.sound.bgm import SoundBgm
-
 import maplepy.display.display as display
+from maplepy.sound.bgm import SoundBgm
 from maplepy.xml.displayitemsxml import BackgroundSpritesXml, LayeredSpritesXml
-
 from maplepy.xml.mapxml import MapXml
 
 

@@ -1,5 +1,6 @@
-import os
 import logging
+import os
+
 import nx.nxfile as nxfile
 from nx.nxfileset import NXFileSet
 

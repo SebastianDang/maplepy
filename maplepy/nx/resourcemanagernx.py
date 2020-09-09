@@ -1,4 +1,5 @@
 import logging
+
 from maplepy.nx.spritenx import SpriteNx
 
 

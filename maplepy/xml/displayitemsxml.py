@@ -1,13 +1,13 @@
-import os
 import logging
+import os
+
 import pygame
 
 import maplepy.display.displayitems as displayitems
-
-from maplepy.xml.basexml import Layer, BaseXml
-from maplepy.info.instance import Instance
 from maplepy.info.canvas import Canvas
 from maplepy.info.foothold import Foothold
+from maplepy.info.instance import Instance
+from maplepy.xml.basexml import BaseXml, Layer
 
 # Cache individual xmls and images here
 xml_cache = {}

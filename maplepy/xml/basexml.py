@@ -1,7 +1,7 @@
-import os
 import logging
-from enum import Enum
+import os
 import xml.etree.ElementTree as ET
+from enum import Enum
 
 
 class Layer(Enum):

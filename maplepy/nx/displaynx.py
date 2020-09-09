@@ -1,16 +1,15 @@
-import os
 import logging
+import os
 import random
 import time
-import pygame
 
-from maplepy.sound.bgm import SoundBgm
+import pygame
 
 import maplepy.display.display as display
 from maplepy.nx.displayitemsnx import BackgroundSpritesNx, LayeredSpritesNx
-
 from maplepy.nx.mapnx import MapNx
 from maplepy.nx.soundnx import SoundNx
+from maplepy.sound.bgm import SoundBgm
 
 map_file_names = ['map.nx', 'map001.nx', 'map002.nx', 'map2.nx']
 sound_file_names = ['sound.nx', 'sound001.nx', 'sound2.nx']

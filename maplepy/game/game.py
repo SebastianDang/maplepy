@@ -1,12 +1,13 @@
-import threading
 import logging
+import threading
+
 import pygame
 
 from maplepy.config import Config
-from maplepy.xml.displayxml import DisplayXml
-from maplepy.nx.displaynx import DisplayNx
 from maplepy.display.console import Console
 from maplepy.display.displayloop import DisplayLoop
+from maplepy.nx.displaynx import DisplayNx
+from maplepy.xml.displayxml import DisplayXml
 
 FLAGS = pygame.HWSURFACE | pygame.HWACCEL | pygame.SRCALPHA | pygame.RESIZABLE
 CAMERA_SPEED = 4
@@ -125,13 +126,11 @@ class Game():
 
             # Quit application
             if event.type == pygame.QUIT:
-                pygame.event.clear()
                 self.running = False
 
-            # Resized
+            # Resize window
             if event.type == pygame.VIDEORESIZE:
-                self.width = event.w
-                self.height = event.h
+                self.width, self.height = event.w, event.h
                 for _, display in self.displays.items():
                     display.resize(event.w, event.h)
 
@@ -160,11 +159,11 @@ class Game():
 
     def handle_inputs(self):
 
-        # Prevent quickly pressed keys, remove if done
-        self.pressed = {k: v-1 for k, v in self.pressed.items() if v > 1}
-
         # Get current state
         state = self.get_state()
+
+        # Prevent quickly pressed keys, remove if done
+        self.pressed = {k: v-1 for k, v in self.pressed.items() if v > 1}
 
         # Get inputs
         # mouse_x, mouse_y = pygame.mouse.get_pos()
