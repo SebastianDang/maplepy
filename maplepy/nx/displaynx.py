@@ -93,6 +93,7 @@ class DisplayNx(display.Display):
 
         # Get info, minimap, foothold
         info = self.map_nx.get_info(map_id)
+        seat = self.map_nx.get_seat(map_id)
         minimap = self.map_nx.get_minimap(map_id)
         foothold = self.map_nx.get_foothold(map_id)
         ladder = self.map_nx.get_ladder(map_id)

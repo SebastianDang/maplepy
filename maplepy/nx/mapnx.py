@@ -187,6 +187,23 @@ class MapNx:
         # Return
         return ladder
 
+    def get_seat(self, map_id):
+        """ Return seat data for the map """
+
+        seat = {}
+
+        # Get minimap node
+        path = f'Map/Map{map_id[0:1]}/{map_id}.img/seat'
+        seat_node = self.file.resolve(path)
+        if not seat_node:
+            return None
+
+        # Get values
+        seat = self.get_values(seat_node)
+
+        # Return
+        return seat
+
     def get_minimap(self, map_id):
         """ Return mini map data for the map """
 
