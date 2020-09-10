@@ -1,12 +1,10 @@
 import logging
 import os
 
-import nx.nxfile as nxfile
 from nx.nxfileset import NXFileSet
 
 
 class MapNx:
-
     """ Helper class to get values from a map nx file. """
 
     def __init__(self):
@@ -19,7 +17,6 @@ class MapNx:
         if not os.path.exists(file):
             logging.warning(f'{file} does not exist')
             return
-
         try:
             # Open nx file
             self.file.load(file)
@@ -50,7 +47,7 @@ class MapNx:
         path = f'Map/Map{map_id[0:1]}/{map_id}.img'
         return self.file.resolve(path)
 
-    def get_info_data(self, map_id):
+    def get_info(self, map_id):
         """ Return info data for the map """
 
         info = {}
@@ -67,7 +64,7 @@ class MapNx:
         # Return
         return info
 
-    def get_back_data(self, map_id):
+    def get_back(self, map_id):
         """ Return back data for the map """
 
         back = []
@@ -87,7 +84,7 @@ class MapNx:
         # Return
         return back
 
-    def get_life_data(self, map_id):
+    def get_life(self, map_id):
         """ Return life data for the map """
 
         life = []
@@ -107,7 +104,7 @@ class MapNx:
         # Return
         return life
 
-    def get_layer_data(self, map_id, index):
+    def get_layer(self, map_id, index):
         """ Return layer data for the map """
 
         layer = {}
@@ -142,11 +139,11 @@ class MapNx:
         layer = {'info': info, 'tile': tiles, 'obj': objects}
         return layer
 
-    def get_reactor_data(self, map_id):
+    def get_reactor(self, map_id):
         """ Return reactor data for the map """
         pass
 
-    def get_foothold_data(self, map_id):
+    def get_foothold(self, map_id):
         """ Return foothold data for the map """
 
         foothold = {}
@@ -170,7 +167,7 @@ class MapNx:
         # Return
         return foothold
 
-    def get_ladder_data(self, map_id):
+    def get_ladder(self, map_id):
         """ Return ladder rope data for the map """
 
         ladder = {}
@@ -190,7 +187,7 @@ class MapNx:
         # Return
         return ladder
 
-    def get_minimap_data(self, map_id):
+    def get_minimap(self, map_id):
         """ Return mini map data for the map """
 
         minimap = {}
@@ -208,7 +205,7 @@ class MapNx:
         # Return
         return minimap
 
-    def get_portal_data(self, map_id):
+    def get_portal(self, map_id):
         """ Return portal data for the map """
 
         portal = []

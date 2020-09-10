@@ -1,5 +1,7 @@
 import os
+
 from nx.nxfile import NXFile
+
 
 def test_nximage():
     node = NXFile(os.path.join(os.path.dirname(__file__),  'map.nx')).resolve(

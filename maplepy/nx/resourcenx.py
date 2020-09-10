@@ -3,7 +3,7 @@ import logging
 from maplepy.nx.spritenx import SpriteNx
 
 
-class ResourceManagerNx():
+class ResourceNx():
     """ Helper class to manage nx data. Load once, then store as cache """
 
     def __init__(self):

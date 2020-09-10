@@ -1,5 +1,7 @@
-import pytest
 import os
+
+import pytest
+
 from nx.nxfile import NXFile
 
 

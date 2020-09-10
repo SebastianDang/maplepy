@@ -4,12 +4,11 @@ import pygame
 
 import maplepy.display.displayitems as displayitems
 from maplepy.info.canvas import Canvas
-from maplepy.info.foothold import Foothold
 from maplepy.info.instance import Instance
-from maplepy.nx.resourcemanagernx import ResourceManagerNx
+from maplepy.nx.resourcenx import ResourceNx
 
 # Create a single resource manager
-resource_manager = ResourceManagerNx()
+resource_manager = ResourceNx()
 
 
 class BackgroundSpritesNx(displayitems.BackgroundSprites):
@@ -23,7 +22,7 @@ class BackgroundSpritesNx(displayitems.BackgroundSprites):
     def load_background(self, map_nx, map_id):
 
         # Load back sprites
-        values = map_nx.get_back_data(map_id)
+        values = map_nx.get_back(map_id)
         if not values:
             logging.warning('Background data not found')
             return
@@ -145,7 +144,7 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
     def load_layer(self, map_nx, map_id, index):
 
         # Load current layer
-        values = map_nx.get_layer_data(map_id, index)
+        values = map_nx.get_layer(map_id, index)
         if not values:
             logging.warning('Layer data not found')
             return
@@ -275,7 +274,7 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
     def load_portal(self, map_nx, map_id):
 
         # Load portal list
-        values = map_nx.get_portal_data(map_id)
+        values = map_nx.get_portal(map_id)
         if not values:
             logging.warning('Portal data not found')
             return

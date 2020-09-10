@@ -1,8 +1,10 @@
-import pygame
 import os
-from nx.nxfile import NXFile
+
+import pygame
+
+from maplepy.nx.resourcenx import ResourceNx
 from maplepy.nx.spritenx import SpriteNx
-from maplepy.nx.resourcemanagernx import ResourceManagerNx
+from nx.nxfile import NXFile
 
 
 def test_nxsprite():
@@ -88,7 +90,7 @@ def test_nxspritemanager():
     screen = pygame.display.set_mode((800, 600))
 
     file = NXFile(os.path.join(os.path.dirname(__file__),  'map.nx'))
-    manager = ResourceManagerNx()
+    manager = ResourceNx()
     manager.file = file
     sprite = manager.get_sprite(file, 'Back', 'grassySoil_new', 'back', '0')
     sprite2 = manager.get_sprite(file, 'Tile', 'grassySoil', 'enV0', '1',)
