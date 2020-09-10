@@ -4,7 +4,7 @@ import os
 import pygame
 
 import maplepy.display.display as display
-from maplepy.sound.bgm import SoundBgm
+from maplepy.sound.bgm import Bgm
 from maplepy.xml.displayitemsxml import BackgroundSpritesXml, LayeredSpritesXml
 from maplepy.xml.mapxml import MapXml
 
@@ -20,7 +20,7 @@ class DisplayXml(display.Display):
         self.path = path
 
         # Music
-        self.bgm = SoundBgm()
+        self.bgm = Bgm()
 
         # Objects in the map
         self.map_xml = None

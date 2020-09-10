@@ -3,7 +3,8 @@ import os
 import pygame
 
 
-class SoundBgm:
+class Bgm:
+    """ Class to handle sounds from a file or from a buffer """
 
     def __init__(self):
         self.name = None
