@@ -12,6 +12,7 @@ class ResourceNx():
         self.sprites = {}
 
     def get_data(self, file, category, folder, subtype, name):
+        """ Returns the node's values """
 
         # Create key
         folder += '.img'
@@ -45,6 +46,7 @@ class ResourceNx():
         return data
 
     def get_sprite(self, file, category, folder, subtype, name):
+        """ Returns the node's sprite """
 
         # Create key
         folder += '.img'
@@ -75,6 +77,7 @@ class ResourceNx():
         return self.add_sprite(key, image)
 
     def add_sprite(self, key, image):
+        """ Loads data into a sprite object, then stores it in the cache """
 
         # Load as nx sprite
         sprite = SpriteNx()
