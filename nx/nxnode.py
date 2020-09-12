@@ -155,7 +155,6 @@ class NXNode():
                       type=data[3])
 
         # Check type
-        node.type
         if node.type == 0:  # null
             file.seek(8, 1)  # skip 8 bytes
         elif node.type == 1:  # long
