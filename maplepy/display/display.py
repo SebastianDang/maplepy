@@ -29,7 +29,7 @@ class Display():
         # Objects in the map
         self.layered_sprites = []
 
-        # Items are alwauys on top
+        # Items are always on top
         self.overlayed_sprites = None
 
     def resize(self, w, h):
