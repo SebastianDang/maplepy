@@ -32,6 +32,24 @@ class NXFile():
         self.soundCount = int.from_bytes(self.file.read(4), 'little')
         self.soundOffset = int.from_bytes(self.file.read(8), 'little')
 
+        # Print header
+        self.dumpHeader()
+
+        # Init data
+        self.nodes = [None] * self.nodeCount
+        self.strings = {}
+        self.images = {}
+        self.sounds = {}
+
+        # Populate data
+        if populate:
+            self.populateNodes()
+            self.populateNodeChildren()
+            self.populateStrings()
+
+    def dumpHeader(self):
+        """ Dump header data """
+
         logging.info(f'{self.path}')
         logging.info(f'nodeCount: {self.nodeCount}')
         logging.info(f'nodeOffset: {self.nodeOffset}')
@@ -41,17 +59,6 @@ class NXFile():
         logging.info(f'imageOffset: {self.imageOffset}')
         logging.info(f'soundCount: {self.soundCount}')
         logging.info(f'soundOffset: {self.soundOffset}')
-
-        self.nodes = [None] * self.nodeCount
-        self.strings = {}
-        self.images = {}
-        self.sounds = {}
-
-        # Setup tables
-        if populate:
-            self.populateNodes()
-            self.populateNodeChildren()
-            self.populateStrings()
 
     def populateNodes(self):
         """ Populate nodes """
