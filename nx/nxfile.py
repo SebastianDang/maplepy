@@ -8,7 +8,7 @@ from nx.nxnode import NXNode
 class NXFile():
     """ Read from the NX file format [PKG4] """
 
-    def __init__(self, path, parent=None):
+    def __init__(self, path, parent=None, populate=None):
 
         # Update variables
         self.path = path
@@ -47,10 +47,11 @@ class NXFile():
         self.images = {}
         self.sounds = {}
 
-        # # Setup tables
-        # self.populateNodesTable()
-        # self.populateStringsTable()
-        self.populateNodeChildren()
+        # Setup tables
+        if populate:
+            self.populateNodes()
+            self.populateNodeChildren()
+            self.populateStrings()
 
     def populateNodes(self):
         """ Populate nodes """
