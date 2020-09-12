@@ -4,7 +4,7 @@ import os
 
 from pydub import AudioSegment
 
-from nx.nxfileset import NXFileSet
+from nx.nxfile import NXFileSet
 
 
 class SoundNx:

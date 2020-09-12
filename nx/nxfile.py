@@ -1,7 +1,8 @@
 import logging
+import os
 import struct
 
-import nx.nodeparser as nodeparser
+from nx.nxnode import NXNode
 
 
 class NXFile():
@@ -49,27 +50,32 @@ class NXFile():
         # # Setup tables
         # self.populateNodesTable()
         # self.populateStringsTable()
-        # self.populateNodeChildren()
+        self.populateNodeChildren()
 
-        # # Setup images
-        # self.file.seek(self.imageOffset)
-        # for i in range(self.imageCount):
-        #     offset = int.from_bytes(self.file.read(8), 'little')
-        #     self.images[i] = Image(self, offset)
+    def populateNodes(self):
+        """ Populate nodes """
 
-        # # Setup sounds
-        # self.file.seek(self.soundOffset)
-        # for i in range(self.soundCount):
-        #     offset = int.from_bytes(self.file.read(8), 'little')
-        #     self.sounds[i] = Sound(self, offset)
-
-    def populateNodesTable(self):
+        # Begin at the node offset
         self.file.seek(self.nodeOffset)
-        for i in range(self.nodeCount):
-            self.nodes[i] = nodeparser.parseNode(self)
 
-    def populateStringsTable(self):
+        # Parse each node
+        for i in range(self.nodeCount):
+            self.nodes[i] = NXNode.parseNode(self)
+
+    def populateNodeChildren(self):
+        """ Populate node's immediate children """
+
+        for node in self.nodes:
+            if node:
+                node.populateChildren()
+
+    def populateStrings(self):
+        """ Populate strings """
+
+        # Begin at the string offset
         self.file.seek(self.stringOffset)
+
+        # Parse each string
         for i in range(self.stringCount):
             offset = int.from_bytes(self.file.read(8), 'little')
             position = self.file.tell()
@@ -77,10 +83,6 @@ class NXFile():
             length = int.from_bytes(self.file.read(2), 'little')
             self.strings[i] = self.file.read(length).decode('utf-8')
             self.file.seek(position)
-
-    def populateNodeChildren(self):
-        for node in self.nodes:
-            node.populateChildren()
 
     def getString(self, index):
         """ Get string by index """
@@ -113,7 +115,7 @@ class NXFile():
         self.file.seek(self.nodeOffset + index * 20)  # offset by node size
 
         # Read and save node
-        self.nodes[index] = nodeparser.parseNode(self)
+        self.nodes[index] = NXNode.parseNode(self)
         return self.nodes[index]
 
     def getRoot(self):
@@ -123,3 +125,36 @@ class NXFile():
     def resolve(self, path):
         """ Resolve path starting from root """
         return self.getRoot().resolve(path)
+
+
+class NXFileSet:
+    """ Create a set of nx files that share data """
+
+    def __init__(self, *argv):
+
+        self.nxfiles = []
+        for arg in argv:
+            self.load(arg)
+
+    def load(self, path):
+        """ Create a new nx file and add it to set """
+
+        # Check if path exists before adding
+        if not os.path.exists(path):
+            logging.warning(f'{path} does not exist')
+            return
+
+        # Create nx file, set parent to self
+        self.nxfiles.append(NXFile(path=path, parent=self))
+
+    def resolve(self, path):
+        """ Resolve for each file (DFS-like) """
+
+        # Attempt to resolve until success
+        for nxfile in self.nxfiles:
+            node = nxfile.resolve(path)
+            if node:
+                return node
+
+        logging.warning(f'{path} failed to resolve')
+        return None
