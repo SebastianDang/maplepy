@@ -102,7 +102,7 @@ class NXNode():
 
             # Load image from node
             self.nxfile.file.seek(
-                self.nxfile.imageOffset + self.imageIndex * 8)
+                self.nxfile.image_offset + self.imageIndex * 8)
             offset = int.from_bytes(self.nxfile.file.read(8), 'little')
             image = NXImage(self.nxfile, offset, self.width, self.height)
             self.nxfile.images[self.imageIndex] = image
@@ -118,7 +118,7 @@ class NXNode():
 
             # Load sound from node
             self.nxfile.file.seek(
-                self.nxfile.soundOffset + self.soundIndex * 8)
+                self.nxfile.sound_offset + self.soundIndex * 8)
             offset = int.from_bytes(self.nxfile.file.read(8), 'little')
             sound = NXSound(self.nxfile, offset)
             self.nxfile.sounds[self.soundIndex] = sound

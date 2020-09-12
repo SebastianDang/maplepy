@@ -8,6 +8,8 @@ from nx.nxnode import NXNode
 class NXFile():
     """ Read from the NX file format [PKG4] """
 
+    _MAGIC = 'PKG4'
+
     def __init__(self, path, parent=None, populate=None):
 
         # Update variables
@@ -19,24 +21,24 @@ class NXFile():
 
         # Check for nx pkg4 type
         magic = self.file.read(4).decode('ascii')
-        if magic != 'PKG4':
+        if magic != NXFile._MAGIC:
             raise Exception('Cannot read file. Invalid format')
 
         # Header info
-        self.nodeCount = int.from_bytes(self.file.read(4), 'little')
-        self.nodeOffset = int.from_bytes(self.file.read(8), 'little')
-        self.stringCount = int.from_bytes(self.file.read(4), 'little')
-        self.stringOffset = int.from_bytes(self.file.read(8), 'little')
-        self.imageCount = int.from_bytes(self.file.read(4), 'little')
-        self.imageOffset = int.from_bytes(self.file.read(8), 'little')
-        self.soundCount = int.from_bytes(self.file.read(4), 'little')
-        self.soundOffset = int.from_bytes(self.file.read(8), 'little')
+        self.node_count = int.from_bytes(self.file.read(4), 'little')
+        self.node_offset = int.from_bytes(self.file.read(8), 'little')
+        self.string_count = int.from_bytes(self.file.read(4), 'little')
+        self.string_offset = int.from_bytes(self.file.read(8), 'little')
+        self.image_count = int.from_bytes(self.file.read(4), 'little')
+        self.image_offset = int.from_bytes(self.file.read(8), 'little')
+        self.sound_count = int.from_bytes(self.file.read(4), 'little')
+        self.sound_offset = int.from_bytes(self.file.read(8), 'little')
 
         # Print header
         self.dump_header()
 
         # Init data
-        self.nodes = [None] * self.nodeCount
+        self.nodes = [None] * self.node_count
         self.strings = {}
         self.images = {}
         self.sounds = {}
@@ -51,23 +53,23 @@ class NXFile():
         """ Dump header data """
 
         logging.info(f'{self.path}')
-        logging.info(f'nodeCount: {self.nodeCount}')
-        logging.info(f'nodeOffset: {self.nodeOffset}')
-        logging.info(f'stringCount: {self.stringCount}')
-        logging.info(f'stringOffset: {self.stringOffset}')
-        logging.info(f'imageCount: {self.imageCount}')
-        logging.info(f'imageOffset: {self.imageOffset}')
-        logging.info(f'soundCount: {self.soundCount}')
-        logging.info(f'soundOffset: {self.soundOffset}')
+        logging.info(f'node_count: {self.node_count}')
+        logging.info(f'node_offset: {self.node_offset}')
+        logging.info(f'string_count: {self.string_count}')
+        logging.info(f'string_offset: {self.string_offset}')
+        logging.info(f'image_count: {self.image_count}')
+        logging.info(f'image_offset: {self.image_offset}')
+        logging.info(f'sound_count: {self.sound_count}')
+        logging.info(f'sound_offset: {self.sound_offset}')
 
     def populate_nodes(self):
         """ Populate nodes """
 
         # Begin at the node offset
-        self.file.seek(self.nodeOffset)
+        self.file.seek(self.node_offset)
 
         # Parse each node
-        for i in range(self.nodeCount):
+        for i in range(self.node_count):
             self.nodes[i] = NXNode.parse_node(self)
 
     def populate_node_children(self):
@@ -81,35 +83,16 @@ class NXFile():
         """ Populate strings """
 
         # Begin at the string offset
-        self.file.seek(self.stringOffset)
+        self.file.seek(self.string_offset)
 
         # Parse each string
-        for i in range(self.stringCount):
+        for i in range(self.string_count):
             offset = int.from_bytes(self.file.read(8), 'little')
             position = self.file.tell()
             self.file.seek(offset)
             length = int.from_bytes(self.file.read(2), 'little')
             self.strings[i] = self.file.read(length).decode('utf-8')
             self.file.seek(position)
-
-    def get_string(self, index):
-        """ Get string by index """
-
-        # If string was already read
-        string = self.strings.get(index)
-        if string:
-            return string
-
-        # Move to string index
-        self.file.seek(self.stringOffset + index * 8)
-
-        # Move to location where the string is stored
-        self.file.seek(int.from_bytes(self.file.read(8), 'little'))
-        length = int.from_bytes(self.file.read(2), 'little')
-
-        # Read and save string
-        self.strings[index] = self.file.read(length).decode('utf-8')
-        return self.strings[index]
 
     def get_node(self, index):
         """ Get node by index """
@@ -120,19 +103,38 @@ class NXFile():
             return node
 
         # Move to location the node is stored
-        self.file.seek(self.nodeOffset + index * 20)  # offset by node size
+        self.file.seek(self.node_offset + index * 20)  # offset by node size
 
         # Read and save node
         self.nodes[index] = NXNode.parse_node(self)
         return self.nodes[index]
 
-    def get_root(self):
+    def get_root_node(self):
         """ Return root node """
         return self.get_node(0)
 
+    def get_string(self, index):
+        """ Get string by index """
+
+        # If string was already read
+        string = self.strings.get(index)
+        if string:
+            return string
+
+        # Move to string index
+        self.file.seek(self.string_offset + index * 8)
+
+        # Move to location where the string is stored
+        self.file.seek(int.from_bytes(self.file.read(8), 'little'))
+        length = int.from_bytes(self.file.read(2), 'little')
+
+        # Read and save string
+        self.strings[index] = self.file.read(length).decode('utf-8')
+        return self.strings[index]
+
     def resolve(self, path):
         """ Resolve path starting from root """
-        return self.get_root().resolve(path)
+        return self.get_root_node().resolve(path)
 
 
 class NXFileSet:
