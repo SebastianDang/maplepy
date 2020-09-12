@@ -25,7 +25,7 @@ class MapNx:
 
     def get_values(self, node):
         """ Return the node's children as a dictionary """
-        return {c.name: c.value for c in node.getChildren()}
+        return {c.name: c.value for c in node.get_children()}
 
     def get_map_nodes(self):
         """ Return all available map nodes """
@@ -36,7 +36,7 @@ class MapNx:
         for i in range(0, 9):
             map_digit = self.file.resolve(f'Map/Map{i}')
             if map_digit:
-                for child in map_digit.getChildren():
+                for child in map_digit.get_children():
                     map_nodes[child.name] = child.value
 
         # Return
@@ -76,7 +76,7 @@ class MapNx:
             return None
 
         # Get values
-        for node in back_node.getChildren():
+        for node in back_node.get_children():
             values = self.get_values(node)
             values['name'] = node.name
             back.append(values)
@@ -96,7 +96,7 @@ class MapNx:
             return None
 
         # Get values
-        for node in life_node.getChildren():
+        for node in life_node.get_children():
             values = self.get_values(node)
             values['name'] = node.name
             life.append(values)
@@ -116,21 +116,21 @@ class MapNx:
             return None
 
         # Get info for this layer
-        info_node = layer_node.getChild('info')
+        info_node = layer_node.get_child('info')
         info = self.get_values(info_node)
 
         # Get tiles for this layer
         tiles = []
-        tile_node = layer_node.getChild('tile')
-        for node in tile_node.getChildren():
+        tile_node = layer_node.get_child('tile')
+        for node in tile_node.get_children():
             values = self.get_values(node)
             values['name'] = node.name
             tiles.append(values)
 
         # Get objects for this layer
         objects = []
-        object_node = layer_node.getChild('obj')
-        for node in object_node.getChildren():
+        object_node = layer_node.get_child('obj')
+        for node in object_node.get_children():
             values = self.get_values(node)
             values['name'] = node.name
             objects.append(values)
@@ -155,10 +155,10 @@ class MapNx:
             return None
 
         # Get values
-        for layer in foothold_node.getChildren():
-            for array in layer.getChildren():
+        for layer in foothold_node.get_children():
+            for array in layer.get_children():
                 group = []
-                for node in array.getChildren():
+                for node in array.get_children():
                     values = self.get_values(node)
                     values['name'] = node.name
                     group.append(values)
@@ -179,7 +179,7 @@ class MapNx:
             return None
 
         # Get values
-        for node in ladder_node.getChildren():
+        for node in ladder_node.get_children():
             values = self.get_values(node)
             values['name'] = node.name
             ladder[node.name] = values
@@ -217,7 +217,7 @@ class MapNx:
 
         # Get values
         minimap = self.get_values(minimap_node)
-        minimap['canvas_image'] = minimap_node['canvas'].getImage()
+        minimap['canvas_image'] = minimap_node['canvas'].get_image()
 
         # Return
         return minimap
@@ -234,7 +234,7 @@ class MapNx:
             return None
 
         # Get values
-        for node in portal_node.getChildren():
+        for node in portal_node.get_children():
             values = self.get_values(node)
             values['name'] = node.name
             portal.append(values)

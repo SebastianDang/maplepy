@@ -4,7 +4,7 @@ class NXSound:
         self.nxfile = nxfile
         self.offset = offset
 
-    def getData(self, length):
+    def get_data(self, length):
         """ Get sound data """
         self.nxfile.file.seek(self.offset)
         return self.nxfile.file.read(length)

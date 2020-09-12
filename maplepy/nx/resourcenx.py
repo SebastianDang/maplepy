@@ -37,7 +37,7 @@ class ResourceNx():
             return None
 
         # Parse into dictionary
-        for child in node.getChildren():
+        for child in node.get_children():
             if hasattr(child, 'value'):
                 data[child.name] = child.value
 
@@ -69,7 +69,7 @@ class ResourceNx():
             return None
 
         # Get image
-        image = node.getImage()
+        image = node.get_image()
         if not image:
             logging.warning(f'{key} is not a sprite')
             return None
@@ -81,7 +81,7 @@ class ResourceNx():
 
         # Load as nx sprite
         sprite = SpriteNx()
-        sprite.load(image.width, image.height, image.getData())
+        sprite.load(image.width, image.height, image.get_data())
 
         # Store and return
         self.sprites[key] = sprite

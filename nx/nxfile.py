@@ -33,7 +33,7 @@ class NXFile():
         self.soundOffset = int.from_bytes(self.file.read(8), 'little')
 
         # Print header
-        self.dumpHeader()
+        self.dump_header()
 
         # Init data
         self.nodes = [None] * self.nodeCount
@@ -43,11 +43,11 @@ class NXFile():
 
         # Populate data
         if populate:
-            self.populateNodes()
-            self.populateNodeChildren()
-            self.populateStrings()
+            self.populate_nodes()
+            self.populate_node_children()
+            self.populate_strings()
 
-    def dumpHeader(self):
+    def dump_header(self):
         """ Dump header data """
 
         logging.info(f'{self.path}')
@@ -60,7 +60,7 @@ class NXFile():
         logging.info(f'soundCount: {self.soundCount}')
         logging.info(f'soundOffset: {self.soundOffset}')
 
-    def populateNodes(self):
+    def populate_nodes(self):
         """ Populate nodes """
 
         # Begin at the node offset
@@ -68,16 +68,16 @@ class NXFile():
 
         # Parse each node
         for i in range(self.nodeCount):
-            self.nodes[i] = NXNode.parseNode(self)
+            self.nodes[i] = NXNode.parse_node(self)
 
-    def populateNodeChildren(self):
+    def populate_node_children(self):
         """ Populate node's immediate children """
 
         for node in self.nodes:
             if node:
                 node.populateChildren()
 
-    def populateStrings(self):
+    def populate_strings(self):
         """ Populate strings """
 
         # Begin at the string offset
@@ -92,7 +92,7 @@ class NXFile():
             self.strings[i] = self.file.read(length).decode('utf-8')
             self.file.seek(position)
 
-    def getString(self, index):
+    def get_string(self, index):
         """ Get string by index """
 
         # If string was already read
@@ -111,7 +111,7 @@ class NXFile():
         self.strings[index] = self.file.read(length).decode('utf-8')
         return self.strings[index]
 
-    def getNode(self, index):
+    def get_node(self, index):
         """ Get node by index """
 
         # If node was already read
@@ -123,16 +123,16 @@ class NXFile():
         self.file.seek(self.nodeOffset + index * 20)  # offset by node size
 
         # Read and save node
-        self.nodes[index] = NXNode.parseNode(self)
+        self.nodes[index] = NXNode.parse_node(self)
         return self.nodes[index]
 
-    def getRoot(self):
+    def get_root(self):
         """ Return root node """
-        return self.getNode(0)
+        return self.get_node(0)
 
     def resolve(self, path):
         """ Resolve path starting from root """
-        return self.getRoot().resolve(path)
+        return self.get_root().resolve(path)
 
 
 class NXFileSet:

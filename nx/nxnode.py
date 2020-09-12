@@ -26,16 +26,16 @@ class NXNode():
         self._value = None
 
     def __getitem__(self, key):
-        return self.getChild(key)
+        return self.get_child(key)
 
     @property
     def name(self):
-        return self.nxfile.getString(self.nameIndex)
+        return self.nxfile.get_string(self.nameIndex)
 
     @property
     def value(self):
         if self.type == 3:  # string
-            return self.nxfile.getString(self.stringIndex)
+            return self.nxfile.get_string(self.stringIndex)
 
         return self._value
 
@@ -43,7 +43,7 @@ class NXNode():
     def value(self, value):
         self._value = value
 
-    def populateChildren(self):
+    def populate_children(self):
         """ Populates immediate child nodes. No-ops if ran more than once. """
 
         # Check if there are any children or already populated
@@ -53,40 +53,28 @@ class NXNode():
         # Populate child map
         childMap = {}
         for i in range(self.childIndex, self.childIndex + self.childCount):
-            childNode = self.nxfile.getNode(i)
+            childNode = self.nxfile.get_node(i)
             childMap[childNode.name] = childNode
 
         # Update variable
         self.childMap = childMap
 
-    def listChildren(self):
+    def list_children(self):
         """ Lists names of children nodes. """
-        self.populateChildren()
+        self.populate_children()
         return list(self.childMap.keys())
 
-    def getChildren(self):
+    def get_children(self):
         """ Get children nodes as a list. """
-        self.populateChildren()
+        self.populate_children()
         return list(self.childMap.values())
 
-    def getChild(self, name):
+    def get_child(self, name):
         """ Get child node by name """
-        self.populateChildren()
+        self.populate_children()
         return self.childMap.get(name)
 
-    def resolve(self, path):
-        """ Get child node by path """
-
-        paths = path.split('/')
-        node = self
-        for path in paths:
-            node = node.getChild(path)
-            if not node:
-                return None
-
-        return node
-
-    def getImage(self):
+    def get_image(self):
         """ Get image at current index """
 
         image = self.nxfile.images.get(self.imageIndex)
@@ -108,7 +96,7 @@ class NXNode():
 
                 # Return outlink node
                 if outlinkNode:
-                    image = outlinkNode.getImage()
+                    image = outlinkNode.get_image()
                     self.nxfile.images[self.imageIndex] = image
                     return image
 
@@ -121,7 +109,7 @@ class NXNode():
 
         return image
 
-    def getSound(self):
+    def get_sound(self):
         """ Get sound at current index """
 
         sound = self.nxfile.sounds.get(self.soundIndex)
@@ -135,10 +123,22 @@ class NXNode():
             sound = NXSound(self.nxfile, offset)
             self.nxfile.sounds[self.soundIndex] = sound
 
-        return sound.getData(self.length) if sound else None
+        return sound.get_data(self.length) if sound else None
+
+    def resolve(self, path):
+        """ Get child node by path """
+
+        paths = path.split('/')
+        node = self
+        for path in paths:
+            node = node.get_child(path)
+            if not node:
+                return None
+
+        return node
 
     @staticmethod
-    def parseNode(nxfile):
+    def parse_node(nxfile):
         """ Parse the node at the current file pointer """
 
         file = nxfile.file

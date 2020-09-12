@@ -9,7 +9,7 @@ class NXImage:
         self.width = width
         self.height = height
 
-    def getData(self):
+    def get_data(self):
         """ Get image data """
         self.nxfile.file.seek(self.offset)
         compressedSize = int.from_bytes(self.nxfile.file.read(4), 'little')
