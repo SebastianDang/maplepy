@@ -77,7 +77,7 @@ class NXFile():
 
         for node in self.nodes:
             if node:
-                node.populateChildren()
+                node.populate_children()
 
     def populate_strings(self):
         """ Populate strings """

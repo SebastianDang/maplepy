@@ -6,23 +6,29 @@ from nx.nxsound import NXSound
 
 class NXNode():
 
-    def __init__(self,  nxfile, nameIndex, childIndex, childCount, type):
+    def __init__(self,  nxfile, name_index, child_index, child_count, type):
 
         # Constructor
         self.nxfile = nxfile
-        self.nameIndex = nameIndex
-        self.childIndex = childIndex
-        self.childCount = childCount
+        self.name_index = name_index
+        self.child_index = child_index
+        self.child_count = child_count
         self.type = type
 
         # Variables
-        self.childMap = {}
-        self.stringIndex = None
-        self.imageIndex = None
+        self.child_map = {}
+        self.string_index = None
+
+        # NxImage
+        self.image_index = None
         self.width = None
         self.height = None
-        self.soundIndex = None
+
+        # NxSound
+        self.sound_index = None
         self.length = None
+
+        # Value
         self._value = None
 
     def __getitem__(self, key):
@@ -30,12 +36,12 @@ class NXNode():
 
     @property
     def name(self):
-        return self.nxfile.get_string(self.nameIndex)
+        return self.nxfile.get_string(self.name_index)
 
     @property
     def value(self):
         if self.type == 3:  # string
-            return self.nxfile.get_string(self.stringIndex)
+            return self.nxfile.get_string(self.string_index)
 
         return self._value
 
@@ -47,37 +53,37 @@ class NXNode():
         """ Populates immediate child nodes. No-ops if ran more than once. """
 
         # Check if there are any children or already populated
-        if self.childCount == 0 or self.childMap:
+        if self.child_count == 0 or self.child_map:
             return
 
         # Populate child map
-        childMap = {}
-        for i in range(self.childIndex, self.childIndex + self.childCount):
-            childNode = self.nxfile.get_node(i)
-            childMap[childNode.name] = childNode
+        child_map = {}
+        for i in range(self.child_index, self.child_index + self.child_count):
+            child_node = self.nxfile.get_node(i)
+            child_map[child_node.name] = child_node
 
         # Update variable
-        self.childMap = childMap
+        self.child_map = child_map
 
     def list_children(self):
         """ Lists names of children nodes. """
         self.populate_children()
-        return list(self.childMap.keys())
+        return list(self.child_map.keys())
 
     def get_children(self):
         """ Get children nodes as a list. """
         self.populate_children()
-        return list(self.childMap.values())
+        return list(self.child_map.values())
 
     def get_child(self, name):
         """ Get child node by name """
         self.populate_children()
-        return self.childMap.get(name)
+        return self.child_map.get(name)
 
     def get_image(self):
         """ Get image at current index """
 
-        image = self.nxfile.images.get(self.imageIndex)
+        image = self.nxfile.images.get(self.image_index)
 
         if not image:
 
@@ -90,38 +96,38 @@ class NXNode():
 
                 # Resolve using parent fileset or current file
                 if self.nxfile.parent:
-                    outlinkNode = self.nxfile.parent.resolve(path)
+                    outlink_node = self.nxfile.parent.resolve(path)
                 else:
-                    outlinkNode = self.nxfile.resolve(path)
+                    outlink_node = self.nxfile.resolve(path)
 
                 # Return outlink node
-                if outlinkNode:
-                    image = outlinkNode.get_image()
-                    self.nxfile.images[self.imageIndex] = image
+                if outlink_node:
+                    image = outlink_node.get_image()
+                    self.nxfile.images[self.image_index] = image
                     return image
 
             # Load image from node
             self.nxfile.file.seek(
-                self.nxfile.image_offset + self.imageIndex * 8)
+                self.nxfile.image_offset + self.image_index * 8)
             offset = int.from_bytes(self.nxfile.file.read(8), 'little')
             image = NXImage(self.nxfile, offset, self.width, self.height)
-            self.nxfile.images[self.imageIndex] = image
+            self.nxfile.images[self.image_index] = image
 
         return image
 
     def get_sound(self):
         """ Get sound at current index """
 
-        sound = self.nxfile.sounds.get(self.soundIndex)
+        sound = self.nxfile.sounds.get(self.sound_index)
 
         if not sound:
 
             # Load sound from node
             self.nxfile.file.seek(
-                self.nxfile.sound_offset + self.soundIndex * 8)
+                self.nxfile.sound_offset + self.sound_index * 8)
             offset = int.from_bytes(self.nxfile.file.read(8), 'little')
             sound = NXSound(self.nxfile, offset)
-            self.nxfile.sounds[self.soundIndex] = sound
+            self.nxfile.sounds[self.sound_index] = sound
 
         return sound.get_data(self.length) if sound else None
 
@@ -149,9 +155,9 @@ class NXNode():
 
         # Create node
         node = NXNode(nxfile,
-                      nameIndex=data[0],
-                      childIndex=data[1],
-                      childCount=data[2],
+                      name_index=data[0],
+                      child_index=data[1],
+                      child_count=data[2],
                       type=data[3])
 
         # Check type
@@ -162,19 +168,19 @@ class NXNode():
         elif node.type == 2:  # double
             node.value = struct.unpack('<d', file.read(8))
         elif node.type == 3:  # string
-            node.stringIndex = int.from_bytes(file.read(4), 'little')
+            node.string_index = int.from_bytes(file.read(4), 'little')
             file.seek(4, 1)
         elif node.type == 4:  # point
             node.x = int.from_bytes(file.read(4), 'little', signed=True)
             node.y = int.from_bytes(file.read(4), 'little', signed=True)
             node.value = (node.x, node.y)  # Use tuple
         elif node.type == 5:  # image
-            node.imageIndex = int.from_bytes(file.read(4), 'little')
+            node.image_index = int.from_bytes(file.read(4), 'little')
             node.width = int.from_bytes(file.read(2), 'little')
             node.height = int.from_bytes(file.read(2), 'little')
             node.value = (node.width, node.height)  # Use tuple
         elif node.type == 6:  # sound
-            node.soundIndex = int.from_bytes(file.read(4), 'little')
+            node.sound_index = int.from_bytes(file.read(4), 'little')
             node.length = int.from_bytes(file.read(4), 'little')
         else:
             raise Exception(

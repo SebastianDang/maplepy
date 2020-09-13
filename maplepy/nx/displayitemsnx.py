@@ -40,7 +40,7 @@ class BackgroundSpritesNx(displayitems.BackgroundSprites):
                 subtype = 'ani' if inst.ani else 'back'
                 key = f'Back/{inst.bS}.img/{subtype}/{inst.no}'
                 node = map_nx.file.resolve(key)
-                count = node.childCount if node and inst.ani else 1
+                count = node.child_count if node and inst.ani else 1
 
                 # Build canvases
                 for index in range(count):
@@ -216,7 +216,7 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                 # Get node
                 key = f'Obj/{inst.oS}.img/{inst.l0}/{inst.l1}/{inst.l2}'
                 node = map_nx.file.resolve(key)
-                count = node.childCount
+                count = node.child_count
 
                 # Build canvases
                 for index in range(count):
@@ -301,7 +301,7 @@ class LayeredSpritesNx(displayitems.LayeredSprites):
                 # Get node
                 key = f'MapHelper.img/portal/game/{portal_game[inst.pt]}/{inst.pS}'
                 node = map_nx.file.resolve(key)
-                count = node.childCount
+                count = node.child_count
 
                 # Build canvases
                 for index in range(count):
