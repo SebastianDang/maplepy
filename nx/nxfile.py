@@ -47,7 +47,6 @@ class NXFile():
         if populate:
             self.populate_nodes()
             self.populate_node_children()
-            self.populate_strings()
 
     def dump_header(self):
         """ Dump header data """
@@ -79,21 +78,6 @@ class NXFile():
             if node:
                 node.populate_children()
 
-    def populate_strings(self):
-        """ Populate strings """
-
-        # Begin at the string offset
-        self.file.seek(self.string_offset)
-
-        # Parse each string
-        for i in range(self.string_count):
-            offset = int.from_bytes(self.file.read(8), 'little')
-            position = self.file.tell()
-            self.file.seek(offset)
-            length = int.from_bytes(self.file.read(2), 'little')
-            self.strings[i] = self.file.read(length).decode('utf-8')
-            self.file.seek(position)
-
     def get_node(self, index):
         """ Get node by index """
 
@@ -112,25 +96,6 @@ class NXFile():
     def get_root_node(self):
         """ Return root node """
         return self.get_node(0)
-
-    def get_string(self, index):
-        """ Get string by index """
-
-        # If string was already read
-        string = self.strings.get(index)
-        if string:
-            return string
-
-        # Move to string index
-        self.file.seek(self.string_offset + index * 8)
-
-        # Move to location where the string is stored
-        self.file.seek(int.from_bytes(self.file.read(8), 'little'))
-        length = int.from_bytes(self.file.read(2), 'little')
-
-        # Read and save string
-        self.strings[index] = self.file.read(length).decode('utf-8')
-        return self.strings[index]
 
     def resolve(self, path):
         """ Resolve path starting from root """

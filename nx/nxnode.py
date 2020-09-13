@@ -15,16 +15,18 @@ class NXNode():
         self.child_count = child_count
         self.type = type
 
-        # Variables
+        # Children
         self.child_map = {}
+
+        # String
         self.string_index = None
 
-        # NxImage
+        # Image
         self.image_index = None
         self.width = None
         self.height = None
 
-        # NxSound
+        # Sound
         self.sound_index = None
         self.length = None
 
@@ -36,13 +38,10 @@ class NXNode():
 
     @property
     def name(self):
-        return self.nxfile.get_string(self.name_index)
+        return self.get_string(self.name_index)
 
     @property
     def value(self):
-        if self.type == 3:  # string
-            return self.nxfile.get_string(self.string_index)
-
         return self._value
 
     @value.setter
@@ -79,6 +78,29 @@ class NXNode():
         """ Get child node by name """
         self.populate_children()
         return self.child_map.get(name)
+
+    def get_string(self, index):
+        """ Get string at current index """
+
+        string = self.nxfile.strings.get(index)
+
+        if not string:
+
+            # Move to string index
+            self.nxfile.file.seek(
+                self.nxfile.string_offset + index * 8)
+
+            # Move to location where the string is stored
+            self.nxfile.file.seek(int.from_bytes(
+                self.nxfile.file.read(8), 'little'))
+            length = int.from_bytes(self.nxfile.file.read(2), 'little')
+
+            # Read and save string
+            self.nxfile.strings[index] = self.nxfile.file.read(
+                length).decode('utf-8')
+            return self.nxfile.strings[index]
+
+        return string
 
     def get_image(self):
         """ Get image at current index """
@@ -161,7 +183,7 @@ class NXNode():
                       type=data[3])
 
         # Check type
-        if node.type == 0:  # null
+        if node.type == 0:  # no data
             file.seek(8, 1)  # skip 8 bytes
         elif node.type == 1:  # long
             node.value = int.from_bytes(file.read(8), 'little', signed=True)
@@ -169,19 +191,20 @@ class NXNode():
             node.value = struct.unpack('<d', file.read(8))
         elif node.type == 3:  # string
             node.string_index = int.from_bytes(file.read(4), 'little')
-            file.seek(4, 1)
+            node.value = node.get_string(node.string_index)
         elif node.type == 4:  # point
             node.x = int.from_bytes(file.read(4), 'little', signed=True)
             node.y = int.from_bytes(file.read(4), 'little', signed=True)
-            node.value = (node.x, node.y)  # Use tuple
+            node.value = (node.x, node.y)
         elif node.type == 5:  # image
             node.image_index = int.from_bytes(file.read(4), 'little')
             node.width = int.from_bytes(file.read(2), 'little')
             node.height = int.from_bytes(file.read(2), 'little')
-            node.value = (node.width, node.height)  # Use tuple
+            node.value = node.get_image()
         elif node.type == 6:  # sound
             node.sound_index = int.from_bytes(file.read(4), 'little')
             node.length = int.from_bytes(file.read(4), 'little')
+            node.value = node.get_sound()
         else:
             raise Exception(
                 'Failed to parse node. Encountered invalid node type', node.type)

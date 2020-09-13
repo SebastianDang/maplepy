@@ -41,7 +41,7 @@ class SoundNx:
             return None
 
         # Get sound data
-        sound = sound_node.get_sound()
+        sound = sound_node.value
         data = io.BytesIO(sound[82:])
 
         # header = sound[32:82]

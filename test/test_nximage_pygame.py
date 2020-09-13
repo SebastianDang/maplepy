@@ -10,7 +10,7 @@ from nx.nxfile import NXFile
 def test_nxsprite():
     node = NXFile(os.path.join(os.path.dirname(__file__),  'map.nx')).resolve(
         "Back/grassySoil_new.img/back/0")
-    image = node.get_image()
+    image = node.value
     byte = image.get_data()
 
     assert node.name == '0'
@@ -49,7 +49,7 @@ def test_nxsprite2():
 
     node = NXFile(os.path.join(os.path.dirname(__file__),  'map.nx')).resolve(
         "Tile/grassySoil.img/bsc/0")
-    image = node.get_image()
+    image = node.value
     byte = image.get_data()
 
     assert node.name == '0'

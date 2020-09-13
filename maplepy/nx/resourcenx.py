@@ -69,7 +69,7 @@ class ResourceNx():
             return None
 
         # Get image
-        image = node.get_image()
+        image = node.value
         if not image:
             logging.warning(f'{key} is not a sprite')
             return None
