@@ -12,6 +12,10 @@ class Bgm:
         self.sound = None
         self.channel = None
 
+    def unload(self):
+        self.stop()
+        self.__init__()
+
     def load(self, name, file=None, buffer=None):
         try:
 
@@ -19,12 +23,8 @@ class Bgm:
             if self.name == name:
                 return
 
-            # Unload previous
-            if self.file:
-                pygame.mixer.music.stop()
-
-            if self.sound:
-                self.sound.stop()
+            # Stop current channel
+            self.stop()
 
             # Load from file
             if file and os.path.isfile(file):
@@ -59,3 +59,11 @@ class Bgm:
 
         if self.sound:
             self.channel = self.sound.play(loops=-1, fade_ms=250)
+
+    def pause(self):
+        if self.channel:
+            self.channel.pause()
+
+    def stop(self):
+        if self.channel:
+            self.channel.stop()

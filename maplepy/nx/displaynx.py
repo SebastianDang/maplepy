@@ -70,6 +70,7 @@ class DisplayNx(display.Display):
             return
 
         # Unload all old data
+        self.bgm.unload()
         self.view.topleft = (0, 0)
         self.view_limit = None
         self.background_sprites = None
