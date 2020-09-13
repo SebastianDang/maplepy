@@ -200,11 +200,11 @@ class NXNode():
             node.image_index = int.from_bytes(file.read(4), 'little')
             node.width = int.from_bytes(file.read(2), 'little')
             node.height = int.from_bytes(file.read(2), 'little')
-            node.value = node.get_image()
+            # node.value = node.get_image()
         elif node.type == 6:  # sound
             node.sound_index = int.from_bytes(file.read(4), 'little')
             node.length = int.from_bytes(file.read(4), 'little')
-            node.value = node.get_sound()
+            # node.value = node.get_sound()
         else:
             raise Exception(
                 'Failed to parse node. Encountered invalid node type', node.type)

@@ -217,7 +217,7 @@ class MapNx:
 
         # Get values
         minimap = self.get_values(minimap_node)
-        minimap['canvas_image'] = minimap.pop('canvas')
+        minimap['canvas_image'] = minimap_node['canvas'].get_image()
 
         # Return
         return minimap

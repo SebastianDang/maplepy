@@ -10,7 +10,7 @@ class NXFile():
 
     _MAGIC = 'PKG4'
 
-    def __init__(self, path, parent=None, populate=None):
+    def __init__(self, path, parent=None):
 
         # Update variables
         self.path = path
@@ -43,11 +43,6 @@ class NXFile():
         self.images = {}
         self.sounds = {}
 
-        # Populate data
-        if populate:
-            self.populate_nodes()
-            self.populate_node_children()
-
     def dump_header(self):
         """ Dump header data """
 
@@ -60,23 +55,6 @@ class NXFile():
         logging.info(f'image_offset: {self.image_offset}')
         logging.info(f'sound_count: {self.sound_count}')
         logging.info(f'sound_offset: {self.sound_offset}')
-
-    def populate_nodes(self):
-        """ Populate nodes """
-
-        # Begin at the node offset
-        self.file.seek(self.node_offset)
-
-        # Parse each node
-        for i in range(self.node_count):
-            self.nodes[i] = NXNode.parse_node(self)
-
-    def populate_node_children(self):
-        """ Populate node's immediate children """
-
-        for node in self.nodes:
-            if node:
-                node.populate_children()
 
     def get_node(self, index):
         """ Get node by index """
