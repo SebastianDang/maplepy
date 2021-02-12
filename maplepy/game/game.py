@@ -2,9 +2,9 @@ import logging
 import threading
 
 import pygame
-from maplepy.config import Config
 from maplepy.base.display import ImageDisplay
 from maplepy.base.sprite import ConsoleSprite
+from maplepy.config import Config
 from maplepy.nx.displaynx import DisplayNx
 from maplepy.xml.displayxml import DisplayXml
 
