@@ -74,9 +74,9 @@ class ResourceNx():
             logging.warning(f'{key} is not a sprite')
             return None
 
-        return self.add_sprite(key, image)
+        return self.cache_sprite(key, image)
 
-    def add_sprite(self, key, image):
+    def cache_sprite(self, key, image):
         """ Loads data into a sprite object, then stores it in the cache """
 
         # Load as nx sprite

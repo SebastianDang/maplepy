@@ -1,3 +1,4 @@
+import logging
 import os
 
 import pygame
@@ -39,7 +40,7 @@ class Bgm:
             self.name = name
 
         except:
-            pass
+            logging.exception('Failed to load sound')
 
     def volume(self, val):
 

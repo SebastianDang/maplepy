@@ -289,4 +289,4 @@ class DataSprite(pygame.sprite.Sprite):
             self.data = data
 
         except:
-            logging.exception('Unable to load image')
+            logging.exception('Failed to load image')

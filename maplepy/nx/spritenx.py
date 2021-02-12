@@ -126,7 +126,7 @@ class LayeredSpritesNx(LayeredSprites):
 
         # Get data
         key = info['mapMark']
-        sprite = resource_manager.add_sprite(f'{key}', inst.canvas_image)
+        sprite = resource_manager.cache_sprite(f'{key}', inst.canvas_image)
 
         # Build canvas
         w = inst.width >> inst.mag

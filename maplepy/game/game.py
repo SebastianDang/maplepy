@@ -109,7 +109,6 @@ class Game():
                 self.threads.append(thread)
         except:
             logging.exception('Command failed')
-            pass
 
     def handle_threads(self):
 
