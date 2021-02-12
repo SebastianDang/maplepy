@@ -247,6 +247,7 @@ class DataSprite(pygame.sprite.Sprite):
             h (int): target image height
             data (array[int]): byte array
         """
+
         try:
 
             if True:  # Automatic buffer method

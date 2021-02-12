@@ -6,7 +6,7 @@ from maplepy.base.sprite import BackgroundSprites, LayeredSprites
 from maplepy.info.canvas import Canvas
 from maplepy.info.foothold import Foothold
 from maplepy.info.instance import Instance
-from maplepy.xml.basexml import BaseXml, Layer
+from maplepy.xml.parsexml import BaseXml, Layer
 
 # Cache individual xmls and images here
 xml_cache = {}

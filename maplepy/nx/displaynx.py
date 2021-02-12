@@ -5,10 +5,10 @@ import time
 
 import pygame
 from maplepy.base.display import SpriteDisplay
-from maplepy.nx.spritenx import BackgroundSpritesNx, LayeredSpritesNx
-from maplepy.nx.mapnx import MapNx
-from maplepy.nx.soundnx import SoundNx
 from maplepy.base.sound import Bgm
+from maplepy.nx.parsenx import MapNx
+from maplepy.nx.soundnx import SoundNx
+from maplepy.nx.spritenx import BackgroundSpritesNx, LayeredSpritesNx
 
 map_file_names = ['map.nx', 'map001.nx', 'map002.nx', 'map2.nx']
 sound_file_names = ['sound.nx', 'sound001.nx', 'sound2.nx']

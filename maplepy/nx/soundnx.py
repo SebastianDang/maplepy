@@ -2,9 +2,8 @@ import io
 import logging
 import os
 
-from pydub import AudioSegment
-
 from libnx.nxfile import NXFileSet
+from pydub import AudioSegment
 
 
 class SoundNx:

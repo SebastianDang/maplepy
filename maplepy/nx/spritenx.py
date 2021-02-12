@@ -1,10 +1,10 @@
 import logging
 
 import pygame
+from maplepy.base.sprite import BackgroundSprites, LayeredSprites
 from maplepy.info.canvas import Canvas
 from maplepy.info.instance import Instance
 from maplepy.nx.resourcenx import ResourceNx
-from maplepy.base.sprite import BackgroundSprites, LayeredSprites
 
 # Create a single resource manager
 resource_manager = ResourceNx()

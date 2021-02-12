@@ -5,7 +5,7 @@ import pygame
 from maplepy.base.display import SpriteDisplay
 from maplepy.base.sound import Bgm
 from maplepy.xml.spritexml import BackgroundSpritesXml, LayeredSpritesXml
-from maplepy.xml.mapxml import MapXml
+from maplepy.xml.parsexml import MapXml
 
 
 class DisplayXml(SpriteDisplay):
