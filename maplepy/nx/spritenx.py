@@ -342,9 +342,19 @@ class LayeredSpritesNx(LayeredSprites):
 
     def fix_overlapping_sprites(self):
         """ Fix z issues with overlapping tiles and objects """
+
         for sprite in self.sprites:
-            collisions = pygame.sprite.spritecollide(
-                sprite, self.sprites, False)
-            for collision in collisions:
+
+            # Check if z exists
+            if not sprite.canvas_list[0].z:
+                continue
+
+            # Collision check
+            for collision in pygame.sprite.spritecollide(sprite, self.sprites, False):
+
+                # Check if z exists
+                if not collision.canvas_list[0].z:
+                    continue
+
                 if sprite.canvas_list[0].z > collision.canvas_list[0].z:
                     self.sprites.change_layer(sprite, collision._layer+1)
