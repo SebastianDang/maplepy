@@ -2,7 +2,7 @@ import logging
 import os
 import struct
 
-from nx.nxnode import NXNode
+from libnx.nxnode import NXNode
 
 
 class NXFile():

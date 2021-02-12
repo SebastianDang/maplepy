@@ -1,7 +1,7 @@
 import logging
 import os
 
-from nx.nxfile import NXFileSet
+from libnx.nxfile import NXFileSet
 
 
 class MapNx:

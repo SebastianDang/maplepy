@@ -2,14 +2,13 @@ import logging
 import os
 
 import pygame
-
-import maplepy.display.display as display
-from maplepy.sound.bgm import Bgm
-from maplepy.xml.displayitemsxml import BackgroundSpritesXml, LayeredSpritesXml
+from maplepy.base.display import SpriteDisplay
+from maplepy.base.sound import Bgm
+from maplepy.xml.spritexml import BackgroundSpritesXml, LayeredSpritesXml
 from maplepy.xml.mapxml import MapXml
 
 
-class DisplayXml(display.Display):
+class DisplayXml(SpriteDisplay):
 
     def __init__(self, w, h, path):
 

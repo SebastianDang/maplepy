@@ -1,80 +1,350 @@
 import logging
 
 import pygame
+from maplepy.info.canvas import Canvas
+from maplepy.info.instance import Instance
+from maplepy.nx.resourcenx import ResourceNx
+from maplepy.base.sprite import BackgroundSprites, LayeredSprites
+
+# Create a single resource manager
+resource_manager = ResourceNx()
 
 
-class SpriteNx(pygame.sprite.Sprite):
-    """ Helper class to load byte array images as pygame sprites """
+class BackgroundSpritesNx(BackgroundSprites):
+    """ Class containing background images for the map """
 
     def __init__(self):
 
-        # pygame.sprite.Sprite
+        # Create sprites
         super().__init__()
-        self.image = None
-        self.rect = None
-        self.mask = None
 
-        # nx byte data
-        self.width = 0
-        self.height = 0
-        self.data = []
+    def load_background(self, map_nx, map_id):
 
-    def load(self, w, h, data):
-        """
-        Load image from byte array
+        # Load back sprites
+        values = map_nx.get_back(map_id)
+        if not values:
+            logging.warning('Background data not found')
+            return
 
-        Each pixel is 4 bytes (32-bit) represented by:
+        # Go through instances list and add
+        for val in values:
+            try:
 
-            b   g   r   a
+                # Extract properties
+                inst = Instance()
+                for k, v in val.items():
+                    setattr(inst, k, v)
 
-        Pygame stores image data as 4 bytes (32-bit) represented by:
+                # Get node
+                subtype = 'ani' if inst.ani else 'back'
+                key = f'Back/{inst.bS}.img/{subtype}/{inst.no}'
+                node = map_nx.file.resolve(key)
+                count = node.child_count if node and inst.ani else 1
 
-            r   g   b   a
+                # Build canvases
+                for index in range(count):
 
-        Args:
-            w (int): target image width
-            h (int): target image height
-            data (array[int]): byte array
-        """
-        try:
+                    # Get data
+                    if inst.ani:  # Animated
+                        # subtype = 'ani'
+                        no = f'{inst.no}/{index}'
+                    else:  # Static
+                        # subtype = 'back'
+                        no = str(inst.no)
+                    sprite = resource_manager.get_sprite(
+                        map_nx.file, 'Back', inst.bS, subtype, no)
+                    data = resource_manager.get_data(
+                        map_nx.file, 'Back', inst.bS, subtype, no)
 
-            if True:  # Automatic buffer method
+                    # Data not found
+                    if not sprite or not data:
+                        break
 
-                # Swap b and r (b,r = r,b)
-                data[0::4], data[2::4] = data[2::4], data[0::4]
+                    # Get info
+                    w, h = sprite.image.get_size()
+                    x = data['origin'][0] if 'origin' in data else 0
+                    y = data['origin'][1] if 'origin' in data else 0
+                    z = int(data['z']) if 'z' in data else None
+                    delay = int(data['delay']) if 'delay' in data else 120
 
-                # Create a new image
-                image = pygame.image.frombuffer(data, (w, h), 'RGBA')
+                    # Create a canvas object
+                    canvas = Canvas(sprite.image, w, h, x, y, z)
 
-            else:  # Manually loop
+                    # Flip
+                    if inst.f and inst.f > 0:
+                        canvas.flip()
 
-                # Create a new image
-                image = pygame.Surface((w, h), pygame.SRCALPHA)
-                # image.set_colorkey((0, 0, 0, 0))  # Transparent
+                    # Check cx, cy
+                    if not inst.cx:
+                        inst.cx = w
+                    if not inst.cy:
+                        inst.cy = h
 
-                # Create pixel array to access x,y coordinates
-                pxarray = pygame.PixelArray(image)
-                for y in range(0, h):
-                    for x in range(0, w):
-                        b = data[(y*w*4) + (x*4) + 0]
-                        g = data[(y*w*4) + (x*4) + 1]
-                        r = data[(y*w*4) + (x*4) + 2]
-                        a = data[(y*w*4) + (x*4) + 3]
-                        pxarray[x, y] = (r, g, b, a)
+                    # Set delay
+                    canvas.set_delay(delay)
 
-                # pixel array must be deleted to 'unlock' the image
-                del pxarray
+                    # Add to object
+                    inst.add_canvas(canvas)
 
-                # Call unlock, to be safe
-                image.unlock()
+                    # Do not continue if static
+                    if not inst.ani:
+                        break
 
-            # Update current sprite
-            self.image = image.convert_alpha()
-            self.rect = image.get_rect()
-            self.mask = pygame.mask.from_surface(image)
-            self.width = w
-            self.height = h
-            self.data = data
+                # Explicit special case
+                if inst.name and inst.name.isdigit():
+                    inst.update_layer(int(inst.name))
 
-        except:
-            logging.exception('Unable to load image')
+                # Add to list
+                if inst.canvas_list:
+                    self.sprites.add(inst)
+
+            except:
+                logging.exception('Failed to load background')
+                continue
+
+
+class LayeredSpritesNx(LayeredSprites):
+    """
+    Class containing tile and object images for the map
+    """
+
+    def __init__(self):
+
+        # Create sprites
+        super().__init__()
+
+    def load_minimap(self, info, val):
+
+        # Translate
+        val['x'] = 0
+        val['y'] = 0
+
+        # Extract properties
+        inst = Instance()
+        for k, v in val.items():
+            setattr(inst, k, v)
+
+        # Get data
+        key = info['mapMark']
+        sprite = resource_manager.add_sprite(f'{key}', inst.canvas_image)
+
+        # Build canvas
+        w = inst.width >> inst.mag
+        h = inst.height >> inst.mag
+        canvas = Canvas(sprite.image, w, h)
+
+        # Add to object
+        inst.add_canvas(canvas)
+
+        # Add to list
+        if inst.canvas_list:
+            self.sprites.add(inst)
+
+    def load_layer(self, map_nx, map_id, index):
+
+        # Load current layer
+        values = map_nx.get_layer(map_id, index)
+        if not values:
+            logging.warning('Layer data not found')
+            return
+
+        # Get info
+        info = values['info']
+
+        # Go through instances list and add
+        for val in values['tile']:
+            try:
+
+                # Make sure there's tile information
+                if 'tS' not in info:
+                    logging.warning('Tile data not found')
+                    break
+
+                # Extract properties
+                inst = Instance()
+                inst.tS = info['tS']
+                for k, v in val.items():
+                    setattr(inst, k, v)
+
+                # Get Data
+                sprite = resource_manager.get_sprite(
+                    map_nx.file, 'Tile', inst.tS, inst.u, str(inst.no))
+                data = resource_manager.get_data(
+                    map_nx.file, 'Tile', inst.tS, inst.u, str(inst.no))
+
+                # Data not found
+                if not sprite or not data:
+                    continue
+
+                # Get info
+                w, h = sprite.image.get_size()
+                x = data['origin'][0] if 'origin' in data else 0
+                y = data['origin'][1] if 'origin' in data else 0
+                z = int(data['z']) if 'z' in data else None
+
+                # Create a canvas object
+                canvas = Canvas(sprite.image, w, h, x, y, z)
+
+                # Add to object
+                inst.add_canvas(canvas)
+
+                # Explicit special case
+                if inst.name and inst.name.isdigit():
+                    inst.update_layer(int(inst.name))
+
+                # Add to list
+                if inst.canvas_list:
+                    self.sprites.add(inst)
+
+            except:
+                logging.exception('Failed to load tile')
+                continue
+
+        # Fix overlapping tiles
+        self.fix_overlapping_sprites()
+
+        # Go through instances list and add
+        for val in values['obj']:
+            try:
+
+                # Extract properties
+                inst = Instance()
+                for k, v in val.items():
+                    setattr(inst, k, v)
+
+                # Get node
+                key = f'Obj/{inst.oS}.img/{inst.l0}/{inst.l1}/{inst.l2}'
+                node = map_nx.file.resolve(key)
+                count = node.child_count
+
+                # Build canvases
+                for index in range(count):
+
+                    # Get data
+                    no = f'{inst.l1}/{inst.l2}/{index}'
+                    sprite = resource_manager.get_sprite(
+                        map_nx.file, 'Obj', inst.oS, inst.l0, no)
+                    data = resource_manager.get_data(
+                        map_nx.file, 'Obj', inst.oS, inst.l0, no)
+
+                    # Data not found
+                    if not sprite or not data:
+                        break
+
+                    # Get info
+                    w, h = sprite.image.get_size()
+                    x = data['origin'][0] if 'origin' in data else 0
+                    y = data['origin'][1] if 'origin' in data else 0
+                    z = int(data['z']) if 'z' in data else None
+                    delay = int(data['delay']) if 'delay' in data else 120
+                    a0 = int(data['a0']) if 'a0' in data else 255
+                    a1 = int(data['a1']) if 'a1' in data else 255
+
+                    # Create a canvas object
+                    canvas = Canvas(sprite.image, w, h, x, y, z)
+
+                    # Flip
+                    if inst.f and inst.f > 0:
+                        canvas.flip()
+
+                    # Set delay
+                    canvas.set_delay(delay)
+
+                    # Set alphas
+                    canvas.set_alpha(a0, a1)
+
+                    # Add to object
+                    inst.add_canvas(canvas)
+
+                # Explicit special case
+                if 'z' in val:
+                    inst.update_layer(int(val['z']))
+                else:
+                    inst.update_layer(inst.zM)
+
+                # Add to list
+                if inst.canvas_list:
+                    self.sprites.add(inst)
+
+            except:
+                logging.exception('Failed to load object')
+                continue
+
+    def load_portal(self, map_nx, map_id):
+
+        # Load portal list
+        values = map_nx.get_portal(map_id)
+        if not values:
+            logging.warning('Portal data not found')
+            return
+
+        # Hard code some known portal stuff here
+        portal_game = {2: 'pv', 7: 'pv'}
+
+        # Go through portal list and add
+        for val in values:
+            try:
+
+                # Special case
+                val['pS'] = val.pop('image') if 'image' in val else 'default'
+
+                # Extract properties
+                inst = Instance()
+                for k, v in val.items():
+                    setattr(inst, k, v)
+
+                # For now, only deal with in game portals
+                if inst.pt not in portal_game.keys():
+                    continue
+
+                # Get node
+                key = f'MapHelper.img/portal/game/{portal_game[inst.pt]}/{inst.pS}'
+                node = map_nx.file.resolve(key)
+                count = node.child_count
+
+                # Build canvases
+                for index in range(count):
+
+                    # Get data
+                    pt = portal_game[inst.pt]
+                    no = f'game/{pt}/{inst.pS}/{index}'
+                    sprite = resource_manager.get_sprite(
+                        map_nx.file, None, 'MapHelper', 'portal', no)
+                    data = resource_manager.get_data(
+                        map_nx.file, None, 'MapHelper', 'portal', no)
+
+                    # Data not found
+                    if not sprite or not data:
+                        break
+
+                    # Get info
+                    w, h = sprite.image.get_size()
+                    x = data['origin'][0] if 'origin' in data else 0
+                    y = data['origin'][1] if 'origin' in data else 0
+                    z = int(data['z']) if 'z' in data else None
+
+                    # Create a canvas object
+                    canvas = Canvas(sprite.image, w, h, x, y, z)
+
+                    # Set delay
+                    canvas.set_delay(100)
+
+                    # Add to object
+                    inst.add_canvas(canvas)
+
+                # Add to list
+                if inst.canvas_list:
+                    self.sprites.add(inst)
+
+            except:
+                logging.exception('Failed to load portal')
+                continue
+
+    def fix_overlapping_sprites(self):
+        """ Fix z issues with overlapping tiles and objects """
+        for sprite in self.sprites:
+            collisions = pygame.sprite.spritecollide(
+                sprite, self.sprites, False)
+            for collision in collisions:
+                if sprite.canvas_list[0].z > collision.canvas_list[0].z:
+                    self.sprites.change_layer(sprite, collision._layer+1)

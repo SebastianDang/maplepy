@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from nx.nxfile import NXFile
+from libnx.nxfile import NXFile
 
 
 def test_nxnode_resolve():

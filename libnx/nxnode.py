@@ -1,7 +1,7 @@
 import struct
 
-from nx.nximage import NXImage
-from nx.nxsound import NXSound
+from libnx.nximage import NXImage
+from libnx.nxsound import NXSound
 
 
 class NXNode():

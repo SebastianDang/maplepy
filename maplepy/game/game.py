@@ -2,10 +2,9 @@ import logging
 import threading
 
 import pygame
-
 from maplepy.config import Config
-from maplepy.display.console import Console
-from maplepy.display.displayloop import DisplayLoop
+from maplepy.base.display import ImageDisplay
+from maplepy.base.sprite import ConsoleSprite
 from maplepy.nx.displaynx import DisplayNx
 from maplepy.xml.displayxml import DisplayXml
 
@@ -58,7 +57,7 @@ class Game():
 
         # Create displays
         self.displays = {
-            Game.LOADING: DisplayLoop(self.width, self.height),
+            Game.LOADING: ImageDisplay(self.width, self.height),
             Game.DEFAULT: Display(self.width, self.height, self.asset_path)
         }
 
@@ -72,7 +71,7 @@ class Game():
         # Console
         self.typing = False
         self.text = ''
-        self.console = Console(200, 100)
+        self.console = ConsoleSprite(200, 100)
 
     def get_state(self):
 
@@ -92,7 +91,7 @@ class Game():
         try:
             cmd = command[0].lower()
             if cmd == 'loading':
-                fn = self.displays[Game.LOADING].load_images
+                fn = self.displays[Game.LOADING].load
                 args = tuple(command[1:3])
                 thread = threading.Thread(target=fn, args=args)
                 thread.start()
@@ -222,6 +221,7 @@ class Game():
 
             # Console
             if self.typing:
+                self.console.update()
                 self.console.blit(self.screen, self.text)
 
             # Update

@@ -1,6 +1,6 @@
 import logging
 
-from maplepy.nx.spritenx import SpriteNx
+from maplepy.base.sprite import DataSprite
 
 
 class ResourceNx():
@@ -80,7 +80,7 @@ class ResourceNx():
         """ Loads data into a sprite object, then stores it in the cache """
 
         # Load as nx sprite
-        sprite = SpriteNx()
+        sprite = DataSprite()
         sprite.load(image.width, image.height, image.get_data())
 
         # Store and return

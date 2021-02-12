@@ -1,12 +1,12 @@
 import os
 
-from nx.nxfile import NXFile
+from libnx.nxfile import NXFile
 
 
 def test_nximage():
     node = NXFile(os.path.join(os.path.dirname(__file__),  'map.nx')).resolve(
         "Back/grassySoil_new.img/back/0")
-    image = node.value
+    image = node.get_image()
     byte = image.get_data()
     assert node.name == '0'
     assert node.width == 22
@@ -17,7 +17,7 @@ def test_nximage():
 def test_nximage2():
     node = NXFile(os.path.join(os.path.dirname(__file__),  'map.nx')).resolve(
         "Tile/grassySoil.img/bsc/0")
-    image = node.value
+    image = node.get_image()
     byte = image.get_data()
     assert node.name == '0'
     assert node.width == 90
@@ -28,7 +28,7 @@ def test_nximage2():
 def test_nximage3():
     node = NXFile(os.path.join(os.path.dirname(__file__),  'map.nx')).resolve(
         "Obj/acc1.img/grassySoil/nature/0/0")
-    image = node.value
+    image = node.get_image()
     byte = image.get_data()
     assert node.name == '0'
     assert node.width == 131

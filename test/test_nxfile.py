@@ -3,7 +3,7 @@ import os
 import pytest
 
 from maplepy.config import Config
-from nx.nxfile import NXFile
+from libnx.nxfile import NXFile
 
 config = Config.instance()
 config.init('config.json')

@@ -3,14 +3,14 @@ import os
 import pygame
 
 from maplepy.nx.resourcenx import ResourceNx
-from maplepy.nx.spritenx import SpriteNx
-from nx.nxfile import NXFile
+from maplepy.base.sprite import DataSprite
+from libnx.nxfile import NXFile
 
 
 def test_nxsprite():
     node = NXFile(os.path.join(os.path.dirname(__file__),  'map.nx')).resolve(
         "Back/grassySoil_new.img/back/0")
-    image = node.value
+    image = node.get_image()
     byte = image.get_data()
 
     assert node.name == '0'
@@ -21,7 +21,7 @@ def test_nxsprite():
     pygame.init()
     screen = pygame.display.set_mode((800, 600))
 
-    sprite = SpriteNx()
+    sprite = DataSprite()
     sprite.load(node.width, node.height, byte)
     sprite.image = pygame.transform.scale(sprite.image, screen.get_size())
 
@@ -49,7 +49,7 @@ def test_nxsprite2():
 
     node = NXFile(os.path.join(os.path.dirname(__file__),  'map.nx')).resolve(
         "Tile/grassySoil.img/bsc/0")
-    image = node.value
+    image = node.get_image()
     byte = image.get_data()
 
     assert node.name == '0'
@@ -60,7 +60,7 @@ def test_nxsprite2():
     pygame.init()
     screen = pygame.display.set_mode((800, 600))
 
-    sprite = SpriteNx()
+    sprite = DataSprite()
     sprite.load(node.width, node.height, byte)
     sprite.image = pygame.transform.scale(sprite.image, screen.get_size())
 
