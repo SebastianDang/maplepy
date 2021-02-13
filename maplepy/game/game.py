@@ -28,6 +28,7 @@ class Game():
         self.config.init(config_file)
         self.width = self.config['width']
         self.height = self.config['height']
+        self.fps = self.config['fps']
         self.asset_path = self.config['asset_path']
         self.asset_type = self.config['asset_type']
         self.map = self.config['map']
@@ -65,7 +66,6 @@ class Game():
         self.threads = []
         self.state = Game.DEFAULT
         self.running = False
-        self.fps = 60
         self.pressed = {}
 
         # Console
