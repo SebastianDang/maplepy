@@ -25,7 +25,7 @@ class DisplayNx(SpriteDisplay):
         # Other properties
         self.path = path
         self.bgm = Bgm()
-        self.maps = None
+        self.map_nodes = None
 
         # Objects in the map
         self.map_nx = MapNx()
@@ -43,12 +43,12 @@ class DisplayNx(SpriteDisplay):
             return
 
         # Load map nodes
-        if not self.maps:
-            self.maps = self.map_nx.get_map_nodes()
+        if not self.map_nodes:
+            self.map_nodes = self.map_nx.get_map_nodes()
 
         # Pick random node
-        if self.maps:
-            choices = list(self.maps.keys())
+        if self.map_nodes:
+            choices = list(self.map_nodes.keys())
             map_id = random.choice(choices)[:9]
             logging.info(f'Load random map: {map_id}')
             self.load_map(map_id)
