@@ -148,10 +148,10 @@ class NXNode():
             self.nxfile.file.seek(
                 self.nxfile.sound_offset + self.sound_index * 8)
             offset = int.from_bytes(self.nxfile.file.read(8), 'little')
-            sound = NXSound(self.nxfile, offset)
+            sound = NXSound(self.nxfile, offset, self.length)
             self.nxfile.sounds[self.sound_index] = sound
 
-        return sound.get_data(self.length) if sound else None
+        return sound.get_data() if sound else None
 
     def resolve(self, path):
         """ Get child node by path """
