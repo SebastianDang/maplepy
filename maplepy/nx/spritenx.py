@@ -39,10 +39,17 @@ class BackgroundSpritesNx(BackgroundSprites):
                 subtype = 'ani' if inst.ani else 'back'
                 key = f'Back/{inst.bS}.img/{subtype}/{inst.no}'
                 node = map_nx.file.resolve(key)
-                count = node.child_count if node and inst.ani else 1
+
+                # Get children
+                # count = node.child_count if node and inst.ani else 1
+                if node and inst.ani:
+                    indexes = [c for c in node.list_children()
+                               if c.isnumeric()]
+                else:
+                    indexes = ["0"]
 
                 # Build canvases
-                for index in range(count):
+                for index in indexes:  # range(count):
 
                     # Get data
                     if inst.ani:  # Animated
@@ -140,10 +147,10 @@ class LayeredSpritesNx(LayeredSprites):
         if inst.canvas_list:
             self.sprites.add(inst)
 
-    def load_layer(self, map_nx, map_id, index):
+    def load_layer(self, map_nx, map_id, layer):
 
         # Load current layer
-        values = map_nx.get_layer(map_id, index)
+        values = map_nx.get_layer(map_id, layer)
         if not values:
             logging.warning('Layer data not found')
             return
@@ -215,10 +222,12 @@ class LayeredSpritesNx(LayeredSprites):
                 # Get node
                 key = f'Obj/{inst.oS}.img/{inst.l0}/{inst.l1}/{inst.l2}'
                 node = map_nx.file.resolve(key)
-                count = node.child_count
+
+                # Get children
+                indexes = [c for c in node.list_children() if c.isnumeric()]
 
                 # Build canvases
-                for index in range(count):
+                for index in indexes:  # range(node.child_count):
 
                     # Get data
                     no = f'{inst.l1}/{inst.l2}/{index}'
@@ -300,10 +309,12 @@ class LayeredSpritesNx(LayeredSprites):
                 # Get node
                 key = f'MapHelper.img/portal/game/{portal_game[inst.pt]}/{inst.pS}'
                 node = map_nx.file.resolve(key)
-                count = node.child_count
+
+                # Get children
+                indexes = [c for c in node.list_children() if c.isnumeric()]
 
                 # Build canvases
-                for index in range(count):
+                for index in indexes:  # range(node.child_count):
 
                     # Get data
                     pt = portal_game[inst.pt]
