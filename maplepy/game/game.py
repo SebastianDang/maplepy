@@ -49,17 +49,17 @@ class Game():
         self.screen = pygame.display.set_mode(size, Game.FLAGS)
         self.clock = pygame.time.Clock()
 
-        # Create available displays
+        # Set sprite display
         available_displays = {
             'nx': DisplayNx,
             'xml': DisplayXml
         }
-        Display = available_displays[self.asset_type]
+        SpriteDisplay = available_displays[self.asset_type]
 
-        # Create displays
+        # Create all displays
         self.displays = {
             Game.LOADING: ImageDisplay(self.width, self.height),
-            Game.DEFAULT: Display(self.width, self.height, self.asset_path)
+            Game.DEFAULT: SpriteDisplay(self.width, self.height, self.asset_path)
         }
 
         # Game state
