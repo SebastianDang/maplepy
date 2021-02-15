@@ -42,7 +42,7 @@ class BackgroundSpritesNx(BackgroundSprites):
 
                 # Get children
                 # count = node.child_count if node and inst.ani else 1
-                if node and inst.ani:
+                if inst.ani:
                     indexes = [c for c in node.list_children()
                                if c.isnumeric()]
                 else:
@@ -52,16 +52,9 @@ class BackgroundSpritesNx(BackgroundSprites):
                 for index in indexes:  # range(count):
 
                     # Get data
-                    if inst.ani:  # Animated
-                        # subtype = 'ani'
-                        no = f'{inst.no}/{index}'
-                    else:  # Static
-                        # subtype = 'back'
-                        no = str(inst.no)
-                    sprite = resource_manager.get_sprite(
-                        map_nx.file, 'Back', inst.bS, subtype, no)
-                    data = resource_manager.get_data(
-                        map_nx.file, 'Back', inst.bS, subtype, no)
+                    link = f'{key}/{index}' if inst.ani else key
+                    sprite = resource_manager.get_sprite(map_nx.file, link)
+                    data = resource_manager.get_data(map_nx.file, link)
 
                     # Data not found
                     if not sprite or not data:
@@ -173,11 +166,10 @@ class LayeredSpritesNx(LayeredSprites):
                 for k, v in val.items():
                     setattr(inst, k, v)
 
-                # Get Data
-                sprite = resource_manager.get_sprite(
-                    map_nx.file, 'Tile', inst.tS, inst.u, str(inst.no))
-                data = resource_manager.get_data(
-                    map_nx.file, 'Tile', inst.tS, inst.u, str(inst.no))
+                # Get data
+                link = f'Tile/{inst.tS}.img/{inst.u}/{inst.no}'
+                sprite = resource_manager.get_sprite(map_nx.file, link)
+                data = resource_manager.get_data(map_nx.file, link)
 
                 # Data not found
                 if not sprite or not data:
@@ -230,11 +222,9 @@ class LayeredSpritesNx(LayeredSprites):
                 for index in indexes:  # range(node.child_count):
 
                     # Get data
-                    no = f'{inst.l1}/{inst.l2}/{index}'
-                    sprite = resource_manager.get_sprite(
-                        map_nx.file, 'Obj', inst.oS, inst.l0, no)
-                    data = resource_manager.get_data(
-                        map_nx.file, 'Obj', inst.oS, inst.l0, no)
+                    link = f'{key}/{index}'
+                    sprite = resource_manager.get_sprite(map_nx.file, link)
+                    data = resource_manager.get_data(map_nx.file, link)
 
                     # Data not found
                     if not sprite or not data:
@@ -320,11 +310,9 @@ class LayeredSpritesNx(LayeredSprites):
                 for index in indexes:  # range(node.child_count):
 
                     # Get data
-                    no = f'game/{pt}/{pS}/{index}'
-                    sprite = resource_manager.get_sprite(
-                        map_nx.file, None, 'MapHelper', 'portal', no)
-                    data = resource_manager.get_data(
-                        map_nx.file, None, 'MapHelper', 'portal', no)
+                    link = f'{key}/{index}'
+                    sprite = resource_manager.get_sprite(map_nx.file, link)
+                    data = resource_manager.get_data(map_nx.file, link)
 
                     # Data not found
                     if not sprite or not data:

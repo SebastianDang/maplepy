@@ -19,11 +19,10 @@ class ResourceNx():
         # key = f'{category}/{folder}.img/{subtype}/{name}'
         return key
 
-    def get_data(self, file, category, folder, subtype, name):
+    def get_data(self, file, key):
         """ Returns the node's values """
 
         # Check if data is already loaded
-        key = self.build_key(category, folder, subtype, name)
         if key in self.data:
             return self.data[key]
 
@@ -49,11 +48,10 @@ class ResourceNx():
         self.data[key] = data
         return data
 
-    def get_sprite(self, file, category, folder, subtype, name):
+    def get_sprite(self, file, key):
         """ Returns the node's sprite """
 
         # Check if sprite is already loaded
-        key = self.build_key(category, folder, subtype, name)
         if key in self.sprites:
             return self.sprites[key]
 
