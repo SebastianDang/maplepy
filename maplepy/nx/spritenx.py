@@ -10,6 +10,38 @@ from maplepy.nx.resourcenx import ResourceNx
 resource_manager = ResourceNx()
 
 
+def create_canvas(sprite, data, delay=None, f=None):
+    """ Create a canvas object from node data """
+
+    # Missing information
+    if not sprite or not data:
+        return None
+
+    # Extract basic information
+    w, h = sprite.image.get_size()
+    x = data['origin'][0] if 'origin' in data else 0
+    y = data['origin'][1] if 'origin' in data else 0
+    z = int(data['z']) if 'z' in data else None
+
+    # Create a canvas object
+    canvas = Canvas(sprite.image, w, h, x, y, z)
+
+    # Set delay
+    if delay:
+        canvas.set_delay(int(data['delay']) if 'delay' in data else delay)
+
+    # Adjustments
+    if f and f > 0:
+        canvas.flip()
+
+    # Set alpha
+    a0 = int(data['a0']) if 'a0' in data else 255
+    a1 = int(data['a1']) if 'a1' in data else 255
+    canvas.set_alpha(a0, a1)
+
+    return canvas
+
+
 class BackgroundSpritesNx(BackgroundSprites):
     """ Class containing background images for the map """
 
@@ -55,33 +87,13 @@ class BackgroundSpritesNx(BackgroundSprites):
                     link = f'{key}/{index}' if inst.ani else key
                     sprite = resource_manager.get_sprite(map_nx.file, link)
                     data = resource_manager.get_data(map_nx.file, link)
-
-                    # Data not found
-                    if not sprite or not data:
-                        break
-
-                    # Get info
-                    w, h = sprite.image.get_size()
-                    x = data['origin'][0] if 'origin' in data else 0
-                    y = data['origin'][1] if 'origin' in data else 0
-                    z = int(data['z']) if 'z' in data else None
-                    delay = int(data['delay']) if 'delay' in data else 120
-
-                    # Create a canvas object
-                    canvas = Canvas(sprite.image, w, h, x, y, z)
-
-                    # Flip
-                    if inst.f and inst.f > 0:
-                        canvas.flip()
+                    canvas = create_canvas(sprite, data, delay=120, f=inst.f)
 
                     # Check cx, cy
                     if not inst.cx:
-                        inst.cx = w
+                        inst.cx = canvas.width
                     if not inst.cy:
-                        inst.cy = h
-
-                    # Set delay
-                    canvas.set_delay(delay)
+                        inst.cy = canvas.height
 
                     # Add to object
                     inst.add_canvas(canvas)
@@ -170,19 +182,7 @@ class LayeredSpritesNx(LayeredSprites):
                 link = f'Tile/{inst.tS}.img/{inst.u}/{inst.no}'
                 sprite = resource_manager.get_sprite(map_nx.file, link)
                 data = resource_manager.get_data(map_nx.file, link)
-
-                # Data not found
-                if not sprite or not data:
-                    continue
-
-                # Get info
-                w, h = sprite.image.get_size()
-                x = data['origin'][0] if 'origin' in data else 0
-                y = data['origin'][1] if 'origin' in data else 0
-                z = int(data['z']) if 'z' in data else None
-
-                # Create a canvas object
-                canvas = Canvas(sprite.image, w, h, x, y, z)
+                canvas = create_canvas(sprite, data)
 
                 # Add to object
                 inst.add_canvas(canvas)
@@ -225,32 +225,7 @@ class LayeredSpritesNx(LayeredSprites):
                     link = f'{key}/{index}'
                     sprite = resource_manager.get_sprite(map_nx.file, link)
                     data = resource_manager.get_data(map_nx.file, link)
-
-                    # Data not found
-                    if not sprite or not data:
-                        break
-
-                    # Get info
-                    w, h = sprite.image.get_size()
-                    x = data['origin'][0] if 'origin' in data else 0
-                    y = data['origin'][1] if 'origin' in data else 0
-                    z = int(data['z']) if 'z' in data else None
-                    delay = int(data['delay']) if 'delay' in data else 120
-                    a0 = int(data['a0']) if 'a0' in data else 255
-                    a1 = int(data['a1']) if 'a1' in data else 255
-
-                    # Create a canvas object
-                    canvas = Canvas(sprite.image, w, h, x, y, z)
-
-                    # Flip
-                    if inst.f and inst.f > 0:
-                        canvas.flip()
-
-                    # Set delay
-                    canvas.set_delay(delay)
-
-                    # Set alphas
-                    canvas.set_alpha(a0, a1)
+                    canvas = create_canvas(sprite, data, delay=120, f=inst.f)
 
                     # Add to object
                     inst.add_canvas(canvas)
@@ -313,22 +288,7 @@ class LayeredSpritesNx(LayeredSprites):
                     link = f'{key}/{index}'
                     sprite = resource_manager.get_sprite(map_nx.file, link)
                     data = resource_manager.get_data(map_nx.file, link)
-
-                    # Data not found
-                    if not sprite or not data:
-                        break
-
-                    # Get info
-                    w, h = sprite.image.get_size()
-                    x = data['origin'][0] if 'origin' in data else 0
-                    y = data['origin'][1] if 'origin' in data else 0
-                    z = int(data['z']) if 'z' in data else None
-
-                    # Create a canvas object
-                    canvas = Canvas(sprite.image, w, h, x, y, z)
-
-                    # Set delay
-                    canvas.set_delay(100)
+                    canvas = create_canvas(sprite, data, delay=100)
 
                     # Add to object
                     inst.add_canvas(canvas)
