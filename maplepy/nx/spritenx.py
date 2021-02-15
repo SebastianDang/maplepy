@@ -72,13 +72,17 @@ class BackgroundSpritesNx(BackgroundSprites):
                 key = f'Back/{inst.bS}.img/{subtype}/{inst.no}'
                 node = map_nx.file.resolve(key)
 
+                # Node not found
+                if not node:
+                    continue
+
                 # Get children
                 # count = node.child_count if node and inst.ani else 1
                 if inst.ani:
                     indexes = [c for c in node.list_children()
                                if c.isnumeric()]
                 else:
-                    indexes = ["0"]
+                    indexes = ['0']
 
                 # Build canvases
                 for index in indexes:  # range(count):
@@ -89,18 +93,14 @@ class BackgroundSpritesNx(BackgroundSprites):
                     data = resource_manager.get_data(map_nx.file, link)
                     canvas = create_canvas(sprite, data, delay=120, f=inst.f)
 
+                    # Add to object
+                    inst.add_canvas(canvas)
+
                     # Check cx, cy
                     if not inst.cx:
                         inst.cx = canvas.width
                     if not inst.cy:
                         inst.cy = canvas.height
-
-                    # Add to object
-                    inst.add_canvas(canvas)
-
-                    # Do not continue if static
-                    if not inst.ani:
-                        break
 
                 # Explicit special case
                 if inst.name and inst.name.isdigit():
@@ -215,6 +215,10 @@ class LayeredSpritesNx(LayeredSprites):
                 key = f'Obj/{inst.oS}.img/{inst.l0}/{inst.l1}/{inst.l2}'
                 node = map_nx.file.resolve(key)
 
+                # Node not found
+                if not node:
+                    continue
+
                 # Get children
                 indexes = [c for c in node.list_children() if c.isnumeric()]
 
@@ -277,6 +281,10 @@ class LayeredSpritesNx(LayeredSprites):
                 # Get node
                 key = f'MapHelper.img/portal/game/{pt}/{pS}'
                 node = map_nx.file.resolve(key)
+
+                # Node not found
+                if not node:
+                    continue
 
                 # Get children
                 indexes = [c for c in node.list_children() if c.isnumeric()]
