@@ -11,15 +11,19 @@ class ResourceNx():
         self.data = {}
         self.sprites = {}
 
-    def get_data(self, file, category, folder, subtype, name):
-        """ Returns the node's values """
+    def build_key(self, category, folder, subtype, name):
+        """ Builds key from values """
 
-        # Create key
         folder += '.img'
         key = '/'.join([x for x in [category, folder, subtype, name] if x])
         # key = f'{category}/{folder}.img/{subtype}/{name}'
+        return key
+
+    def get_data(self, file, category, folder, subtype, name):
+        """ Returns the node's values """
 
         # Check if data is already loaded
+        key = self.build_key(category, folder, subtype, name)
         if key in self.data:
             return self.data[key]
 
@@ -42,18 +46,14 @@ class ResourceNx():
                 data[child.name] = child.value
 
         # Store and return
-        self.data[name] = data
+        self.data[key] = data
         return data
 
     def get_sprite(self, file, category, folder, subtype, name):
         """ Returns the node's sprite """
 
-        # Create key
-        folder += '.img'
-        key = '/'.join([x for x in [category, folder, subtype, name] if x])
-        # key = f'{category}/{folder}.img/{subtype}/{name}'
-
         # Check if sprite is already loaded
+        key = self.build_key(category, folder, subtype, name)
         if key in self.sprites:
             return self.sprites[key]
 
