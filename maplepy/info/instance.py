@@ -108,7 +108,7 @@ class Instance(pygame.sprite.Sprite):
                 self.image.set_alpha(alpha)
 
             # Check individual canvas delay, update if reached
-            if count > canvas.delay:
+            if count >= canvas.delay:
 
                 # Update canvas index
                 self.canvas_list_index = (self.canvas_list_index + 1) % n
@@ -117,6 +117,7 @@ class Instance(pygame.sprite.Sprite):
                 # Update current image and rect
                 canvas = self.canvas_list[self.canvas_list_index]
                 self.image = canvas.image
+                self.image.set_alpha(canvas.a0)  # IMPORTANT: Reset alpha
                 self.mask = pygame.mask.from_surface(self.image)
                 self.rect = canvas.rect.copy().move(self.x, self.y)
 
