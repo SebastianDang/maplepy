@@ -5,7 +5,13 @@ from libnx.nxfile import NXFileSet
 
 
 class MapNx:
-    """ Helper class to get values from a map nx file. """
+    """
+    Helper class to get values from a map nx file.
+
+    Currently does not handle:
+        reactor, ToolTip, rectInfo
+
+    """
 
     def __init__(self):
         self.file = NXFileSet()
@@ -33,8 +39,8 @@ class MapNx:
         map_nodes = {}
 
         # Loop through map indices
-        for i in range(0, 9):
-            map_digit = self.file.resolve(f'Map/Map{i}')
+        for index in range(9):
+            map_digit = self.file.resolve(f'Map/Map{index}')
             if map_digit:
                 for child in map_digit.get_children():
                     map_nodes[child.name] = child.value
@@ -138,10 +144,6 @@ class MapNx:
         # Return
         layer = {'info': info, 'tile': tiles, 'obj': objects}
         return layer
-
-    def get_reactor(self, map_id):
-        """ Return reactor data for the map """
-        pass
 
     def get_foothold(self, map_id):
         """ Return foothold data for the map """
