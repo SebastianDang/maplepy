@@ -288,7 +288,7 @@ class LayeredSpritesNx(LayeredSprites):
             return
 
         # Hard code some known portal stuff here
-        portal_game = {2: 'pv', 7: 'pv'}
+        portal_game = {2: 'pv', 7: 'pv', 10: 'ph'}
 
         # Go through portal list and add
         for val in values:
@@ -303,11 +303,14 @@ class LayeredSpritesNx(LayeredSprites):
                     setattr(inst, k, v)
 
                 # For now, only deal with in game portals
-                if inst.pt not in portal_game.keys():
+                if inst.pt in portal_game.keys():
+                    pt = portal_game[inst.pt]
+                    pS = inst.pS if pt == 'pv' else 'default/portalContinue'
+                else:
                     continue
 
                 # Get node
-                key = f'MapHelper.img/portal/game/{portal_game[inst.pt]}/{inst.pS}'
+                key = f'MapHelper.img/portal/game/{pt}/{pS}'
                 node = map_nx.file.resolve(key)
 
                 # Get children
@@ -317,8 +320,7 @@ class LayeredSpritesNx(LayeredSprites):
                 for index in indexes:  # range(node.child_count):
 
                     # Get data
-                    pt = portal_game[inst.pt]
-                    no = f'game/{pt}/{inst.pS}/{index}'
+                    no = f'game/{pt}/{pS}/{index}'
                     sprite = resource_manager.get_sprite(
                         map_nx.file, None, 'MapHelper', 'portal', no)
                     data = resource_manager.get_data(
