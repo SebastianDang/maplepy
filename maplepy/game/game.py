@@ -28,6 +28,8 @@ class Game():
         self.config.init(config_file)
         self.width = self.config['width']
         self.height = self.config['height']
+        self.screen_width = self.config['screen_width']
+        self.screen_height = self.config['screen_height']
         self.fps = self.config['fps']
         self.asset_path = self.config['asset_path']
         self.asset_type = self.config['asset_type']
@@ -44,9 +46,15 @@ class Game():
         icon = pygame.image.load(self.config['icon'])
         pygame.display.set_icon(icon)
 
-        # Create pygame objects
+        # Create framebuffer
         size = self.width, self.height
-        self.screen = pygame.display.set_mode(size, Game.FLAGS)
+        self.framebuffer = pygame.Surface(size)
+
+        # Create pygame screen
+        screen_size = self.screen_width, self.screen_height
+        self.screen = pygame.display.set_mode(screen_size, Game.FLAGS)
+
+        # Clock
         self.clock = pygame.time.Clock()
 
         # Set sprite display
@@ -61,9 +69,6 @@ class Game():
             Game.LOADING: ImageDisplay(self.width, self.height),
             Game.DEFAULT: SpriteDisplay(self.width, self.height, self.asset_path)
         }
-
-        # Additional config
-        self.displays[Game.DEFAULT].set_fixed_background(1280, 720)
 
         # Game state
         self.threads = []
@@ -137,9 +142,10 @@ class Game():
 
             # Resize window
             if event.type == pygame.VIDEORESIZE:
-                self.width, self.height = event.w, event.h
-                for _, display in self.displays.items():
-                    display.resize(event.w, event.h)
+                self.screen_width, self.screen_height = event.w, event.h
+                # Remove resizing displays for now
+                # for _, display in self.displays.items():
+                #     display.resize(event.w, event.h)
 
             # Console input
             if state != Game.LOADING and event.type == pygame.KEYDOWN:
@@ -178,9 +184,13 @@ class Game():
         mouse_input = pygame.mouse.get_pressed()
         key_input = pygame.key.get_pressed()
 
+        # Scale inputs
+        scaled_mouse_dx = float(mouse_dx) * self.framebuffer.get_width() / self.screen.get_width()
+        scaled_mouse_dy = float(mouse_dy) * self.framebuffer.get_height() / self.screen.get_height()
+
         # Camera movement
         if state == Game.DEFAULT and mouse_input[2]:
-            self.displays[state].move_view(-mouse_dx, -mouse_dy)
+            self.displays[state].move_view(-scaled_mouse_dx, -scaled_mouse_dy)
         if state == Game.DEFAULT and key_input[pygame.K_UP]:
             self.displays[state].move_view(0, -Game.CAM_SPEED)
         if state == Game.DEFAULT and key_input[pygame.K_DOWN]:
@@ -219,12 +229,15 @@ class Game():
 
             # Render environment
             self.displays[state].update()
-            self.displays[state].blit(self.screen)
+            self.displays[state].blit(self.framebuffer)
 
             # Console
             if self.typing:
                 self.console.update()
-                self.console.blit(self.screen, self.text)
+                self.console.blit(self.framebuffer, self.text)
+
+            # Render to screen
+            self.screen.blit(pygame.transform.smoothscale(self.framebuffer, self.screen.get_rect().size), (0, 0))
 
             # Update
             pygame.display.update()
