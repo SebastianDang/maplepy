@@ -106,8 +106,7 @@ class SpriteDisplay():
             self.background_sprites.blit(self.background, self.view)
 
             # Scale background surface and blit to target surface
-            background = pygame.transform.scale(
-                self.background, surface.get_size())
+            background = pygame.transform.smoothscale(self.background, surface.get_size())
             surface.blit(background, surface.get_rect())
 
         # Tiles / Objs / Others
