@@ -62,10 +62,13 @@ class Game():
             Game.DEFAULT: SpriteDisplay(self.width, self.height, self.asset_path)
         }
 
+        # Additional config
+        self.displays[Game.DEFAULT].set_fixed_background(1280, 720)
+
         # Game state
         self.threads = []
-        self.state = Game.DEFAULT
         self.running = False
+        self.state = Game.DEFAULT
         self.pressed = {}
 
         # Console

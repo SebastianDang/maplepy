@@ -28,6 +28,7 @@ class SpriteDisplay():
 
         # Background
         self.background = pygame.Surface((w, h))
+        self.background_fixed = False
         self.background_sprites = None
 
         # Objects in the map
@@ -38,12 +39,19 @@ class SpriteDisplay():
 
     def resize(self, w, h):
         """ Resizes the display """
+
+        # Update properties
         self.width = w
         self.height = h
+
+        # Update view
         x = self.view.x if self.view else 0
         y = self.view.y if self.view else 0
         self.view = pygame.Rect(x, y, w, h)
-        self.background = pygame.Surface((w, h))
+
+        # Update background surface
+        if not self.background_fixed:
+            self.background = pygame.Surface((w, h))
 
     def move_view(self, x, y):
         """ Moves the view rect """
@@ -52,6 +60,11 @@ class SpriteDisplay():
     def set_view_limit(self, x, y, width, height):
         """ Updates the view limit rect """
         self.view_limit = pygame.Rect(x, y, width, height)
+
+    def set_fixed_background(self, width, height):
+        """ Sets the background to fixed size """
+        self.background = pygame.Surface((width, height))
+        self.background_fixed = True
 
     def update(self):
         """
