@@ -27,8 +27,7 @@ class SpriteDisplay():
         self.view_limit = None
 
         # Background
-        self.background = pygame.Surface((w, h))
-        self.background_fixed = False
+        self.background = None
         self.background_sprites = None
 
         # Objects in the map
@@ -49,10 +48,6 @@ class SpriteDisplay():
         y = self.view.y if self.view else 0
         self.view = pygame.Rect(x, y, w, h)
 
-        # Update background surface
-        if not self.background_fixed:
-            self.background = pygame.Surface((w, h))
-
     def move_view(self, x, y):
         """ Moves the view rect """
         self.view = self.view.move(x, y)
@@ -64,7 +59,6 @@ class SpriteDisplay():
     def set_fixed_background(self, width, height):
         """ Sets the background to fixed size """
         self.background = pygame.Surface((width, height))
-        self.background_fixed = True
 
     def update(self):
         """
@@ -99,15 +93,17 @@ class SpriteDisplay():
         """
 
         # Background
-        if self.background and self.background_sprites:
+        if self.background_sprites:
+            if not self.background:
+                self.background_sprites.blit(surface, self.view)
+            else:
+                # Blit onto background surface
+                self.background.fill((0, 0, 0))
+                self.background_sprites.blit(self.background, self.view)
 
-            # Blit onto background surface
-            self.background.fill((0, 0, 0))
-            self.background_sprites.blit(self.background, self.view)
-
-            # Scale background surface and blit to target surface
-            background = pygame.transform.smoothscale(self.background, surface.get_size())
-            surface.blit(background, surface.get_rect())
+                # Scale background surface and blit to target surface
+                background = pygame.transform.smoothscale(self.background, surface.get_size())
+                surface.blit(background, surface.get_rect())
 
         # Tiles / Objs / Others
         for sprites in self.layered_sprites:
