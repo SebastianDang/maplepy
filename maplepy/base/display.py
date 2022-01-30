@@ -85,7 +85,7 @@ class SpriteDisplay():
         if self.overlayed_sprites:
             self.overlayed_sprites.update()
 
-    def blit(self, surface):
+    def blit(self, surface: pygame.Surface):
         """
         Draw background sprites onto a separate surface, then scale it to the target surface
         Draw layered sprites together, ordered by layer index
@@ -166,7 +166,7 @@ class ImageDisplay():
                 self.images_index = (self.images_index + 1) % n
                 self.image = self.images[self.images_index]
 
-    def blit(self, surface):
+    def blit(self, surface: pygame.Surface):
         """ Draw current image """
 
         if self.image:
