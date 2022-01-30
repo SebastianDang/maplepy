@@ -1,3 +1,4 @@
-pygame==2.0.0.dev10
 lz4==3.1.0
 pydub==0.24.1
+pygame==2.1.2
+pytest==6.2.5
