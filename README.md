@@ -7,6 +7,7 @@ A basic emulator for the popular game [MapleStory](https://maplestory.com/)!
 ## Windows Requirements
 
 - [Microsoft Visual C++ 14.0](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+- [FFmpeg](https://www.ffmpeg.org/download.html)
 
 ## Resources
 
