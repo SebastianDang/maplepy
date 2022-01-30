@@ -4,9 +4,8 @@ import threading
 import pygame
 from maplepy.base.display import ImageDisplay
 from maplepy.base.sprite import ConsoleSprite
-from maplepy.config import Config
+from maplepy.helper.config import Config
 from maplepy.nx.displaynx import DisplayNx
-from maplepy.xml.displayxml import DisplayXml
 
 
 class Game():
@@ -50,10 +49,7 @@ class Game():
         self.clock = pygame.time.Clock()
 
         # Set sprite display
-        available_displays = {
-            'nx': DisplayNx,
-            'xml': DisplayXml
-        }
+        available_displays = {'nx': DisplayNx}
         SpriteDisplay = available_displays[self.asset_type]
 
         # Create all displays

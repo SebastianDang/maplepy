@@ -1,6 +1,5 @@
 import logging
 import os
-import struct
 
 from libnx.nxnode import NXNode
 

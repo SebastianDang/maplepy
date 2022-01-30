@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from maplepy.config import Config
+from maplepy.helper.config import Config
 from libnx.nxfile import NXFile
 
 config = Config.instance()

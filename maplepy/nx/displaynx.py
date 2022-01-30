@@ -11,7 +11,7 @@ from maplepy.nx.soundnx import SoundNx
 from maplepy.nx.spritenx import BackgroundSpritesNx, LayeredSpritesNx
 
 map_file_names = ['map.nx', 'map001.nx', 'map002.nx', 'map2.nx']
-sound_file_names = ['sound.nx', 'sound001.nx', 'sound2.nx']
+sound_file_names = ['sound.nx', 'sound001.nx', 'sound002.nx', 'sound2.nx']
 random.seed(time.time())
 
 
