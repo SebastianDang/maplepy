@@ -6,7 +6,7 @@ import time
 import pygame
 from maplepy.base.display import SpriteDisplay
 from maplepy.base.sound import Bgm
-from maplepy.nx.parsenx import MapNx
+from maplepy.nx.mapnx import MapNx
 from maplepy.nx.soundnx import SoundNx
 from maplepy.nx.spritenx import BackgroundSpritesNx, LayeredSpritesNx
 
