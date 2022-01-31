@@ -2,7 +2,7 @@
 
 A basic emulator for the popular game [MapleStory](https://maplestory.com/)!
 
-![img](assets/img/MapleIsland.png)
+https://user-images.githubusercontent.com/7243868/151745052-bfb792c4-66ba-4e36-9fd6-086aa8e615cb.mp4
 
 ## Windows Requirements
 
@@ -15,3 +15,7 @@ A basic emulator for the popular game [MapleStory](https://maplestory.com/)!
 - [NoLifeWzToNx](https://github.com/ryantpayton/NoLifeWzToNx)
 - [nxformat](https://nxformat.github.io/)
 - [harepacker](https://github.com/lastbattle/Harepacker-resurrected)
+
+
+
+
