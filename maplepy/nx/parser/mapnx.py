@@ -95,7 +95,7 @@ class MapNx:
 
         life = []
 
-        # Get portal node
+        # Get life node
         path = f'Map/Map{map_id[0:1]}/{map_id}.img/life'
         life_node = self.file.resolve(path)
         if not life_node:
@@ -174,7 +174,7 @@ class MapNx:
 
         ladder = {}
 
-        # Get minimap node
+        # Get ladderRope node
         path = f'Map/Map{map_id[0:1]}/{map_id}.img/ladderRope'
         ladder_node = self.file.resolve(path)
         if not ladder_node:
@@ -194,7 +194,7 @@ class MapNx:
 
         seat = {}
 
-        # Get minimap node
+        # Get seat node
         path = f'Map/Map{map_id[0:1]}/{map_id}.img/seat'
         seat_node = self.file.resolve(path)
         if not seat_node:
@@ -211,7 +211,7 @@ class MapNx:
 
         minimap = {}
 
-        # Get minimap node
+        # Get miniMap node
         path = f'Map/Map{map_id[0:1]}/{map_id}.img/miniMap'
         minimap_node = self.file.resolve(path)
         if not minimap_node:
