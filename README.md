@@ -2,7 +2,7 @@
 
 A basic emulator for the popular game [MapleStory](https://maplestory.com/)!
 
-![img](img/MapleIsland.png)
+![img](assets/img/MapleIsland.png)
 
 ## Windows Requirements
 
