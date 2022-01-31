@@ -1,5 +1,5 @@
 {
-  "icon": "./img/maple_pie.png",
+  "icon": "./assets/img/maple_pie.png",
   "caption": "MaplePie",
   "width": 1920,
   "height": 1080,
@@ -8,7 +8,7 @@
   "asset_type": "nx",
   "map": "000010000",
   "loading_display_loop": [
-    "./img/loading",
+    "./assets/img/loading",
     "loading.repeat.1"
   ]
 }
