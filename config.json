@@ -4,7 +4,7 @@
   "width": 1920,
   "height": 1080,
   "fps": 60,
-  "asset_path": "P:/Downloads/MapleStory",
+  "asset_path": "./assets/nx",
   "asset_type": "nx",
   "map": "000010000",
   "loading_display_loop": [
