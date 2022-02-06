@@ -132,4 +132,4 @@ dmypy.json
 .vscode/
 
 # maplepy
-./assets/nx/
+assets/nx
