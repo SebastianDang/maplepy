@@ -3,7 +3,8 @@ import pygame
 
 class Canvas(pygame.sprite.Sprite):
     """
-    Class contains a single image and array of footholds.
+    Class contains a single image and additional properties
+    for animation.
 
     The constructor will automatically center the image.
 
@@ -33,9 +34,6 @@ class Canvas(pygame.sprite.Sprite):
         self.a0 = 255  # Alpha for first frame [0,255]
         self.a1 = 255  # Alpha for last frame [0,255]
 
-        # Foothold this canvas owns
-        self.footholds = []
-
         # Update center
         self.rect.topleft = (-self.x, -self.y)
 
@@ -45,9 +43,6 @@ class Canvas(pygame.sprite.Sprite):
     def set_alpha(self, a0, a1):
         self.a0 = a0
         self.a1 = a1
-
-    def add_foothold(self, foothold):
-        self.footholds.append(foothold)
 
     def flip(self):
         self.image = pygame.transform.flip(self.image, True, False)

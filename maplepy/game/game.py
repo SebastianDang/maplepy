@@ -1,7 +1,6 @@
 import logging
 import threading
 
-import maplepy.base.constants as Constants
 import pygame
 from maplepy.base.constants import CAMERA_SPEED, GAME_STATE, PYGAME_FLAGS
 from maplepy.base.display import ImageDisplay
