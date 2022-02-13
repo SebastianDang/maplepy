@@ -1,9 +1,7 @@
-import io
 import logging
 import os
 
 from libnx.nxfile import NXFileSet
-from pydub import AudioSegment
 
 
 class SoundNx:
@@ -41,21 +39,4 @@ class SoundNx:
 
         # Get sound data
         sound = sound_node.get_sound()
-        data = io.BytesIO(sound[82:])
-
-        # header = sound[32:82]
-        # fmt = int.from_bytes(header[8:12], 'big')
-        # channels = int.from_bytes(header[22:24], 'little')
-        # sample_rate = int.from_bytes(header[24:28], 'little')
-        # byte_rate = int.from_bytes(header[28:32], 'little')
-        # block_align = int.from_bytes(header[32:34], 'little')
-        # bits_per_sample = int.from_bytes(header[34:36], 'little')
-
-        # Convert to wav
-        audio_bytes = io.BytesIO()
-        audio = AudioSegment.from_file(data)
-        audio.export(audio_bytes,
-                     format='wav',
-                     codec='pcm_s16le',
-                     parameters=['-ar', '44100'])
-        return audio_bytes.getbuffer()
+        return sound.get_data()
