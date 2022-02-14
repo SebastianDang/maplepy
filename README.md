@@ -11,11 +11,8 @@ https://user-images.githubusercontent.com/7243868/151745052-bfb792c4-66ba-4e36-9
 
 ## Resources
 
+- [nxpy](https://github.com/SebastianDang/nxpy)
 - [pygame](https://github.com/pygame/)
 - [NoLifeWzToNx](https://github.com/ryantpayton/NoLifeWzToNx)
 - [nxformat](https://nxformat.github.io/)
 - [harepacker](https://github.com/lastbattle/Harepacker-resurrected)
-
-
-
-
