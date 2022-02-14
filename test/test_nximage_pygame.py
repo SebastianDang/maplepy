@@ -4,7 +4,7 @@ import pygame
 
 from maplepy.nx.resourcenx import ResourceNx
 from maplepy.base.sprite import DataSprite
-from libnx.nxfile import NXFile
+from nxpy.nxfile import NXFile
 
 
 def test_nxsprite():
