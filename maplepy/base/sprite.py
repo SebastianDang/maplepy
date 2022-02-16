@@ -253,7 +253,7 @@ class DataSprite(pygame.sprite.Sprite):
             if True:  # Automatic buffer method
 
                 # Swap b and r (b,r = r,b)
-                data[0::4], data[2::4] = data[2::4], data[0::4]
+                # data[0::4], data[2::4] = data[2::4], data[0::4]
 
                 # Create a new image
                 image = pygame.image.frombuffer(data, (w, h), 'RGBA')
