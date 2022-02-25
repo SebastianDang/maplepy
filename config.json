@@ -1,8 +1,10 @@
 {
   "icon": "./assets/img/maple_pie.png",
   "caption": "MaplePie",
-  "width": 1920,
-  "height": 1080,
+  "width": 1280,
+  "height": 720,
+  "screen_width": 1920,
+  "screen_height": 1080,
   "fps": 60,
   "asset_path": "./assets/nx",
   "asset_type": "nx",
